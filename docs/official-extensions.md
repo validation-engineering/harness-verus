@@ -47,6 +47,10 @@ The bridge mounts a child consumer declaring `rustTextAnalysis` as a dependency.
 
 The Rust implementation accepts at most 1 MiB of UTF-8 and returns `backend`, `version`, `bytes`, `characters`, `lines`, and `words`. Characters are Unicode scalar values, not grapheme clusters; lines follow Rust `str.lines()`. This bounded pure calculation checks the tool AbortSignal before and after its call; it does not claim to interrupt an arbitrary Rust future midway through execution.
 
+The addon build uses Cargo release optimization level 3 with debug assertions
+and overflow checks retained. The build checks the actual compiler profile and
+records it with the binary and source hashes.
+
 ## Executable acceptance
 
 After preparing verified official runtime artifacts:

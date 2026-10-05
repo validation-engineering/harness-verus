@@ -1,0 +1,2173 @@
+{
+  "schema": "cordis-harness.performance-observation/v1",
+  "date": "2026-10-05",
+  "scope": "Local observational comparison of complete installed-artifact acceptance processes and RPC timings; not a release gate or isolated startup benchmark.",
+  "retainedData": "Projection preserving all process/RPC timings, checks and input hashes. Full runtime graph snapshots, requests and logs are omitted; raw report and log hashes are retained. Hashes are integrity links, not signed attestations.",
+  "sampling": {
+    "baselineRunsPerBackend": 1,
+    "candidateRunsPerBackend": 3,
+    "order": [
+      "upstream",
+      "native",
+      "native-rust",
+      "upstream",
+      "native",
+      "native-rust",
+      "upstream",
+      "native",
+      "native-rust"
+    ],
+    "concurrency": 1,
+    "warmupRuns": 0,
+    "processTimer": "Date.now(), complete child lifecycle including setup/work/polling/300 ms cancellation wait/shutdown",
+    "rpcTimer": "Date.now(), calls/totalMs/maxMs per method; not percentile latency",
+    "nativeRustDifference": "Includes extra Rust tool turn; compare with its own baseline."
+  },
+  "baselineProvenance": {
+    "applicationCommit": "feeaecbbf9f99faaaf91851f7ebfcdf02fa113c8",
+    "officialValidationPath": "docs/official-validation-report.json",
+    "officialValidationSha256": "3e6b4425da6dc8eeff27ae9bb79a26f9405c5091fd3acfa0a3194f1c0265dda2",
+    "installEvidenceSha256": "632fba8882091d4a0a9d85d01e5da8ef530ec9e41d40644d40811ae3d015800f",
+    "sourceLockSha256": "10cd311c7215f73a2a12d179abc88efcd4bcbe949d1a6d8137b56b5f8d5169ae",
+    "sourceLock": {
+      "schema": "cordis-harness.sources/v1",
+      "cordis": {
+        "repository": "https://github.com/Stool233/cordis-verus.git",
+        "baseCommit": "53c58ce548a35ef16c6ca445bc8353540e276605",
+        "workingTreeDirty": true,
+        "sourceIdentity": "verified working-tree file hashes; baseCommit is metadata, not snapshot identity",
+        "sourceFingerprint": "f69dbdf0e47d7e9553cfa780cbc468becda68e7331f00d8345fa65be805fa72a",
+        "developmentReportSha256": "9dc8b4297dbd7853b67d9e3ff65414c4b02de34a9424904d2891cbf8b8334873",
+        "packageReportSha256": "d9ff772d117c1b70731c9b8f5f4bdf944f776b496a5aeceee62867340e9ee096",
+        "developmentAcceptance": true,
+        "releaseAcceptance": false,
+        "paperCompletion": false,
+        "testedTarget": {
+          "platform": "darwin",
+          "architecture": "arm64",
+          "node": "v22.22.0",
+          "nodeApi": "10",
+          "nodeModuleAbi": "127",
+          "driverAbi": 1
+        },
+        "nativeTarget": "darwin-arm64-napi8",
+        "nativeArtifactSha256": "a49d5a64475f366661c7415c527362a3a08e2bea4c72490b53cb18a34daddb91",
+        "archives": [
+          {
+            "name": "@cordis-verus/compat-cordis",
+            "version": "0.1.0",
+            "file": ".vendor/cordis/cordis-verus-compat-cordis-0.1.0.tgz",
+            "sha256": "702b5d7a6bafe927fe513819f5c1a43689b4569a10d457354e91d33e679bcf1c"
+          },
+          {
+            "name": "@cordis-verus/compat-harness",
+            "version": "0.1.0",
+            "file": ".vendor/cordis/cordis-verus-compat-harness-0.1.0.tgz",
+            "sha256": "913b42b90cd6d1254b45ff922cdc91b693442e9990c0517f2b0d5efd750cc3e0"
+          },
+          {
+            "name": "@cordis-verus/compat-loader",
+            "version": "0.1.0",
+            "file": ".vendor/cordis/cordis-verus-compat-loader-0.1.0.tgz",
+            "sha256": "bd86dae6145727a93b898c306e9dff13da74a673582264bec64a63fcaf164051"
+          }
+        ]
+      },
+      "deepseekHarness": {
+        "repository": "https://github.com/deepseek-ai/deepseek-harness.git",
+        "revision": "da00f7f5358f2949383b35c14f548bc20187d80c",
+        "tree": "3c6b47ceb23985cdeaa53d169f29362e1412479d",
+        "archiveSha256": "fee896b309e096f4279409faf2e37e650571441322495f82d3d02205da6b5554",
+        "snapshotSha256": "e43913f0629d11f25daef166a888de87e13417321a36b7d1566889d781da5599",
+        "sourceDirectory": ".cache/upstream/deepseek-harness",
+        "snapshotFile": ".cache/upstream/deepseek-harness.snapshot.json",
+        "unmodified": true
+      }
+    },
+    "limitation": "Historical dirty source snapshot; baseCommit alone does not identify all inputs. Raw timing hashes match the committed acceptance record, but the old complete installed tree is not retained here."
+  },
+  "candidateProvenance": {
+    "sourceLockSha256": "c044854b0885d35488610c3e5ce2e95a9f04d39f1951edc55fc6132f9ce235bb",
+    "sourceLock": {
+      "schema": "cordis-harness.sources/v1",
+      "cordis": {
+        "repository": "https://github.com/Stool233/cordis-verus.git",
+        "baseCommit": "b7d716994010245346a59bced6212f22dee19601",
+        "workingTreeDirty": false,
+        "sourceIdentity": "verified working-tree file hashes; baseCommit is metadata, not snapshot identity",
+        "sourceFingerprint": "d0bb5931a6e808f65b6e861ef293d4fc5b8809d3b76f76fc694536b82a2d7649",
+        "developmentReportSha256": "69fff81d6503826a8cbb67ce3ca01c767553cf7925dbf09b5a53518e65de20ca",
+        "packageReportSha256": "9c5a05743aab76af25e8392469707c9077e8f984c0bf364624171f16956b597f",
+        "developmentAcceptance": true,
+        "releaseAcceptance": false,
+        "paperCompletion": false,
+        "testedTarget": {
+          "platform": "darwin",
+          "architecture": "arm64",
+          "node": "v22.22.0",
+          "nodeApi": "10",
+          "nodeModuleAbi": "127",
+          "driverAbi": 1
+        },
+        "nativeTarget": "darwin-arm64-napi8",
+        "nativeArtifactSha256": "1e2b40dfb146eacfd33ccc8c7c5a80bfd8ce27b3013a16d2dce9cfb5722fc5e7",
+        "archives": [
+          {
+            "name": "@cordis-verus/compat-cordis",
+            "version": "0.1.0",
+            "file": ".vendor/cordis/cordis-verus-compat-cordis-0.1.0.tgz",
+            "sha256": "b60c2ae5b8d1a30501118792dfcb28543304cfb78576c561b1a82f8bf54a5ae6"
+          },
+          {
+            "name": "@cordis-verus/compat-harness",
+            "version": "0.1.0",
+            "file": ".vendor/cordis/cordis-verus-compat-harness-0.1.0.tgz",
+            "sha256": "913b42b90cd6d1254b45ff922cdc91b693442e9990c0517f2b0d5efd750cc3e0"
+          },
+          {
+            "name": "@cordis-verus/compat-loader",
+            "version": "0.1.0",
+            "file": ".vendor/cordis/cordis-verus-compat-loader-0.1.0.tgz",
+            "sha256": "bd86dae6145727a93b898c306e9dff13da74a673582264bec64a63fcaf164051"
+          }
+        ]
+      },
+      "deepseekHarness": {
+        "repository": "https://github.com/deepseek-ai/deepseek-harness.git",
+        "revision": "da00f7f5358f2949383b35c14f548bc20187d80c",
+        "tree": "3c6b47ceb23985cdeaa53d169f29362e1412479d",
+        "archiveSha256": "fee896b309e096f4279409faf2e37e650571441322495f82d3d02205da6b5554",
+        "snapshotSha256": "e43913f0629d11f25daef166a888de87e13417321a36b7d1566889d781da5599",
+        "sourceDirectory": ".cache/upstream/deepseek-harness",
+        "snapshotFile": ".cache/upstream/deepseek-harness.snapshot.json",
+        "unmodified": true
+      }
+    },
+    "installEvidenceSha256": "747ca424923ae6d22c952c65f79f45ff87c11bf0f8e7360c54c162a5d372da04",
+    "nativeBuildProfile": {
+      "opt_level": "3",
+      "debuginfo": 0,
+      "debug_assertions": true,
+      "overflow_checks": true,
+      "test": false
+    },
+    "rustAddonBuildProfile": {
+      "opt_level": "3",
+      "debuginfo": 0,
+      "debug_assertions": true,
+      "overflow_checks": true,
+      "test": false
+    },
+    "rustAddonManifestSha256": "85ac573f1caf78432e2e0f9861d962d95d1a7be7fbf69f66968ea703bd207d18"
+  },
+  "comparability": {
+    "controllerPluginsAndRegistersUnchanged": true,
+    "officialUpstreamSnapshotUnchanged": true,
+    "changedNpmPackages": [
+      "node_modules/@cordis-verus/compat-cordis"
+    ],
+    "sameRecordedPlatformAndNode": true,
+    "statisticalSignificanceClaimed": false
+  },
+  "summary": {
+    "upstream": {
+      "baselineWebMs": 1953,
+      "candidateWebMs": [
+        1846,
+        1861,
+        1857
+      ],
+      "candidateMedianWebMs": 1857,
+      "candidateMinWebMs": 1846,
+      "candidateMaxWebMs": 1861
+    },
+    "native": {
+      "baselineWebMs": 81461,
+      "candidateWebMs": [
+        2589,
+        2589,
+        2627
+      ],
+      "candidateMedianWebMs": 2589,
+      "candidateMinWebMs": 2589,
+      "candidateMaxWebMs": 2627
+    },
+    "native-rust": {
+      "baselineWebMs": 85206,
+      "candidateWebMs": [
+        4715,
+        4666,
+        4686
+      ],
+      "candidateMedianWebMs": 4686,
+      "candidateMinWebMs": 4666,
+      "candidateMaxWebMs": 4715
+    }
+  },
+  "baseline": {
+    "upstream": {
+      "schemaVersion": 1,
+      "status": "passed",
+      "backend": "upstream",
+      "rust": false,
+      "evidence": "installed-artifacts",
+      "node": "v22.22.0",
+      "platform": "darwin-arm64",
+      "startedAt": "2026-10-05T14:25:51.725Z",
+      "finishedAt": "2026-10-05T14:25:54.274Z",
+      "browserExecution": false,
+      "paidModelRequests": false,
+      "releaseAcceptance": false,
+      "checks": {
+        "headless": [
+          {
+            "tool": "cordis_greet",
+            "toolCalled": true,
+            "final": "COMPLETE_headless"
+          }
+        ],
+        "web": {
+          "standardPreset": true,
+          "toolCalls": true,
+          "invalidConfigurationRejected": true,
+          "configurationUpdated": true,
+          "toolFailureRecovered": true,
+          "cancelled": true,
+          "unloadedToolAbsent": true,
+          "reenabledToolCalled": true,
+          "rustToolCalled": false
+        },
+        "persistence": {
+          "sessions": 2,
+          "cancelledToolResult": {
+            "type": "tool/result",
+            "seq": 94,
+            "time": 1791210353860,
+            "data": {
+              "turn": 6,
+              "step": 1,
+              "message": {
+                "role": "tool",
+                "source": {
+                  "kind": "tool",
+                  "callId": "call-cancelled"
+                },
+                "toolCallId": "call-cancelled",
+                "content": [
+                  {
+                    "type": "text",
+                    "text": "Error: The operation was aborted"
+                  }
+                ],
+                "isError": true,
+                "id": "a66477eb-2fa0-4bf3-900a-d858831dda0d"
+              }
+            },
+            "sourceEventSeqs": [
+              93
+            ],
+            "surfaceOp": "append"
+          },
+          "hashes": {
+            "session-b39d5750-0c46-4c65-8edd-116093fd0c42": "f42c51c1ec68894f88da4f522c2f4935242ae8693ccb6cb798d723c17faa601b",
+            "extension-web": "73726e5d17156f44b1443c06471f06e23ecbc7a5129ff0790c6b4c147229e9a8"
+          }
+        },
+        "evidenceUnchanged": true
+      },
+      "inputs": {
+        "scripts/check-official-extensions.mjs": "8b8e35bef2f299efeeac0c6a0ba26e0012adee79f73b101eb90383ce1d5b60ac",
+        "scripts/official-test-entry.mjs": "2de22d8f6d9b087de79ed480427603158432c9f908abbcf380f2490f3276cba0",
+        "src/official-plugin-api.mjs": "3442a9341b41291b875bfe163e65012bca4959656564d2fc15158b279001cc75",
+        "examples/official/greeting.mjs": "1f3d58a1b093279561d853663b2c01dd9c7c3afaa92caefbe8d51d6e0dda4e30",
+        "examples/official/rust-text-analysis.mjs": "947ea9c24880a3da3e03b2af2f0c6ae7c00df22cda22e349758a252c195cd871",
+        "official-runtime/package-lock.json": "2fe0c9f8b8786404948ebb576114ca467f8b04e4b2481670ada12f10ef22a639"
+      },
+      "rpc": {
+        "pluginInventory/list": {
+          "calls": 2,
+          "totalMs": 63,
+          "maxMs": 42
+        },
+        "agentPresets/list": {
+          "calls": 1,
+          "totalMs": 3,
+          "maxMs": 3
+        },
+        "session/create": {
+          "calls": 8,
+          "totalMs": 20,
+          "maxMs": 12
+        },
+        "session/prompt": {
+          "calls": 8,
+          "totalMs": 30,
+          "maxMs": 7
+        },
+        "session/list": {
+          "calls": 8,
+          "totalMs": 31,
+          "maxMs": 9
+        },
+        "settings/describe": {
+          "calls": 1,
+          "totalMs": 7,
+          "maxMs": 7
+        },
+        "settings/update": {
+          "calls": 2,
+          "totalMs": 82,
+          "maxMs": 57
+        },
+        "session/cancel": {
+          "calls": 1,
+          "totalMs": 12,
+          "maxMs": 12
+        },
+        "pluginManager/listPlugins": {
+          "calls": 1,
+          "totalMs": 47,
+          "maxMs": 47
+        },
+        "pluginManager/setPluginEnabled": {
+          "calls": 2,
+          "totalMs": 159,
+          "maxMs": 81
+        }
+      },
+      "diagnostics": [],
+      "logSha256": "0aca7d59f695e5ac8e6b5f3b465cccba183f021af5e724e7314691ce070755ca",
+      "rawReportSha256": "2a3d0b803742f002b46fb75899a90fc9a6137f9ac4417d14d185d719e62a9565",
+      "processes": [
+        {
+          "label": "headless",
+          "code": 0,
+          "signal": null,
+          "forced": false,
+          "elapsedMs": 550,
+          "singleContext": true,
+          "registryEmpty": true
+        },
+        {
+          "label": "web",
+          "code": 0,
+          "signal": null,
+          "forced": false,
+          "elapsedMs": 1953,
+          "singleContext": true,
+          "registryEmpty": true
+        }
+      ]
+    },
+    "native": {
+      "schemaVersion": 1,
+      "status": "passed",
+      "backend": "native",
+      "rust": false,
+      "evidence": "installed-artifacts",
+      "node": "v22.22.0",
+      "platform": "darwin-arm64",
+      "startedAt": "2026-10-05T14:26:06.313Z",
+      "finishedAt": "2026-10-05T14:27:30.289Z",
+      "browserExecution": false,
+      "paidModelRequests": false,
+      "releaseAcceptance": false,
+      "checks": {
+        "headless": [
+          {
+            "tool": "cordis_greet",
+            "toolCalled": true,
+            "final": "COMPLETE_headless"
+          }
+        ],
+        "web": {
+          "standardPreset": true,
+          "toolCalls": true,
+          "invalidConfigurationRejected": true,
+          "configurationUpdated": true,
+          "toolFailureRecovered": true,
+          "cancelled": true,
+          "unloadedToolAbsent": true,
+          "reenabledToolCalled": true,
+          "rustToolCalled": false
+        },
+        "persistence": {
+          "sessions": 2,
+          "cancelledToolResult": {
+            "type": "tool/result",
+            "seq": 94,
+            "time": 1791210410227,
+            "data": {
+              "turn": 6,
+              "step": 1,
+              "message": {
+                "role": "tool",
+                "source": {
+                  "kind": "tool",
+                  "callId": "call-cancelled"
+                },
+                "toolCallId": "call-cancelled",
+                "content": [
+                  {
+                    "type": "text",
+                    "text": "Error: The operation was aborted"
+                  }
+                ],
+                "isError": true,
+                "id": "b2d43b0a-f9c1-4ba6-9e97-e869824efe4b"
+              }
+            },
+            "sourceEventSeqs": [
+              93
+            ],
+            "surfaceOp": "append"
+          },
+          "hashes": {
+            "session-d2a8e884-603c-4a82-977b-3de438bd119d": "8ec7967dc2b3a4f1d00ab293e7eaf4d519b1bf95ecb44ddde20e5b4068966dfb",
+            "extension-web": "f7382ad47ca61cd328ea71adf1339a84c391a71a4057c5d39bae9d6415b5827d"
+          }
+        },
+        "evidenceUnchanged": true
+      },
+      "inputs": {
+        "scripts/check-official-extensions.mjs": "8b8e35bef2f299efeeac0c6a0ba26e0012adee79f73b101eb90383ce1d5b60ac",
+        "scripts/official-test-entry.mjs": "2de22d8f6d9b087de79ed480427603158432c9f908abbcf380f2490f3276cba0",
+        "src/official-plugin-api.mjs": "3442a9341b41291b875bfe163e65012bca4959656564d2fc15158b279001cc75",
+        "examples/official/greeting.mjs": "1f3d58a1b093279561d853663b2c01dd9c7c3afaa92caefbe8d51d6e0dda4e30",
+        "examples/official/rust-text-analysis.mjs": "947ea9c24880a3da3e03b2af2f0c6ae7c00df22cda22e349758a252c195cd871",
+        "official-runtime/package-lock.json": "2fe0c9f8b8786404948ebb576114ca467f8b04e4b2481670ada12f10ef22a639"
+      },
+      "registerSha256": "f080919b98e94eedede1caad57ae506139d38a28336810aebdbd81ee0d7cb41a",
+      "rpc": {
+        "pluginInventory/list": {
+          "calls": 2,
+          "totalMs": 10404,
+          "maxMs": 7679
+        },
+        "agentPresets/list": {
+          "calls": 1,
+          "totalMs": 2688,
+          "maxMs": 2688
+        },
+        "session/create": {
+          "calls": 8,
+          "totalMs": 2060,
+          "maxMs": 2047
+        },
+        "session/prompt": {
+          "calls": 8,
+          "totalMs": 40,
+          "maxMs": 8
+        },
+        "session/list": {
+          "calls": 8,
+          "totalMs": 30,
+          "maxMs": 6
+        },
+        "settings/describe": {
+          "calls": 1,
+          "totalMs": 7,
+          "maxMs": 7
+        },
+        "settings/update": {
+          "calls": 2,
+          "totalMs": 14917,
+          "maxMs": 9969
+        },
+        "session/cancel": {
+          "calls": 1,
+          "totalMs": 18,
+          "maxMs": 18
+        },
+        "pluginManager/listPlugins": {
+          "calls": 1,
+          "totalMs": 7714,
+          "maxMs": 7714
+        },
+        "pluginManager/setPluginEnabled": {
+          "calls": 2,
+          "totalMs": 21359,
+          "maxMs": 10719
+        }
+      },
+      "diagnostics": [],
+      "logSha256": "55ab606e564fa1b864bfd27bc663bf345c9393c10cb9bce1106ae4472cf52720",
+      "rawReportSha256": "b647952a72ec497cf9f84ccb1a8c20e17238bff1f4c409520d32bd801a352e67",
+      "processes": [
+        {
+          "label": "headless",
+          "code": 0,
+          "signal": null,
+          "forced": false,
+          "elapsedMs": 2470,
+          "nativePluginsAtExit": 0,
+          "singleContext": true,
+          "registryEmpty": true
+        },
+        {
+          "label": "web",
+          "code": 0,
+          "signal": null,
+          "forced": false,
+          "elapsedMs": 81461,
+          "nativePluginsAtExit": 0,
+          "singleContext": true,
+          "registryEmpty": true
+        }
+      ]
+    },
+    "native-rust": {
+      "schemaVersion": 1,
+      "status": "passed",
+      "backend": "native",
+      "rust": true,
+      "evidence": "installed-artifacts",
+      "node": "v22.22.0",
+      "platform": "darwin-arm64",
+      "startedAt": "2026-10-05T14:27:39.197Z",
+      "finishedAt": "2026-10-05T14:29:13.674Z",
+      "browserExecution": false,
+      "paidModelRequests": false,
+      "releaseAcceptance": false,
+      "checks": {
+        "headless": [
+          {
+            "tool": "cordis_greet",
+            "toolCalled": true,
+            "final": "COMPLETE_headless"
+          },
+          {
+            "tool": "rust_text_analyze",
+            "toolCalled": true,
+            "final": "COMPLETE_headless_rust"
+          }
+        ],
+        "web": {
+          "standardPreset": true,
+          "toolCalls": true,
+          "invalidConfigurationRejected": true,
+          "configurationUpdated": true,
+          "toolFailureRecovered": true,
+          "cancelled": true,
+          "unloadedToolAbsent": true,
+          "reenabledToolCalled": true,
+          "rustToolCalled": true
+        },
+        "persistence": {
+          "sessions": 3,
+          "cancelledToolResult": {
+            "type": "tool/result",
+            "seq": 94,
+            "time": 1791210512720,
+            "data": {
+              "turn": 6,
+              "step": 1,
+              "message": {
+                "role": "tool",
+                "source": {
+                  "kind": "tool",
+                  "callId": "call-cancelled"
+                },
+                "toolCallId": "call-cancelled",
+                "content": [
+                  {
+                    "type": "text",
+                    "text": "Error: The operation was aborted"
+                  }
+                ],
+                "isError": true,
+                "id": "ad57f02d-400f-4c7f-89fd-de284491123d"
+              }
+            },
+            "sourceEventSeqs": [
+              93
+            ],
+            "surfaceOp": "append"
+          },
+          "hashes": {
+            "session-2b9621fb-1f49-43ba-a317-59df729374e1": "6e1796147bda1a326e8291d8773b87a5ecf13f98ee6959e2d88ef64aef8ccc9a",
+            "session-3bc9d15a-50af-4c33-9953-02293ea086ef": "9cb6502beea65dcb0e6912991c16048ebd7c1ff27c7dfe64f860e7781f16aae8",
+            "extension-web": "8cb04a6b233de104b30bb726847f27b8ccbe5e4f906022c1d38358af8d14887a"
+          }
+        },
+        "evidenceUnchanged": true
+      },
+      "inputs": {
+        "scripts/check-official-extensions.mjs": "8b8e35bef2f299efeeac0c6a0ba26e0012adee79f73b101eb90383ce1d5b60ac",
+        "scripts/official-test-entry.mjs": "2de22d8f6d9b087de79ed480427603158432c9f908abbcf380f2490f3276cba0",
+        "src/official-plugin-api.mjs": "3442a9341b41291b875bfe163e65012bca4959656564d2fc15158b279001cc75",
+        "examples/official/greeting.mjs": "1f3d58a1b093279561d853663b2c01dd9c7c3afaa92caefbe8d51d6e0dda4e30",
+        "examples/official/rust-text-analysis.mjs": "947ea9c24880a3da3e03b2af2f0c6ae7c00df22cda22e349758a252c195cd871",
+        "official-runtime/package-lock.json": "2fe0c9f8b8786404948ebb576114ca467f8b04e4b2481670ada12f10ef22a639"
+      },
+      "registerSha256": "62cf49e2cf27c06bfa7398cbf3f2b3e26a5405a12cf88de9cfc905fd60592222",
+      "rustAddon": {
+        "manifestSha256": "95fb0b326e2be1c23c3e28576bb562dbe309be7392bb9d85cc03719b43841a3b",
+        "coreSourceDigest": "522049a9aea977091f4e1ed1fe426f0e582173a166a9aa9da1118fab104e9632",
+        "binarySha256": "8f9c2f020517c271cae9c93ddaba8e09bb775cdef82faa7316d2cba95dfa117d"
+      },
+      "rpc": {
+        "pluginInventory/list": {
+          "calls": 2,
+          "totalMs": 10599,
+          "maxMs": 7834
+        },
+        "agentPresets/list": {
+          "calls": 1,
+          "totalMs": 2730,
+          "maxMs": 2730
+        },
+        "session/create": {
+          "calls": 9,
+          "totalMs": 2094,
+          "maxMs": 2082
+        },
+        "session/prompt": {
+          "calls": 9,
+          "totalMs": 41,
+          "maxMs": 8
+        },
+        "session/list": {
+          "calls": 9,
+          "totalMs": 41,
+          "maxMs": 9
+        },
+        "settings/describe": {
+          "calls": 1,
+          "totalMs": 10,
+          "maxMs": 10
+        },
+        "settings/update": {
+          "calls": 2,
+          "totalMs": 15272,
+          "maxMs": 10199
+        },
+        "session/cancel": {
+          "calls": 1,
+          "totalMs": 12,
+          "maxMs": 12
+        },
+        "pluginManager/listPlugins": {
+          "calls": 1,
+          "totalMs": 7865,
+          "maxMs": 7865
+        },
+        "pluginManager/setPluginEnabled": {
+          "calls": 2,
+          "totalMs": 21734,
+          "maxMs": 10881
+        }
+      },
+      "diagnostics": [],
+      "logSha256": "a90c9a22343722371ee8eed9cddb2c1178126b26ea0ad175e4937868e73a72db",
+      "rawReportSha256": "65e559ef5a25b4ec1056c9651ada64c16d108fccf2c8bd13c1374f6f774a47ff",
+      "processes": [
+        {
+          "label": "headless",
+          "code": 0,
+          "signal": null,
+          "forced": false,
+          "elapsedMs": 4600,
+          "nativePluginsAtExit": 0,
+          "singleContext": true,
+          "registryEmpty": true
+        },
+        {
+          "label": "headless_rust",
+          "code": 0,
+          "signal": null,
+          "forced": false,
+          "elapsedMs": 4599,
+          "nativePluginsAtExit": 0,
+          "singleContext": true,
+          "registryEmpty": true
+        },
+        {
+          "label": "web",
+          "code": 0,
+          "signal": null,
+          "forced": false,
+          "elapsedMs": 85206,
+          "nativePluginsAtExit": 0,
+          "singleContext": true,
+          "registryEmpty": true
+        }
+      ]
+    }
+  },
+  "candidate": {
+    "upstream": [
+      {
+        "schemaVersion": 1,
+        "status": "passed",
+        "backend": "upstream",
+        "rust": false,
+        "evidence": "installed-artifacts",
+        "node": "v22.22.0",
+        "platform": "darwin-arm64",
+        "startedAt": "2026-10-05T15:17:15.282Z",
+        "finishedAt": "2026-10-05T15:17:18.366Z",
+        "browserExecution": false,
+        "paidModelRequests": false,
+        "releaseAcceptance": false,
+        "checks": {
+          "headless": [
+            {
+              "tool": "cordis_greet",
+              "toolCalled": true,
+              "final": "COMPLETE_headless"
+            }
+          ],
+          "web": {
+            "standardPreset": true,
+            "toolCalls": true,
+            "invalidConfigurationRejected": true,
+            "configurationUpdated": true,
+            "toolFailureRecovered": true,
+            "cancelled": true,
+            "unloadedToolAbsent": true,
+            "reenabledToolCalled": true,
+            "rustToolCalled": false
+          },
+          "persistence": {
+            "sessions": 2,
+            "cancelledToolResult": {
+              "type": "tool/result",
+              "seq": 94,
+              "time": 1791213437963,
+              "data": {
+                "turn": 6,
+                "step": 1,
+                "message": {
+                  "role": "tool",
+                  "source": {
+                    "kind": "tool",
+                    "callId": "call-cancelled"
+                  },
+                  "toolCallId": "call-cancelled",
+                  "content": [
+                    {
+                      "type": "text",
+                      "text": "Error: The operation was aborted"
+                    }
+                  ],
+                  "isError": true,
+                  "id": "69ed4288-5096-49d3-b846-88016d748188"
+                }
+              },
+              "sourceEventSeqs": [
+                93
+              ],
+              "surfaceOp": "append"
+            },
+            "hashes": {
+              "session-c0e8e8b6-bbf4-419c-8611-6064f61f9937": "bf12a7848f7183f4b35c6a79ec2aba696f541e21973612cb31f552638bbe01a0",
+              "extension-web": "692c74e60bdc073ff3a3481f281dd8cf165f5e9678fcf134270917a16791d8b7"
+            }
+          },
+          "evidenceUnchanged": true
+        },
+        "inputs": {
+          "scripts/check-official-extensions.mjs": "8b8e35bef2f299efeeac0c6a0ba26e0012adee79f73b101eb90383ce1d5b60ac",
+          "scripts/official-test-entry.mjs": "2de22d8f6d9b087de79ed480427603158432c9f908abbcf380f2490f3276cba0",
+          "src/official-plugin-api.mjs": "3442a9341b41291b875bfe163e65012bca4959656564d2fc15158b279001cc75",
+          "examples/official/greeting.mjs": "1f3d58a1b093279561d853663b2c01dd9c7c3afaa92caefbe8d51d6e0dda4e30",
+          "examples/official/rust-text-analysis.mjs": "947ea9c24880a3da3e03b2af2f0c6ae7c00df22cda22e349758a252c195cd871",
+          "official-runtime/package-lock.json": "ce4b6259920fbb83db1c5b62b94844ae3732af24a31d7e8489ca6cced5eb73ab"
+        },
+        "rpc": {
+          "pluginInventory/list": {
+            "calls": 2,
+            "totalMs": 59,
+            "maxMs": 39
+          },
+          "agentPresets/list": {
+            "calls": 1,
+            "totalMs": 3,
+            "maxMs": 3
+          },
+          "session/create": {
+            "calls": 8,
+            "totalMs": 20,
+            "maxMs": 11
+          },
+          "session/prompt": {
+            "calls": 8,
+            "totalMs": 29,
+            "maxMs": 7
+          },
+          "session/list": {
+            "calls": 8,
+            "totalMs": 32,
+            "maxMs": 8
+          },
+          "settings/describe": {
+            "calls": 1,
+            "totalMs": 8,
+            "maxMs": 8
+          },
+          "settings/update": {
+            "calls": 2,
+            "totalMs": 79,
+            "maxMs": 54
+          },
+          "session/cancel": {
+            "calls": 1,
+            "totalMs": 11,
+            "maxMs": 11
+          },
+          "pluginManager/listPlugins": {
+            "calls": 1,
+            "totalMs": 49,
+            "maxMs": 49
+          },
+          "pluginManager/setPluginEnabled": {
+            "calls": 2,
+            "totalMs": 153,
+            "maxMs": 80
+          }
+        },
+        "diagnostics": [],
+        "logSha256": "d8b6caeedca47c0f2d3e131ad96be09288b8ace2b42aecb8d38013ed9dfb6725",
+        "rawReportSha256": "6d0eaa7a5b22b71f29b4a8ea1db4b1381c0a6e8a59ea8165dfc54f4fd989ad9d",
+        "processes": [
+          {
+            "label": "headless",
+            "code": 0,
+            "signal": null,
+            "forced": false,
+            "elapsedMs": 1188,
+            "singleContext": true,
+            "registryEmpty": true
+          },
+          {
+            "label": "web",
+            "code": 0,
+            "signal": null,
+            "forced": false,
+            "elapsedMs": 1846,
+            "singleContext": true,
+            "registryEmpty": true
+          }
+        ]
+      },
+      {
+        "schemaVersion": 1,
+        "status": "passed",
+        "backend": "upstream",
+        "rust": false,
+        "evidence": "installed-artifacts",
+        "node": "v22.22.0",
+        "platform": "darwin-arm64",
+        "startedAt": "2026-10-05T15:18:09.963Z",
+        "finishedAt": "2026-10-05T15:18:12.387Z",
+        "browserExecution": false,
+        "paidModelRequests": false,
+        "releaseAcceptance": false,
+        "checks": {
+          "headless": [
+            {
+              "tool": "cordis_greet",
+              "toolCalled": true,
+              "final": "COMPLETE_headless"
+            }
+          ],
+          "web": {
+            "standardPreset": true,
+            "toolCalls": true,
+            "invalidConfigurationRejected": true,
+            "configurationUpdated": true,
+            "toolFailureRecovered": true,
+            "cancelled": true,
+            "unloadedToolAbsent": true,
+            "reenabledToolCalled": true,
+            "rustToolCalled": false
+          },
+          "persistence": {
+            "sessions": 2,
+            "cancelledToolResult": {
+              "type": "tool/result",
+              "seq": 94,
+              "time": 1791213491993,
+              "data": {
+                "turn": 6,
+                "step": 1,
+                "message": {
+                  "role": "tool",
+                  "source": {
+                    "kind": "tool",
+                    "callId": "call-cancelled"
+                  },
+                  "toolCallId": "call-cancelled",
+                  "content": [
+                    {
+                      "type": "text",
+                      "text": "Error: The operation was aborted"
+                    }
+                  ],
+                  "isError": true,
+                  "id": "d73b7ff2-004d-4ec5-9f50-e86e4d2a40e9"
+                }
+              },
+              "sourceEventSeqs": [
+                93
+              ],
+              "surfaceOp": "append"
+            },
+            "hashes": {
+              "session-ce7b3b19-aab6-4212-a31e-66d091e3a96a": "fb6bc8c58354cd7f94dd7ab652de091d2596428006133a62fe2e6780e3177cd7",
+              "extension-web": "15882d56443a2ec91f372b9c0e5fa8660e9c9d53b27fdc0ae4a9bcf40a2b13ae"
+            }
+          },
+          "evidenceUnchanged": true
+        },
+        "inputs": {
+          "scripts/check-official-extensions.mjs": "8b8e35bef2f299efeeac0c6a0ba26e0012adee79f73b101eb90383ce1d5b60ac",
+          "scripts/official-test-entry.mjs": "2de22d8f6d9b087de79ed480427603158432c9f908abbcf380f2490f3276cba0",
+          "src/official-plugin-api.mjs": "3442a9341b41291b875bfe163e65012bca4959656564d2fc15158b279001cc75",
+          "examples/official/greeting.mjs": "1f3d58a1b093279561d853663b2c01dd9c7c3afaa92caefbe8d51d6e0dda4e30",
+          "examples/official/rust-text-analysis.mjs": "947ea9c24880a3da3e03b2af2f0c6ae7c00df22cda22e349758a252c195cd871",
+          "official-runtime/package-lock.json": "ce4b6259920fbb83db1c5b62b94844ae3732af24a31d7e8489ca6cced5eb73ab"
+        },
+        "rpc": {
+          "pluginInventory/list": {
+            "calls": 2,
+            "totalMs": 58,
+            "maxMs": 39
+          },
+          "agentPresets/list": {
+            "calls": 1,
+            "totalMs": 3,
+            "maxMs": 3
+          },
+          "session/create": {
+            "calls": 8,
+            "totalMs": 20,
+            "maxMs": 10
+          },
+          "session/prompt": {
+            "calls": 8,
+            "totalMs": 30,
+            "maxMs": 7
+          },
+          "session/list": {
+            "calls": 8,
+            "totalMs": 25,
+            "maxMs": 5
+          },
+          "settings/describe": {
+            "calls": 1,
+            "totalMs": 7,
+            "maxMs": 7
+          },
+          "settings/update": {
+            "calls": 2,
+            "totalMs": 80,
+            "maxMs": 54
+          },
+          "session/cancel": {
+            "calls": 1,
+            "totalMs": 7,
+            "maxMs": 7
+          },
+          "pluginManager/listPlugins": {
+            "calls": 1,
+            "totalMs": 42,
+            "maxMs": 42
+          },
+          "pluginManager/setPluginEnabled": {
+            "calls": 2,
+            "totalMs": 159,
+            "maxMs": 85
+          }
+        },
+        "diagnostics": [],
+        "logSha256": "7cd47640fee91e70d99fc60a4141af5495257f83ae6da20f8f4ade10f17c83db",
+        "rawReportSha256": "b91f26608bf3782838bc875364f4b076c1fe108021f09b5a5e37fb2fd110004a",
+        "processes": [
+          {
+            "label": "headless",
+            "code": 0,
+            "signal": null,
+            "forced": false,
+            "elapsedMs": 520,
+            "singleContext": true,
+            "registryEmpty": true
+          },
+          {
+            "label": "web",
+            "code": 0,
+            "signal": null,
+            "forced": false,
+            "elapsedMs": 1861,
+            "singleContext": true,
+            "registryEmpty": true
+          }
+        ]
+      },
+      {
+        "schemaVersion": 1,
+        "status": "passed",
+        "backend": "upstream",
+        "rust": false,
+        "evidence": "installed-artifacts",
+        "node": "v22.22.0",
+        "platform": "darwin-arm64",
+        "startedAt": "2026-10-05T15:19:01.330Z",
+        "finishedAt": "2026-10-05T15:19:03.753Z",
+        "browserExecution": false,
+        "paidModelRequests": false,
+        "releaseAcceptance": false,
+        "checks": {
+          "headless": [
+            {
+              "tool": "cordis_greet",
+              "toolCalled": true,
+              "final": "COMPLETE_headless"
+            }
+          ],
+          "web": {
+            "standardPreset": true,
+            "toolCalls": true,
+            "invalidConfigurationRejected": true,
+            "configurationUpdated": true,
+            "toolFailureRecovered": true,
+            "cancelled": true,
+            "unloadedToolAbsent": true,
+            "reenabledToolCalled": true,
+            "rustToolCalled": false
+          },
+          "persistence": {
+            "sessions": 2,
+            "cancelledToolResult": {
+              "type": "tool/result",
+              "seq": 94,
+              "time": 1791213543365,
+              "data": {
+                "turn": 6,
+                "step": 1,
+                "message": {
+                  "role": "tool",
+                  "source": {
+                    "kind": "tool",
+                    "callId": "call-cancelled"
+                  },
+                  "toolCallId": "call-cancelled",
+                  "content": [
+                    {
+                      "type": "text",
+                      "text": "Error: The operation was aborted"
+                    }
+                  ],
+                  "isError": true,
+                  "id": "836015f2-6ba8-4444-b83a-1e9a8c2089ef"
+                }
+              },
+              "sourceEventSeqs": [
+                93
+              ],
+              "surfaceOp": "append"
+            },
+            "hashes": {
+              "session-ce14b0db-6fde-4623-a753-3d4ebda7873d": "42394c3f3e06a1897018bbe2b8c57fc45a181e39f784e6e2e58cbf956ef0395f",
+              "extension-web": "c9a488a366241d68039b01c41e1ecdc856a9304959531e48137449043ab29800"
+            }
+          },
+          "evidenceUnchanged": true
+        },
+        "inputs": {
+          "scripts/check-official-extensions.mjs": "8b8e35bef2f299efeeac0c6a0ba26e0012adee79f73b101eb90383ce1d5b60ac",
+          "scripts/official-test-entry.mjs": "2de22d8f6d9b087de79ed480427603158432c9f908abbcf380f2490f3276cba0",
+          "src/official-plugin-api.mjs": "3442a9341b41291b875bfe163e65012bca4959656564d2fc15158b279001cc75",
+          "examples/official/greeting.mjs": "1f3d58a1b093279561d853663b2c01dd9c7c3afaa92caefbe8d51d6e0dda4e30",
+          "examples/official/rust-text-analysis.mjs": "947ea9c24880a3da3e03b2af2f0c6ae7c00df22cda22e349758a252c195cd871",
+          "official-runtime/package-lock.json": "ce4b6259920fbb83db1c5b62b94844ae3732af24a31d7e8489ca6cced5eb73ab"
+        },
+        "rpc": {
+          "pluginInventory/list": {
+            "calls": 2,
+            "totalMs": 57,
+            "maxMs": 38
+          },
+          "agentPresets/list": {
+            "calls": 1,
+            "totalMs": 2,
+            "maxMs": 2
+          },
+          "session/create": {
+            "calls": 8,
+            "totalMs": 20,
+            "maxMs": 11
+          },
+          "session/prompt": {
+            "calls": 8,
+            "totalMs": 30,
+            "maxMs": 6
+          },
+          "session/list": {
+            "calls": 8,
+            "totalMs": 28,
+            "maxMs": 5
+          },
+          "settings/describe": {
+            "calls": 1,
+            "totalMs": 7,
+            "maxMs": 7
+          },
+          "settings/update": {
+            "calls": 2,
+            "totalMs": 79,
+            "maxMs": 54
+          },
+          "session/cancel": {
+            "calls": 1,
+            "totalMs": 10,
+            "maxMs": 10
+          },
+          "pluginManager/listPlugins": {
+            "calls": 1,
+            "totalMs": 39,
+            "maxMs": 39
+          },
+          "pluginManager/setPluginEnabled": {
+            "calls": 2,
+            "totalMs": 153,
+            "maxMs": 81
+          }
+        },
+        "diagnostics": [],
+        "logSha256": "f7cdb522e02a9e53745dbf0acbade13bae901acdb1e07a2ee2fec4e9c1f682a8",
+        "rawReportSha256": "11d771f1bd1043f122fef10f0c980132cab89501010333cf775924913b209c18",
+        "processes": [
+          {
+            "label": "headless",
+            "code": 0,
+            "signal": null,
+            "forced": false,
+            "elapsedMs": 523,
+            "singleContext": true,
+            "registryEmpty": true
+          },
+          {
+            "label": "web",
+            "code": 0,
+            "signal": null,
+            "forced": false,
+            "elapsedMs": 1857,
+            "singleContext": true,
+            "registryEmpty": true
+          }
+        ]
+      }
+    ],
+    "native": [
+      {
+        "schemaVersion": 1,
+        "status": "passed",
+        "backend": "native",
+        "rust": false,
+        "evidence": "installed-artifacts",
+        "node": "v22.22.0",
+        "platform": "darwin-arm64",
+        "startedAt": "2026-10-05T15:17:30.409Z",
+        "finishedAt": "2026-10-05T15:17:34.203Z",
+        "browserExecution": false,
+        "paidModelRequests": false,
+        "releaseAcceptance": false,
+        "checks": {
+          "headless": [
+            {
+              "tool": "cordis_greet",
+              "toolCalled": true,
+              "final": "COMPLETE_headless"
+            }
+          ],
+          "web": {
+            "standardPreset": true,
+            "toolCalls": true,
+            "invalidConfigurationRejected": true,
+            "configurationUpdated": true,
+            "toolFailureRecovered": true,
+            "cancelled": true,
+            "unloadedToolAbsent": true,
+            "reenabledToolCalled": true,
+            "rustToolCalled": false
+          },
+          "persistence": {
+            "sessions": 2,
+            "cancelledToolResult": {
+              "type": "tool/result",
+              "seq": 94,
+              "time": 1791213453496,
+              "data": {
+                "turn": 6,
+                "step": 1,
+                "message": {
+                  "role": "tool",
+                  "source": {
+                    "kind": "tool",
+                    "callId": "call-cancelled"
+                  },
+                  "toolCallId": "call-cancelled",
+                  "content": [
+                    {
+                      "type": "text",
+                      "text": "Error: The operation was aborted"
+                    }
+                  ],
+                  "isError": true,
+                  "id": "87eec8d3-6c3e-4921-8cff-7d4fff414e46"
+                }
+              },
+              "sourceEventSeqs": [
+                93
+              ],
+              "surfaceOp": "append"
+            },
+            "hashes": {
+              "session-512635d5-09ca-4c92-8fc9-3153ab269da4": "e9a14db882b30f19cec244f441aab51d6acef9009e05190d046d562719533c41",
+              "extension-web": "5d93e595fc0198143e11896da3850b78050c264f1a36ffaae02b9856286605fe"
+            }
+          },
+          "evidenceUnchanged": true
+        },
+        "inputs": {
+          "scripts/check-official-extensions.mjs": "8b8e35bef2f299efeeac0c6a0ba26e0012adee79f73b101eb90383ce1d5b60ac",
+          "scripts/official-test-entry.mjs": "2de22d8f6d9b087de79ed480427603158432c9f908abbcf380f2490f3276cba0",
+          "src/official-plugin-api.mjs": "3442a9341b41291b875bfe163e65012bca4959656564d2fc15158b279001cc75",
+          "examples/official/greeting.mjs": "1f3d58a1b093279561d853663b2c01dd9c7c3afaa92caefbe8d51d6e0dda4e30",
+          "examples/official/rust-text-analysis.mjs": "947ea9c24880a3da3e03b2af2f0c6ae7c00df22cda22e349758a252c195cd871",
+          "official-runtime/package-lock.json": "ce4b6259920fbb83db1c5b62b94844ae3732af24a31d7e8489ca6cced5eb73ab"
+        },
+        "registerSha256": "f080919b98e94eedede1caad57ae506139d38a28336810aebdbd81ee0d7cb41a",
+        "rpc": {
+          "pluginInventory/list": {
+            "calls": 2,
+            "totalMs": 62,
+            "maxMs": 41
+          },
+          "agentPresets/list": {
+            "calls": 1,
+            "totalMs": 5,
+            "maxMs": 5
+          },
+          "session/create": {
+            "calls": 8,
+            "totalMs": 30,
+            "maxMs": 22
+          },
+          "session/prompt": {
+            "calls": 8,
+            "totalMs": 33,
+            "maxMs": 6
+          },
+          "session/list": {
+            "calls": 8,
+            "totalMs": 31,
+            "maxMs": 6
+          },
+          "settings/describe": {
+            "calls": 1,
+            "totalMs": 7,
+            "maxMs": 7
+          },
+          "settings/update": {
+            "calls": 2,
+            "totalMs": 85,
+            "maxMs": 60
+          },
+          "session/cancel": {
+            "calls": 1,
+            "totalMs": 10,
+            "maxMs": 10
+          },
+          "pluginManager/listPlugins": {
+            "calls": 1,
+            "totalMs": 43,
+            "maxMs": 43
+          },
+          "pluginManager/setPluginEnabled": {
+            "calls": 2,
+            "totalMs": 181,
+            "maxMs": 94
+          }
+        },
+        "diagnostics": [],
+        "logSha256": "c42a293db2711b6b37d81300907923c985a6417c4aa4682c90a33ac525948918",
+        "rawReportSha256": "f2682e6b31ab6fd4cfcf94c0a6994014728d0f136f999845b90d7da8d7d5eb04",
+        "processes": [
+          {
+            "label": "headless",
+            "code": 0,
+            "signal": null,
+            "forced": false,
+            "elapsedMs": 1160,
+            "nativePluginsAtExit": 0,
+            "singleContext": true,
+            "registryEmpty": true
+          },
+          {
+            "label": "web",
+            "code": 0,
+            "signal": null,
+            "forced": false,
+            "elapsedMs": 2589,
+            "nativePluginsAtExit": 0,
+            "singleContext": true,
+            "registryEmpty": true
+          }
+        ]
+      },
+      {
+        "schemaVersion": 1,
+        "status": "passed",
+        "backend": "native",
+        "rust": false,
+        "evidence": "installed-artifacts",
+        "node": "v22.22.0",
+        "platform": "darwin-arm64",
+        "startedAt": "2026-10-05T15:18:24.419Z",
+        "finishedAt": "2026-10-05T15:18:27.744Z",
+        "browserExecution": false,
+        "paidModelRequests": false,
+        "releaseAcceptance": false,
+        "checks": {
+          "headless": [
+            {
+              "tool": "cordis_greet",
+              "toolCalled": true,
+              "final": "COMPLETE_headless"
+            }
+          ],
+          "web": {
+            "standardPreset": true,
+            "toolCalls": true,
+            "invalidConfigurationRejected": true,
+            "configurationUpdated": true,
+            "toolFailureRecovered": true,
+            "cancelled": true,
+            "unloadedToolAbsent": true,
+            "reenabledToolCalled": true,
+            "rustToolCalled": false
+          },
+          "persistence": {
+            "sessions": 2,
+            "cancelledToolResult": {
+              "type": "tool/result",
+              "seq": 94,
+              "time": 1791213507037,
+              "data": {
+                "turn": 6,
+                "step": 1,
+                "message": {
+                  "role": "tool",
+                  "source": {
+                    "kind": "tool",
+                    "callId": "call-cancelled"
+                  },
+                  "toolCallId": "call-cancelled",
+                  "content": [
+                    {
+                      "type": "text",
+                      "text": "Error: The operation was aborted"
+                    }
+                  ],
+                  "isError": true,
+                  "id": "3392e468-fd5f-4a56-8fbe-6673401f2540"
+                }
+              },
+              "sourceEventSeqs": [
+                93
+              ],
+              "surfaceOp": "append"
+            },
+            "hashes": {
+              "session-7d2aa42d-ec97-48a3-8167-af189c3bb921": "f7044e243bb4323fe83874ca5908a39572c51861ef416a806e0597464221b69f",
+              "extension-web": "b979391c7af3e14358b1a95d8656d669a871878bab1ccea1dcd424cc62131e7c"
+            }
+          },
+          "evidenceUnchanged": true
+        },
+        "inputs": {
+          "scripts/check-official-extensions.mjs": "8b8e35bef2f299efeeac0c6a0ba26e0012adee79f73b101eb90383ce1d5b60ac",
+          "scripts/official-test-entry.mjs": "2de22d8f6d9b087de79ed480427603158432c9f908abbcf380f2490f3276cba0",
+          "src/official-plugin-api.mjs": "3442a9341b41291b875bfe163e65012bca4959656564d2fc15158b279001cc75",
+          "examples/official/greeting.mjs": "1f3d58a1b093279561d853663b2c01dd9c7c3afaa92caefbe8d51d6e0dda4e30",
+          "examples/official/rust-text-analysis.mjs": "947ea9c24880a3da3e03b2af2f0c6ae7c00df22cda22e349758a252c195cd871",
+          "official-runtime/package-lock.json": "ce4b6259920fbb83db1c5b62b94844ae3732af24a31d7e8489ca6cced5eb73ab"
+        },
+        "registerSha256": "f080919b98e94eedede1caad57ae506139d38a28336810aebdbd81ee0d7cb41a",
+        "rpc": {
+          "pluginInventory/list": {
+            "calls": 2,
+            "totalMs": 61,
+            "maxMs": 40
+          },
+          "agentPresets/list": {
+            "calls": 1,
+            "totalMs": 4,
+            "maxMs": 4
+          },
+          "session/create": {
+            "calls": 8,
+            "totalMs": 30,
+            "maxMs": 21
+          },
+          "session/prompt": {
+            "calls": 8,
+            "totalMs": 35,
+            "maxMs": 7
+          },
+          "session/list": {
+            "calls": 8,
+            "totalMs": 29,
+            "maxMs": 6
+          },
+          "settings/describe": {
+            "calls": 1,
+            "totalMs": 8,
+            "maxMs": 8
+          },
+          "settings/update": {
+            "calls": 2,
+            "totalMs": 88,
+            "maxMs": 60
+          },
+          "session/cancel": {
+            "calls": 1,
+            "totalMs": 10,
+            "maxMs": 10
+          },
+          "pluginManager/listPlugins": {
+            "calls": 1,
+            "totalMs": 45,
+            "maxMs": 45
+          },
+          "pluginManager/setPluginEnabled": {
+            "calls": 2,
+            "totalMs": 182,
+            "maxMs": 94
+          }
+        },
+        "diagnostics": [],
+        "logSha256": "adf537de2cd5aab8ec688662ebd228fbf15a052d932fcc8da128c2a6e82a626e",
+        "rawReportSha256": "63837ea214178be7a1e70f0cde08ecaa078feb732c650acf2ac07fae20196acb",
+        "processes": [
+          {
+            "label": "headless",
+            "code": 0,
+            "signal": null,
+            "forced": false,
+            "elapsedMs": 694,
+            "nativePluginsAtExit": 0,
+            "singleContext": true,
+            "registryEmpty": true
+          },
+          {
+            "label": "web",
+            "code": 0,
+            "signal": null,
+            "forced": false,
+            "elapsedMs": 2589,
+            "nativePluginsAtExit": 0,
+            "singleContext": true,
+            "registryEmpty": true
+          }
+        ]
+      },
+      {
+        "schemaVersion": 1,
+        "status": "passed",
+        "backend": "native",
+        "rust": false,
+        "evidence": "installed-artifacts",
+        "node": "v22.22.0",
+        "platform": "darwin-arm64",
+        "startedAt": "2026-10-05T15:19:15.785Z",
+        "finishedAt": "2026-10-05T15:19:19.153Z",
+        "browserExecution": false,
+        "paidModelRequests": false,
+        "releaseAcceptance": false,
+        "checks": {
+          "headless": [
+            {
+              "tool": "cordis_greet",
+              "toolCalled": true,
+              "final": "COMPLETE_headless"
+            }
+          ],
+          "web": {
+            "standardPreset": true,
+            "toolCalls": true,
+            "invalidConfigurationRejected": true,
+            "configurationUpdated": true,
+            "toolFailureRecovered": true,
+            "cancelled": true,
+            "unloadedToolAbsent": true,
+            "reenabledToolCalled": true,
+            "rustToolCalled": false
+          },
+          "persistence": {
+            "sessions": 2,
+            "cancelledToolResult": {
+              "type": "tool/result",
+              "seq": 94,
+              "time": 1791213558437,
+              "data": {
+                "turn": 6,
+                "step": 1,
+                "message": {
+                  "role": "tool",
+                  "source": {
+                    "kind": "tool",
+                    "callId": "call-cancelled"
+                  },
+                  "toolCallId": "call-cancelled",
+                  "content": [
+                    {
+                      "type": "text",
+                      "text": "Error: The operation was aborted"
+                    }
+                  ],
+                  "isError": true,
+                  "id": "83b64c66-0693-4ce8-8bef-09e951ae8ffc"
+                }
+              },
+              "sourceEventSeqs": [
+                93
+              ],
+              "surfaceOp": "append"
+            },
+            "hashes": {
+              "session-889728df-bbc1-49c0-8974-9b6354d81cda": "e9f365b4b5a9e044602256c3ee76422bfaf10026842afb0328d7181e63a662bc",
+              "extension-web": "70af182a89edddfb9a7962033ffafced0f44622050e0e6597946d370c10f909c"
+            }
+          },
+          "evidenceUnchanged": true
+        },
+        "inputs": {
+          "scripts/check-official-extensions.mjs": "8b8e35bef2f299efeeac0c6a0ba26e0012adee79f73b101eb90383ce1d5b60ac",
+          "scripts/official-test-entry.mjs": "2de22d8f6d9b087de79ed480427603158432c9f908abbcf380f2490f3276cba0",
+          "src/official-plugin-api.mjs": "3442a9341b41291b875bfe163e65012bca4959656564d2fc15158b279001cc75",
+          "examples/official/greeting.mjs": "1f3d58a1b093279561d853663b2c01dd9c7c3afaa92caefbe8d51d6e0dda4e30",
+          "examples/official/rust-text-analysis.mjs": "947ea9c24880a3da3e03b2af2f0c6ae7c00df22cda22e349758a252c195cd871",
+          "official-runtime/package-lock.json": "ce4b6259920fbb83db1c5b62b94844ae3732af24a31d7e8489ca6cced5eb73ab"
+        },
+        "registerSha256": "f080919b98e94eedede1caad57ae506139d38a28336810aebdbd81ee0d7cb41a",
+        "rpc": {
+          "pluginInventory/list": {
+            "calls": 2,
+            "totalMs": 62,
+            "maxMs": 40
+          },
+          "agentPresets/list": {
+            "calls": 1,
+            "totalMs": 4,
+            "maxMs": 4
+          },
+          "session/create": {
+            "calls": 8,
+            "totalMs": 29,
+            "maxMs": 21
+          },
+          "session/prompt": {
+            "calls": 8,
+            "totalMs": 35,
+            "maxMs": 7
+          },
+          "session/list": {
+            "calls": 8,
+            "totalMs": 32,
+            "maxMs": 7
+          },
+          "settings/describe": {
+            "calls": 1,
+            "totalMs": 8,
+            "maxMs": 8
+          },
+          "settings/update": {
+            "calls": 2,
+            "totalMs": 87,
+            "maxMs": 60
+          },
+          "session/cancel": {
+            "calls": 1,
+            "totalMs": 12,
+            "maxMs": 12
+          },
+          "pluginManager/listPlugins": {
+            "calls": 1,
+            "totalMs": 51,
+            "maxMs": 51
+          },
+          "pluginManager/setPluginEnabled": {
+            "calls": 2,
+            "totalMs": 181,
+            "maxMs": 94
+          }
+        },
+        "diagnostics": [],
+        "logSha256": "f89dcf4083dcdf0eaa8d6161fb5023b7ef2a336c2a63fc518ba2b25fd7ad9e87",
+        "rawReportSha256": "ac4961fafcfdc7284ccc7b7389d901de05102eb923c76fa3646131ceb086d974",
+        "processes": [
+          {
+            "label": "headless",
+            "code": 0,
+            "signal": null,
+            "forced": false,
+            "elapsedMs": 699,
+            "nativePluginsAtExit": 0,
+            "singleContext": true,
+            "registryEmpty": true
+          },
+          {
+            "label": "web",
+            "code": 0,
+            "signal": null,
+            "forced": false,
+            "elapsedMs": 2627,
+            "nativePluginsAtExit": 0,
+            "singleContext": true,
+            "registryEmpty": true
+          }
+        ]
+      }
+    ],
+    "native-rust": [
+      {
+        "schemaVersion": 1,
+        "status": "passed",
+        "backend": "native",
+        "rust": true,
+        "evidence": "installed-artifacts",
+        "node": "v22.22.0",
+        "platform": "darwin-arm64",
+        "startedAt": "2026-10-05T15:17:45.962Z",
+        "finishedAt": "2026-10-05T15:17:58.238Z",
+        "browserExecution": false,
+        "paidModelRequests": false,
+        "releaseAcceptance": false,
+        "checks": {
+          "headless": [
+            {
+              "tool": "cordis_greet",
+              "toolCalled": true,
+              "final": "COMPLETE_headless"
+            },
+            {
+              "tool": "rust_text_analyze",
+              "toolCalled": true,
+              "final": "COMPLETE_headless_rust"
+            }
+          ],
+          "web": {
+            "standardPreset": true,
+            "toolCalls": true,
+            "invalidConfigurationRejected": true,
+            "configurationUpdated": true,
+            "toolFailureRecovered": true,
+            "cancelled": true,
+            "unloadedToolAbsent": true,
+            "reenabledToolCalled": true,
+            "rustToolCalled": true
+          },
+          "persistence": {
+            "sessions": 3,
+            "cancelledToolResult": {
+              "type": "tool/result",
+              "seq": 94,
+              "time": 1791213477428,
+              "data": {
+                "turn": 6,
+                "step": 1,
+                "message": {
+                  "role": "tool",
+                  "source": {
+                    "kind": "tool",
+                    "callId": "call-cancelled"
+                  },
+                  "toolCallId": "call-cancelled",
+                  "content": [
+                    {
+                      "type": "text",
+                      "text": "Error: The operation was aborted"
+                    }
+                  ],
+                  "isError": true,
+                  "id": "fba740e5-e8eb-4010-b00f-84887a4f2760"
+                }
+              },
+              "sourceEventSeqs": [
+                93
+              ],
+              "surfaceOp": "append"
+            },
+            "hashes": {
+              "session-bf2c4532-0af9-4266-a121-7d64a4d682b8": "c58f363186b4a026d726fe7f367a6eb933b35cd4f9ed6565a6463ee1c8dc27a7",
+              "session-ddc2a2d6-0f04-4b0b-a2dd-5fe06967c5bc": "922f4850995db0f7efecdfb11ff59334c01643248cfbc3f845a97118b5ee6bf0",
+              "extension-web": "af7f3e0abcf5a5b53a3389e10a54bbe2566d2301404e643752f6fce61ba8366a"
+            }
+          },
+          "evidenceUnchanged": true
+        },
+        "inputs": {
+          "scripts/check-official-extensions.mjs": "8b8e35bef2f299efeeac0c6a0ba26e0012adee79f73b101eb90383ce1d5b60ac",
+          "scripts/official-test-entry.mjs": "2de22d8f6d9b087de79ed480427603158432c9f908abbcf380f2490f3276cba0",
+          "src/official-plugin-api.mjs": "3442a9341b41291b875bfe163e65012bca4959656564d2fc15158b279001cc75",
+          "examples/official/greeting.mjs": "1f3d58a1b093279561d853663b2c01dd9c7c3afaa92caefbe8d51d6e0dda4e30",
+          "examples/official/rust-text-analysis.mjs": "947ea9c24880a3da3e03b2af2f0c6ae7c00df22cda22e349758a252c195cd871",
+          "official-runtime/package-lock.json": "ce4b6259920fbb83db1c5b62b94844ae3732af24a31d7e8489ca6cced5eb73ab"
+        },
+        "registerSha256": "62cf49e2cf27c06bfa7398cbf3f2b3e26a5405a12cf88de9cfc905fd60592222",
+        "rustAddon": {
+          "manifestSha256": "85ac573f1caf78432e2e0f9861d962d95d1a7be7fbf69f66968ea703bd207d18",
+          "coreSourceDigest": "e1de3fc444464855a0810090d0e4ce9692dcde48e54e8d5b72b5970c3f19ef3d",
+          "binarySha256": "8727fb543c40ba2db5561cf086a884ad2fd9662ec60504c815e229b762cd3fee"
+        },
+        "rpc": {
+          "pluginInventory/list": {
+            "calls": 2,
+            "totalMs": 63,
+            "maxMs": 41
+          },
+          "agentPresets/list": {
+            "calls": 1,
+            "totalMs": 4,
+            "maxMs": 4
+          },
+          "session/create": {
+            "calls": 9,
+            "totalMs": 30,
+            "maxMs": 21
+          },
+          "session/prompt": {
+            "calls": 9,
+            "totalMs": 37,
+            "maxMs": 6
+          },
+          "session/list": {
+            "calls": 9,
+            "totalMs": 37,
+            "maxMs": 8
+          },
+          "settings/describe": {
+            "calls": 1,
+            "totalMs": 8,
+            "maxMs": 8
+          },
+          "settings/update": {
+            "calls": 2,
+            "totalMs": 87,
+            "maxMs": 60
+          },
+          "session/cancel": {
+            "calls": 1,
+            "totalMs": 12,
+            "maxMs": 12
+          },
+          "pluginManager/listPlugins": {
+            "calls": 1,
+            "totalMs": 47,
+            "maxMs": 47
+          },
+          "pluginManager/setPluginEnabled": {
+            "calls": 2,
+            "totalMs": 180,
+            "maxMs": 93
+          }
+        },
+        "diagnostics": [],
+        "logSha256": "93ea2d0a3d5efd2e5eb62ecd61664df92aa592a51ee042e300aaeafe43771813",
+        "rawReportSha256": "51c4451e8b405a8bac5c264aea788fdc35e3c8101757e1b27a4bdce036fc6003",
+        "processes": [
+          {
+            "label": "headless",
+            "code": 0,
+            "signal": null,
+            "forced": false,
+            "elapsedMs": 4804,
+            "nativePluginsAtExit": 0,
+            "singleContext": true,
+            "registryEmpty": true
+          },
+          {
+            "label": "headless_rust",
+            "code": 0,
+            "signal": null,
+            "forced": false,
+            "elapsedMs": 2693,
+            "nativePluginsAtExit": 0,
+            "singleContext": true,
+            "registryEmpty": true
+          },
+          {
+            "label": "web",
+            "code": 0,
+            "signal": null,
+            "forced": false,
+            "elapsedMs": 4715,
+            "nativePluginsAtExit": 0,
+            "singleContext": true,
+            "registryEmpty": true
+          }
+        ]
+      },
+      {
+        "schemaVersion": 1,
+        "status": "passed",
+        "backend": "native",
+        "rust": true,
+        "evidence": "installed-artifacts",
+        "node": "v22.22.0",
+        "platform": "darwin-arm64",
+        "startedAt": "2026-10-05T15:18:39.501Z",
+        "finishedAt": "2026-10-05T15:18:49.612Z",
+        "browserExecution": false,
+        "paidModelRequests": false,
+        "releaseAcceptance": false,
+        "checks": {
+          "headless": [
+            {
+              "tool": "cordis_greet",
+              "toolCalled": true,
+              "final": "COMPLETE_headless"
+            },
+            {
+              "tool": "rust_text_analyze",
+              "toolCalled": true,
+              "final": "COMPLETE_headless_rust"
+            }
+          ],
+          "web": {
+            "standardPreset": true,
+            "toolCalls": true,
+            "invalidConfigurationRejected": true,
+            "configurationUpdated": true,
+            "toolFailureRecovered": true,
+            "cancelled": true,
+            "unloadedToolAbsent": true,
+            "reenabledToolCalled": true,
+            "rustToolCalled": true
+          },
+          "persistence": {
+            "sessions": 3,
+            "cancelledToolResult": {
+              "type": "tool/result",
+              "seq": 94,
+              "time": 1791213528811,
+              "data": {
+                "turn": 6,
+                "step": 1,
+                "message": {
+                  "role": "tool",
+                  "source": {
+                    "kind": "tool",
+                    "callId": "call-cancelled"
+                  },
+                  "toolCallId": "call-cancelled",
+                  "content": [
+                    {
+                      "type": "text",
+                      "text": "Error: The operation was aborted"
+                    }
+                  ],
+                  "isError": true,
+                  "id": "bc5aaeb7-4db1-4a3c-8598-ca00f0d5bdb5"
+                }
+              },
+              "sourceEventSeqs": [
+                93
+              ],
+              "surfaceOp": "append"
+            },
+            "hashes": {
+              "session-1f01f0c0-5367-48d8-a87d-7c32a9a8f334": "e5c21bd309a8ad4cfaf9b3340fcdae67e0312731aa0d598dd74f53ddec022f3f",
+              "session-7740c2d1-540d-464f-a87f-b53515ed6344": "2b2012ee47bf418fb16c7139d680d7896353f6fa43bfba2f237eebb44bb94879",
+              "extension-web": "eba38c16fe09d64503f220bb91cc6942c1a6160ba27b7281dc04aa977c61ed49"
+            }
+          },
+          "evidenceUnchanged": true
+        },
+        "inputs": {
+          "scripts/check-official-extensions.mjs": "8b8e35bef2f299efeeac0c6a0ba26e0012adee79f73b101eb90383ce1d5b60ac",
+          "scripts/official-test-entry.mjs": "2de22d8f6d9b087de79ed480427603158432c9f908abbcf380f2490f3276cba0",
+          "src/official-plugin-api.mjs": "3442a9341b41291b875bfe163e65012bca4959656564d2fc15158b279001cc75",
+          "examples/official/greeting.mjs": "1f3d58a1b093279561d853663b2c01dd9c7c3afaa92caefbe8d51d6e0dda4e30",
+          "examples/official/rust-text-analysis.mjs": "947ea9c24880a3da3e03b2af2f0c6ae7c00df22cda22e349758a252c195cd871",
+          "official-runtime/package-lock.json": "ce4b6259920fbb83db1c5b62b94844ae3732af24a31d7e8489ca6cced5eb73ab"
+        },
+        "registerSha256": "62cf49e2cf27c06bfa7398cbf3f2b3e26a5405a12cf88de9cfc905fd60592222",
+        "rustAddon": {
+          "manifestSha256": "85ac573f1caf78432e2e0f9861d962d95d1a7be7fbf69f66968ea703bd207d18",
+          "coreSourceDigest": "e1de3fc444464855a0810090d0e4ce9692dcde48e54e8d5b72b5970c3f19ef3d",
+          "binarySha256": "8727fb543c40ba2db5561cf086a884ad2fd9662ec60504c815e229b762cd3fee"
+        },
+        "rpc": {
+          "pluginInventory/list": {
+            "calls": 2,
+            "totalMs": 60,
+            "maxMs": 39
+          },
+          "agentPresets/list": {
+            "calls": 1,
+            "totalMs": 4,
+            "maxMs": 4
+          },
+          "session/create": {
+            "calls": 9,
+            "totalMs": 32,
+            "maxMs": 21
+          },
+          "session/prompt": {
+            "calls": 9,
+            "totalMs": 38,
+            "maxMs": 7
+          },
+          "session/list": {
+            "calls": 9,
+            "totalMs": 34,
+            "maxMs": 6
+          },
+          "settings/describe": {
+            "calls": 1,
+            "totalMs": 8,
+            "maxMs": 8
+          },
+          "settings/update": {
+            "calls": 2,
+            "totalMs": 85,
+            "maxMs": 61
+          },
+          "session/cancel": {
+            "calls": 1,
+            "totalMs": 5,
+            "maxMs": 5
+          },
+          "pluginManager/listPlugins": {
+            "calls": 1,
+            "totalMs": 37,
+            "maxMs": 37
+          },
+          "pluginManager/setPluginEnabled": {
+            "calls": 2,
+            "totalMs": 182,
+            "maxMs": 95
+          }
+        },
+        "diagnostics": [],
+        "logSha256": "030c35084e1842f59b1158105435b2aedc226a798f99ec9aabca98836fd8b09e",
+        "rawReportSha256": "fa5caa5ec119e1a8cac88648b0cd5e674b7d283d189a4b2e309d6377a13c3a94",
+        "processes": [
+          {
+            "label": "headless",
+            "code": 0,
+            "signal": null,
+            "forced": false,
+            "elapsedMs": 2684,
+            "nativePluginsAtExit": 0,
+            "singleContext": true,
+            "registryEmpty": true
+          },
+          {
+            "label": "headless_rust",
+            "code": 0,
+            "signal": null,
+            "forced": false,
+            "elapsedMs": 2704,
+            "nativePluginsAtExit": 0,
+            "singleContext": true,
+            "registryEmpty": true
+          },
+          {
+            "label": "web",
+            "code": 0,
+            "signal": null,
+            "forced": false,
+            "elapsedMs": 4666,
+            "nativePluginsAtExit": 0,
+            "singleContext": true,
+            "registryEmpty": true
+          }
+        ]
+      },
+      {
+        "schemaVersion": 1,
+        "status": "passed",
+        "backend": "native",
+        "rust": true,
+        "evidence": "installed-artifacts",
+        "node": "v22.22.0",
+        "platform": "darwin-arm64",
+        "startedAt": "2026-10-05T15:19:30.911Z",
+        "finishedAt": "2026-10-05T15:19:41.025Z",
+        "browserExecution": false,
+        "paidModelRequests": false,
+        "releaseAcceptance": false,
+        "checks": {
+          "headless": [
+            {
+              "tool": "cordis_greet",
+              "toolCalled": true,
+              "final": "COMPLETE_headless"
+            },
+            {
+              "tool": "rust_text_analyze",
+              "toolCalled": true,
+              "final": "COMPLETE_headless_rust"
+            }
+          ],
+          "web": {
+            "standardPreset": true,
+            "toolCalls": true,
+            "invalidConfigurationRejected": true,
+            "configurationUpdated": true,
+            "toolFailureRecovered": true,
+            "cancelled": true,
+            "unloadedToolAbsent": true,
+            "reenabledToolCalled": true,
+            "rustToolCalled": true
+          },
+          "persistence": {
+            "sessions": 3,
+            "cancelledToolResult": {
+              "type": "tool/result",
+              "seq": 94,
+              "time": 1791213580240,
+              "data": {
+                "turn": 6,
+                "step": 1,
+                "message": {
+                  "role": "tool",
+                  "source": {
+                    "kind": "tool",
+                    "callId": "call-cancelled"
+                  },
+                  "toolCallId": "call-cancelled",
+                  "content": [
+                    {
+                      "type": "text",
+                      "text": "Error: The operation was aborted"
+                    }
+                  ],
+                  "isError": true,
+                  "id": "32375ed4-36b3-454d-85b5-65bae263b42c"
+                }
+              },
+              "sourceEventSeqs": [
+                93
+              ],
+              "surfaceOp": "append"
+            },
+            "hashes": {
+              "session-1ed39599-b987-4407-9de7-eb3b8907ec80": "a42acfe50347298f81f7e9f2bfc418a993aff266b66968d1c957a946ef6510e6",
+              "session-8a021fdc-3daa-4811-875e-e212fca1058a": "23adba872cb48f749e8298bc3edc93bbddc61dae77ed3842f1bd42186d52af86",
+              "extension-web": "630a99aa2e7c4b069cf306bcbe6f41e3854dfb3d5f09583bda3bc639f2529831"
+            }
+          },
+          "evidenceUnchanged": true
+        },
+        "inputs": {
+          "scripts/check-official-extensions.mjs": "8b8e35bef2f299efeeac0c6a0ba26e0012adee79f73b101eb90383ce1d5b60ac",
+          "scripts/official-test-entry.mjs": "2de22d8f6d9b087de79ed480427603158432c9f908abbcf380f2490f3276cba0",
+          "src/official-plugin-api.mjs": "3442a9341b41291b875bfe163e65012bca4959656564d2fc15158b279001cc75",
+          "examples/official/greeting.mjs": "1f3d58a1b093279561d853663b2c01dd9c7c3afaa92caefbe8d51d6e0dda4e30",
+          "examples/official/rust-text-analysis.mjs": "947ea9c24880a3da3e03b2af2f0c6ae7c00df22cda22e349758a252c195cd871",
+          "official-runtime/package-lock.json": "ce4b6259920fbb83db1c5b62b94844ae3732af24a31d7e8489ca6cced5eb73ab"
+        },
+        "registerSha256": "62cf49e2cf27c06bfa7398cbf3f2b3e26a5405a12cf88de9cfc905fd60592222",
+        "rustAddon": {
+          "manifestSha256": "85ac573f1caf78432e2e0f9861d962d95d1a7be7fbf69f66968ea703bd207d18",
+          "coreSourceDigest": "e1de3fc444464855a0810090d0e4ce9692dcde48e54e8d5b72b5970c3f19ef3d",
+          "binarySha256": "8727fb543c40ba2db5561cf086a884ad2fd9662ec60504c815e229b762cd3fee"
+        },
+        "rpc": {
+          "pluginInventory/list": {
+            "calls": 2,
+            "totalMs": 62,
+            "maxMs": 40
+          },
+          "agentPresets/list": {
+            "calls": 1,
+            "totalMs": 5,
+            "maxMs": 5
+          },
+          "session/create": {
+            "calls": 9,
+            "totalMs": 33,
+            "maxMs": 21
+          },
+          "session/prompt": {
+            "calls": 9,
+            "totalMs": 37,
+            "maxMs": 7
+          },
+          "session/list": {
+            "calls": 9,
+            "totalMs": 36,
+            "maxMs": 8
+          },
+          "settings/describe": {
+            "calls": 1,
+            "totalMs": 6,
+            "maxMs": 6
+          },
+          "settings/update": {
+            "calls": 2,
+            "totalMs": 85,
+            "maxMs": 60
+          },
+          "session/cancel": {
+            "calls": 1,
+            "totalMs": 14,
+            "maxMs": 14
+          },
+          "pluginManager/listPlugins": {
+            "calls": 1,
+            "totalMs": 48,
+            "maxMs": 48
+          },
+          "pluginManager/setPluginEnabled": {
+            "calls": 2,
+            "totalMs": 180,
+            "maxMs": 92
+          }
+        },
+        "diagnostics": [],
+        "logSha256": "4b23bffc2806f12d7417fbf24f327b4a6071a5b270e36cb9666b2c151803a07a",
+        "rawReportSha256": "3f4c2caa25becff4f885ac316b6cb77d1cecca214d01c9e0d90d15703023604f",
+        "processes": [
+          {
+            "label": "headless",
+            "code": 0,
+            "signal": null,
+            "forced": false,
+            "elapsedMs": 2670,
+            "nativePluginsAtExit": 0,
+            "singleContext": true,
+            "registryEmpty": true
+          },
+          {
+            "label": "headless_rust",
+            "code": 0,
+            "signal": null,
+            "forced": false,
+            "elapsedMs": 2700,
+            "nativePluginsAtExit": 0,
+            "singleContext": true,
+            "registryEmpty": true
+          },
+          {
+            "label": "web",
+            "code": 0,
+            "signal": null,
+            "forced": false,
+            "elapsedMs": 4686,
+            "nativePluginsAtExit": 0,
+            "singleContext": true,
+            "registryEmpty": true
+          }
+        ]
+      }
+    ]
+  }
+}

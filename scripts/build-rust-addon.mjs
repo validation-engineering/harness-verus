@@ -19,7 +19,7 @@ const before = await addonSources();
 const toolchain = JSON.parse(await readFile(path.join(coreRoot, 'toolchain.lock.json'), 'utf8')).rust.channel;
 const output = path.join(projectRoot, addonRelativePath);
 await mkdir(path.dirname(output), { recursive: true });
-const args = ['build', '--locked', '--manifest-path', 'native/text-analysis/Cargo.toml', '--message-format=json-render-diagnostics'];
+const args = ['build', '--release', '--locked', '--manifest-path', 'native/text-analysis/Cargo.toml', '--message-format=json-render-diagnostics'];
 if (offline) args.push('--offline');
 const environment = { ...process.env, RUSTUP_TOOLCHAIN: toolchain, CARGO_TARGET_DIR: path.join(projectRoot, '.cache/rust-addon/target') };
 const result = spawnSync('cargo', args, { cwd: projectRoot, env: environment, encoding: 'utf8',
@@ -32,6 +32,9 @@ const artifacts = result.stdout.split('\n').filter(Boolean).map(line => JSON.par
   .filter(item => item.reason === 'compiler-artifact' && item.target?.name === 'cordis_harness_text_analysis' && item.target.kind.includes('cdylib'));
 const candidates = artifacts.flatMap(item => item.filenames).filter(file => file.endsWith(extension));
 assert.equal(candidates.length, 1, 'Cargo must report exactly one loadable text-analysis artifact');
+assert.equal(artifacts[0].profile?.opt_level, '3', 'The addon must use optimization level 3');
+assert.equal(artifacts[0].profile.debug_assertions, true, 'Keep Rust debug assertions enabled');
+assert.equal(artifacts[0].profile.overflow_checks, true, 'Keep Rust overflow checks enabled');
 await copyFile(candidates[0], output);
 const binding = createRequire(import.meta.url)(output);
 assert.equal(JSON.parse(binding.bindingInfo()).abi, 1);

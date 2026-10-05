@@ -2,12 +2,12 @@
   "schema": "cordis-harness.sources/v1",
   "cordis": {
     "repository": "https://github.com/Stool233/cordis-verus.git",
-    "baseCommit": "53c58ce548a35ef16c6ca445bc8353540e276605",
-    "workingTreeDirty": true,
+    "baseCommit": "b7d716994010245346a59bced6212f22dee19601",
+    "workingTreeDirty": false,
     "sourceIdentity": "verified working-tree file hashes; baseCommit is metadata, not snapshot identity",
-    "sourceFingerprint": "f69dbdf0e47d7e9553cfa780cbc468becda68e7331f00d8345fa65be805fa72a",
-    "developmentReportSha256": "9dc8b4297dbd7853b67d9e3ff65414c4b02de34a9424904d2891cbf8b8334873",
-    "packageReportSha256": "d9ff772d117c1b70731c9b8f5f4bdf944f776b496a5aeceee62867340e9ee096",
+    "sourceFingerprint": "d0bb5931a6e808f65b6e861ef293d4fc5b8809d3b76f76fc694536b82a2d7649",
+    "developmentReportSha256": "69fff81d6503826a8cbb67ce3ca01c767553cf7925dbf09b5a53518e65de20ca",
+    "packageReportSha256": "9c5a05743aab76af25e8392469707c9077e8f984c0bf364624171f16956b597f",
     "developmentAcceptance": true,
     "releaseAcceptance": false,
     "paperCompletion": false,
@@ -20,13 +20,13 @@
       "driverAbi": 1
     },
     "nativeTarget": "darwin-arm64-napi8",
-    "nativeArtifactSha256": "a49d5a64475f366661c7415c527362a3a08e2bea4c72490b53cb18a34daddb91",
+    "nativeArtifactSha256": "1e2b40dfb146eacfd33ccc8c7c5a80bfd8ce27b3013a16d2dce9cfb5722fc5e7",
     "archives": [
       {
         "name": "@cordis-verus/compat-cordis",
         "version": "0.1.0",
         "file": ".vendor/cordis/cordis-verus-compat-cordis-0.1.0.tgz",
-        "sha256": "702b5d7a6bafe927fe513819f5c1a43689b4569a10d457354e91d33e679bcf1c"
+        "sha256": "b60c2ae5b8d1a30501118792dfcb28543304cfb78576c561b1a82f8bf54a5ae6"
       },
       {
         "name": "@cordis-verus/compat-harness",

@@ -49,3 +49,7 @@ need the sibling Rust checkout. Source or artifact changes require a fresh build
 
 Validation is local platform evidence. This example does not claim cross-platform
 release acceptance or formal proof of arbitrary Rust/JavaScript callbacks.
+
+The addon build uses Cargo release optimization level 3 with debug assertions
+and overflow checks retained. The build checks the actual compiler profile and
+records it with the binary and source hashes.

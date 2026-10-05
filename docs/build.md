@@ -67,6 +67,7 @@ LLM 的 attribution 使用 `createRequire(import.meta.url)('../package.json')`�
 构建使用相邻 `../cordis-verus` 的匹配 native 源码及锁定工具链，输出仅写入 `.cache/rust-addon`。
 `npm run rust:verify` 核对 addon 源码、Cargo.lock、core 来源、已安装 facade、当前平台和实际二进制。
 运行时不需要相邻 core checkout；新构建仍需要该源码。
+默认使用优化级别 3 的 release 构建，保留 debug assertions 和 overflow checks；实际 Cargo profile 必须通过构建器检查并写入来源证据。
 
 `npm run official:extensions` 在原版 Web/headless profile 中添加 JS/Rust 工具；
 普通 `npm run official` 保持使用默认发行 addon。`npm run official:check` 验证两种入口，
