@@ -1,0 +1,55 @@
+{
+  "schema": "cordis-harness.sources/v1",
+  "cordis": {
+    "repository": "https://github.com/Stool233/cordis-verus.git",
+    "baseCommit": "19172aa55f56173b18360cb248d983ecc9a2d8ba",
+    "workingTreeDirty": false,
+    "sourceIdentity": "verified working-tree file hashes; baseCommit is metadata, not snapshot identity",
+    "sourceFingerprint": "cd1f6d1748381393f6d3caef61882c4c80d1cdb044414561556fed0746d0bd54",
+    "developmentReportSha256": "2e8f5ae4591512924570cabf4836d43e881e0bbc9af49044ea00370e0d991e52",
+    "packageReportSha256": "8eac5cdebb94e6b4cbc10971d91f4f1e2407408ae2a30ce52450b1a7bb1a5e93",
+    "developmentAcceptance": true,
+    "releaseAcceptance": false,
+    "paperCompletion": false,
+    "testedTarget": {
+      "platform": "darwin",
+      "architecture": "arm64",
+      "node": "v22.22.0",
+      "nodeApi": "10",
+      "nodeModuleAbi": "127",
+      "driverAbi": 1
+    },
+    "nativeTarget": "darwin-arm64-napi8",
+    "nativeArtifactSha256": "a49d5a64475f366661c7415c527362a3a08e2bea4c72490b53cb18a34daddb91",
+    "archives": [
+      {
+        "name": "@cordis-verus/compat-cordis",
+        "version": "0.1.0",
+        "file": ".vendor/cordis/cordis-verus-compat-cordis-0.1.0.tgz",
+        "sha256": "a4a903540be905094f0d7ea394e6196afcc5cf3a53017ceae5a6f5dbc52f494f"
+      },
+      {
+        "name": "@cordis-verus/compat-harness",
+        "version": "0.1.0",
+        "file": ".vendor/cordis/cordis-verus-compat-harness-0.1.0.tgz",
+        "sha256": "5d10e38ec138468373758e5bbe2b45f8a68a37705504a9cd4c2f244bf92b6f60"
+      },
+      {
+        "name": "@cordis-verus/compat-loader",
+        "version": "0.1.0",
+        "file": ".vendor/cordis/cordis-verus-compat-loader-0.1.0.tgz",
+        "sha256": "b42c61bf73b6fd593be3ec246b0ecb527f3316b0a1a15e30920e37561ed07803"
+      }
+    ]
+  },
+  "deepseekHarness": {
+    "repository": "https://github.com/deepseek-ai/deepseek-harness.git",
+    "revision": "da00f7f5358f2949383b35c14f548bc20187d80c",
+    "tree": "3c6b47ceb23985cdeaa53d169f29362e1412479d",
+    "archiveSha256": "fee896b309e096f4279409faf2e37e650571441322495f82d3d02205da6b5554",
+    "snapshotSha256": "e43913f0629d11f25daef166a888de87e13417321a36b7d1566889d781da5599",
+    "sourceDirectory": ".cache/upstream/deepseek-harness",
+    "snapshotFile": ".cache/upstream/deepseek-harness.snapshot.json",
+    "unmodified": true
+  }
+}

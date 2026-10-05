@@ -1,0 +1,23 @@
+This is an independent Rust reimplementation of a subset of Cordis semantics.
+It is not an official Cordis, DeepSeek, or Verus distribution.
+
+Design and behavior references:
+- Cordis, https://github.com/cordiverse/cordis (MIT)
+- DeepSeek Harness, https://github.com/deepseek-ai/deepseek-harness (MIT)
+- A Programming Paradigm for Spatiotemporal Composability,
+  https://arxiv.org/abs/2608.25512v1 (https://github.com/Stool233/cordis-verus/blob/main/reference/README.md)
+
+The ignored upstream checkouts retain their own license and copyright files.
+The reference paper is not covered by this project's MIT license.
+Verus binaries and vstd retain their upstream licenses. Binary archives are
+downloaded into the ignored .tools directory; they are not redistributed here.
+
+The experimental JavaScript compatibility package adapts language-layer code
+from Cordis (Copyright (c) 2021-present Shigma, MIT). The original MIT notice
+is preserved in packages/compat-cordis/LICENSE.upstream. It does not embed the
+upstream Fiber lifecycle scheduler. Node-API dependencies retain their own licenses.
+
+The compatibility logger in packages/compat-cordis/logger.js is adapted from
+Cordis packages/core/src/logger.ts at the locked Cordis revision. Its formatting,
+exporter and traceable-caller behavior are ordinary JavaScript, outside the
+Verus proof boundary, and retain the same MIT attribution above.

@@ -1,0 +1,17 @@
+{
+  "schema": 1,
+  "workspace": "../examples/workspace",
+  "sessionDirectory": "../.cordis-harness/sessions",
+  "provider": {
+    "type": "deepseek",
+    "model": "deepseek-flash",
+    "maxTokens": 4096,
+    "options": { "apiKeyEnv": "DEEPSEEK_API_KEY", "thinking": "disabled" }
+  },
+  "limits": { "maxSteps": 16, "maxContextBytes": 262144 },
+  "plugins": [
+    { "id": "todo", "module": "official:todo" },
+    { "id": "workspace", "module": "local:workspace", "config": { "allowWrite": false } },
+    { "id": "hello", "module": "../plugins/hello.mjs", "config": { "prefix": "Hello" } }
+  ]
+}

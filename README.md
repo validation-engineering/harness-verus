@@ -1,0 +1,107 @@
+# Cordis Harness
+
+用 **Rust / Verus Cordis** 管理生命周期，组合**未改写的官方 DeepSeek Harness 插件**和自有插件的独立 CLI 项目。目标是在真实应用里检验插件兼容性、组合能力和清理语义。
+
+已经接入官方 AgentLoop、AgentRegistry、SessionStore、SystemPrompt、ToolRuntime、SessionProjectionRegistry、Todo 和 DeepSeek API-key provider。自有插件提供文件操作、会话持久化、请求限额及一个简单的 Hello 工具。
+
+这是可运行的开发验证项目，包含自有精简组合与官方发行的宿主替换入口，尚未正式发布。当前已验收 macOS ARM64 / Node 22.22.0；runtime 是固定指纹的未发布开发制品。
+
+## 官方默认 Web 模式
+
+现在另有完整的官方发行安装：保留官方 `dsh web` 入口、Web 界面、默认 `standard` preset、Loader/Include、插件和 JSONL 会话存储，预加载我们的 Rust/Verus Cordis **Node 宿主**。浏览器中的 Cordis 客户端仍为官方 JavaScript 实现。
+
+```sh
+npm run official:install -- --offline
+npm run official
+# 等价：npm run official -- web
+```
+
+官方默认端口为 3080，会打开浏览器。服务器参数原样转发：
+
+```sh
+npm run official -- web --no-open --port 3080
+npm run official -- headless --json "阅读当前项目并概述其用途"
+```
+
+真实模型需要用户在官方界面配置账号或 API key。默认数据保存在本项目 `.cordis-harness/official`；显式 `DSH_HOME` 可选择其他目录。验收不会调用付费模型。固定发行包和所有依赖保持原始布局；启动前核对安装字节，并阻止宿主加载原版 JS Cordis 调度器。
+
+默认 Web、完整插件清单、实际 native Context、官方工具和跨进程恢复的验收见[官方模式](docs/official-mode.md)。这证明锁定版本和已测试流程的宿主替换，不代表所有第三方插件或浏览器运行时均已形式验证。
+
+## 精简组合与离线 demo
+
+当前工作目录已经安装、构建完成：
+
+```sh
+npm run demo
+npm start -- plugins
+npm test
+```
+
+离线 demo 使用**真实官方 agent/tool 循环**和确定性的 scripted provider，不调用模型 API，也不会理解任意自然语言任务。它在 `.cordis-harness/demos/` 下建立新工作区，读取 README、生成 `DEMO_RESULT.md`、完成 Todo，并持久化会话。终端返回实际工作区和 session id。
+
+新 checkout 首先准备固定版本的 runtime 和官方源码：
+
+```sh
+node scripts/bootstrap.mjs --cordis-source ../cordis-verus --offline
+npm run build
+npm run verify
+npm test
+npm run demo
+```
+
+缺少公开 npm 依赖缓存时可使用 `--online`。当前还没有公开 runtime 下载服务；`sources.lock.json` 已记录干净的核心源码提交，可按 `baseCommit` 恢复对应源码。安装仍需经过验收的本地制品，精确字节由源码指纹和制品哈希绑定；重新构建需刷新来源锁并重新验收。两个仓库目前均为私有，需要相应访问权限。详见[独立构建](docs/build.md)。
+
+## 使用真实模型
+
+配置 shell 中的 `DEEPSEEK_API_KEY`，不要把密钥写进配置或 Git。示例使用锁定官方源码中的 `deepseek-flash`，实际账户支持哪些模型需由部署方确认：
+
+```sh
+npm start -- run "阅读 README，说明这个项目的用途" --config examples/deepseek.config.json
+npm start -- chat --config examples/deepseek.config.json
+```
+
+示例默认只读；明确添加 `--allow-write` 才启用写文件工具。provider 是官方 Messages SSE 适配器。本机 HTTP fixture 已验证真实请求、工具循环和取消；本项目验收没有调用付费 API。配置细节见 [provider 指南](docs/providers.md)。
+
+## 保存与恢复
+
+```sh
+npm start -- run "阅读 README" --config examples/deepseek.config.json --session work-1
+npm start -- run "继续分析" --config examples/deepseek.config.json --session work-1 --resume
+npm start -- sessions --config examples/deepseek.config.json
+npm start -- inspect work-1 --config examples/deepseek.config.json
+```
+
+自有 `FileSessions` 实现官方 `SessionPersistence` 接口，恢复走官方 `agents.resume`。快照保留原始事件与序号，不把对话摘要冒充原始历史。完成一个回合和正常退出都会等待持久化屏障。当前采用有大小上限的原子 JSON 快照，不包含官方 JSONL 迁移、自动清理遗留锁或分布式租约恢复；详见[架构与边界](docs/architecture.md)。
+
+## 组合自己的插件
+
+修改 `harness.config.json` 的 `plugins`：
+
+```json
+{ "id": "hello", "module": "./plugins/hello.mjs", "config": { "prefix": "你好" } }
+```
+
+[Hello 示例](plugins/hello.mjs)展示官方 `defineTool` 的完整注册方式。在交互 CLI 里，agent 空闲时可以：
+
+```text
+/plugins
+/unload hello
+/load hello ./plugins/hello.mjs {"prefix":"你好"}
+/reload hello {"prefix":"Welcome"}
+```
+
+这些命令改变当前运行中的组合；持久配置请编辑配置文件。重载失败且新实例已完成清理时恢复旧实例；清理失败则保留实例并阻止替换，修复资源后用 `/retry-cleanup <id>` 显式重试。第三方插件是在同一进程运行的可信代码，工作区文件限制不是插件沙箱。
+
+更多接口、分页读文件和生命周期写法见[插件指南](docs/plugins.md)。
+
+## 验证
+
+```sh
+npm run verify
+npm test
+node scripts/record-validation.mjs
+```
+
+测试覆盖真实官方循环、跨进程会话恢复、官方 HTTP adapter、插件增删重载、路径/UTF-8/取消边界，以及来源和安装产物被改动后的拒绝行为。[验收记录](docs/validation-report.json)绑定本项目源文件与构建证据；它不是新的 Verus 证明。
+
+长期还需要：更多第三方插件与模块图 HMR、原生 Rust typed 动态服务迁移、跨平台制品、长时间运行与大历史性能、完整宿主 refinement 和发布门禁。这个项目给这些工作提供实际使用场景。

@@ -1,0 +1,31 @@
+cordis-harness
+==============
+
+This project composes selected, unchanged DeepSeek Harness plugins with the
+Rust-backed cordis-verus compatibility runtime. It is an independent project,
+not an official DeepSeek release or an endorsement by the upstream authors.
+
+Original application and plugin code is licensed under LICENSE (MIT).
+DeepSeek Harness source: https://github.com/deepseek-ai/deepseek-harness
+The exact revision, tree and archive digest are recorded in sources.lock.json.
+Its MIT license is preserved in third-party/DeepSeek-Harness.LICENSE. Bundled
+upstream sources retain their legal comments and dist/THIRD-PARTY-NOTICES.txt.
+
+cordis-verus source: https://github.com/Stool233/cordis-verus
+The current runtime is an unpublished, development-validated source snapshot.
+sources.lock.json records its clean source commit, content fingerprint and
+package digests. Restoring that commit recovers source; native artifacts and
+local validation evidence must be prepared separately.
+Its license and notices are in third-party/Cordis-Verus.LICENSE and
+third-party/Cordis-Verus.NOTICE, and are also included in the installed packages.
+The packages include upstream Cordis MIT notices and native build provenance.
+
+Zod and eventsource-parser are included in the official plugin bundle. Their
+MIT license texts are in third-party/Zod.LICENSE and
+third-party/eventsource-parser.LICENSE. esbuild is used only at build time;
+its MIT text is in third-party/esbuild.LICENSE. Exact dependency versions and
+registry integrity hashes are recorded in package-lock.json.
+
+No paper PDF or model credentials are distributed. Development evidence does
+not establish complete Harness compatibility, full paper refinement, release
+acceptance, or support for untested native platforms.

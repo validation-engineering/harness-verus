@@ -1,0 +1,12 @@
+{
+  "schema": 1,
+  "workspace": ".",
+  "sessionDirectory": ".cordis-harness/sessions",
+  "provider": { "type": "scripted", "model": "demo" },
+  "limits": { "maxSteps": 16, "maxContextBytes": 262144 },
+  "plugins": [
+    { "id": "todo", "module": "official:todo", "config": { "allowParallelInProgress": false } },
+    { "id": "workspace", "module": "local:workspace", "config": { "allowWrite": false } },
+    { "id": "hello", "module": "./plugins/hello.mjs", "config": { "prefix": "Hello" } }
+  ]
+}

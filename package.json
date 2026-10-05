@@ -1,0 +1,42 @@
+{
+  "name": "@cordis-harness/app",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "license": "MIT",
+  "description": "Composable CLI agent using official DeepSeek Harness plugins and Rust-backed Cordis",
+  "engines": {
+    "node": ">=22.22.0"
+  },
+  "bin": {
+    "cordis-harness": "src/cli.mjs"
+  },
+  "exports": {
+    "./plugin-api": "./src/plugin-api.mjs"
+  },
+  "scripts": {
+    "bootstrap": "node scripts/bootstrap.mjs",
+    "build": "node scripts/build.mjs",
+    "verify": "node scripts/verify-install.mjs",
+    "start": "node --import @cordis-verus/compat-harness/register src/cli.mjs",
+    "demo": "node --import @cordis-verus/compat-harness/register src/cli.mjs demo",
+    "test": "node --import @cordis-verus/compat-harness/register --test --test-timeout=30000 tests/*.test.mjs",
+    "pretest": "node scripts/verify-install.mjs",
+    "predemo": "node scripts/verify-install.mjs",
+    "prestart": "node scripts/verify-install.mjs",
+    "official:install": "node scripts/install-official.mjs",
+    "official:verify": "node scripts/verify-official.mjs",
+    "official": "node scripts/official.mjs",
+    "official:check": "node scripts/record-official-validation.mjs"
+  },
+  "dependencies": {
+    "@cordis-verus/compat-cordis": "file:.vendor/cordis/cordis-verus-compat-cordis-0.1.0.tgz",
+    "@cordis-verus/compat-harness": "file:.vendor/cordis/cordis-verus-compat-harness-0.1.0.tgz",
+    "@cordis-verus/compat-loader": "file:.vendor/cordis/cordis-verus-compat-loader-0.1.0.tgz",
+    "eventsource-parser": "3.1.0",
+    "zod": "4.4.3"
+  },
+  "devDependencies": {
+    "esbuild": "0.28.2"
+  }
+}

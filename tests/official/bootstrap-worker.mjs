@@ -1,0 +1,10 @@
+import assert from 'node:assert/strict';
+import { parentPort } from 'node:worker_threads';
+import { createRequire } from 'node:module';
+import { Context } from '@deepseek-ai/cordis';
+const require = createRequire(import.meta.url);
+assert.equal(require('@deepseek-ai/cordis').Context, Context);
+const ctx = new Context();
+const profile = ctx.snapshot().profile;
+await ctx.dispose();
+parentPort.postMessage({ profile });
