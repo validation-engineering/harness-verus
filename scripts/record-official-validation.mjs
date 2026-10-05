@@ -6,6 +6,7 @@ import { readFile, writeFile, mkdir, lstat } from 'node:fs/promises';
 import { fileURLToPath } from 'node:url';
 import { resolve } from 'node:path';
 import { verifyOfficial, evidencePath } from './verify-official.mjs';
+import { verifyRustAddon, addonEvidenceRelativePath, addonRelativePath } from './verify-rust-addon.mjs';
 import { assertEquivalentRoster, generatedIdModules } from './official-roster.mjs';
 
 const root = fileURLToPath(new URL('../', import.meta.url));
@@ -23,7 +24,7 @@ async function execute(command, args, timeout = 180000) {
   try {
     const result = await new Promise((done, reject) => {
       child.once('error', reject);
-      child.once('exit', (code, signal) => done({ code, signal }));
+      child.once('close', (code, signal) => done({ code, signal }));
     });
     assert.equal(result.code, 0, stdout + stderr);
     assert.equal(result.signal, null, stdout + stderr);
@@ -41,13 +42,23 @@ async function sources() {
   }
   return hashes;
 }
+const officialUnitTests = ['--test', '--test-timeout=60000', 'tests/official/bootstrap.test.mjs', 'tests/official/roster.test.mjs',
+  'tests/official/rust-addon.test.mjs', 'tests/official/extensions-launcher.test.mjs', 'tests/official/extension-loader-mutation.test.mjs'];
+const extensionRuns = [
+  {name:'upstream', backend:'upstream', rust:false},
+  {name:'native', backend:'native', rust:false},
+  {name:'native-rust', backend:'native', rust:true},
+];
+const extensionCommand = run => ['scripts/check-official-extensions.mjs', '--backend', run.backend, ...(run.rust ? ['--rust'] : [])];
 const expectedCommands = [
-  ['--test', 'tests/official/bootstrap.test.mjs', 'tests/official/roster.test.mjs'],
+  officialUnitTests,
   ...['web', 'headless'].flatMap(kind => ['upstream', 'native'].map(backend => [`scripts/check-official-${kind}.mjs`, '--backend', backend])),
+  ...extensionRuns.map(extensionCommand),
 ];
 const executionFiles = [
   ...['web', 'headless'].flatMap(kind => ['upstream', 'native'].flatMap(backend => [`.cache/official-${kind}/${backend}.json`, `.cache/official-${kind}/${backend}.log`])),
-  '.cache/official/validation-runs.json',
+  ...extensionRuns.flatMap(run => [`.cache/official-extensions/${run.name}.json`, `.cache/official-extensions/${run.name}.log`]),
+  addonEvidenceRelativePath, addonRelativePath, '.cache/official/validation-runs.json',
 ].sort();
 function webSummary(reports) {
   const upstream = reports['web/upstream'].checks, native = reports['web/native'].checks;
@@ -89,6 +100,35 @@ function headlessSummary(reports) {
     nativePluginsAtExit: native.runs.map(run => run.graph.nativePluginsAtExit),
     shutdown: native.checks.shutdown };
 }
+function extensionsSummary(reports, hashes) {
+  return Object.fromEntries(extensionRuns.map(run => {
+    const report = reports[`extensions/${run.name}`];
+    assert.equal(report.browserExecution, false); assert.equal(report.paidModelRequests, false);
+    assert.equal(report.rust, run.rust);
+    assert.equal(report.checks.evidenceUnchanged, true);
+    const tools = report.checks.headless.map(item => { assert.equal(item.toolCalled, true); return item.tool; });
+    assert.deepEqual(tools, run.rust ? ['cordis_greet','rust_text_analyze'] : ['cordis_greet']);
+    const web = report.checks.web;
+    for (const key of ['standardPreset','toolCalls','invalidConfigurationRejected','configurationUpdated',
+      'toolFailureRecovered','cancelled','unloadedToolAbsent','reenabledToolCalled']) assert.equal(web[key], true, key);
+    assert.equal(web.rustToolCalled, run.rust);
+    assert.equal(report.processes.length, run.rust ? 3 : 2);
+    for (const process of report.processes) {
+      assert.equal(process.code, 0); assert.equal(process.signal, null); assert.equal(process.forced, false);
+      assert.equal(process.singleContext, true); assert.equal(process.registryEmpty, true);
+      if (run.backend === 'native') assert.equal(process.nativePluginsAtExit, 0);
+    }
+    assert(report.checks.persistence.cancelledToolResult);
+    assert.deepEqual(report.diagnostics, []);
+    if (run.rust) {
+      assert.equal(report.rustAddon.manifestSha256, hashes[addonEvidenceRelativePath]);
+      assert.equal(report.rustAddon.binarySha256, hashes[addonRelativePath]);
+    }
+    return [run.name, {tools, web, processes:report.processes.map(({runtime,...summary}) => summary),
+      persistence: {sessions:report.checks.persistence.sessions,cancelledToolResult:true},
+      ...(run.rust ? {rustAddon:report.rustAddon} : {})}];
+  }));
+}
 async function checkedExecution(hashes) {
   assert.deepEqual(Object.keys(hashes ?? {}).sort(), executionFiles, 'Incomplete official execution evidence');
   for (const path of executionFiles) assert.equal(await hash(path), hashes[path], `Execution evidence changed: ${path}`);
@@ -102,6 +142,15 @@ async function checkedExecution(hashes) {
     assert.equal(evidence.logSha256, hashes[evidence.log]);
     reports[`${kind}/${backend}`] = evidence;
   }
+  for (const run of extensionRuns) {
+    const file = `.cache/official-extensions/${run.name}.json`;
+    const report = JSON.parse(await readFile(resolve(root,file),'utf8'));
+    assert.equal(report.status,'passed'); assert.equal(report.backend,run.backend);
+    assert.equal(report.evidence,'installed-artifacts'); assert.equal(report.releaseAcceptance,false);
+    assert.equal(report.log,`.cache/official-extensions/${run.name}.log`);
+    assert.equal(report.logSha256,hashes[report.log]);
+    reports[`extensions/${run.name}`]=report;
+  }
   const runs = JSON.parse(await readFile(resolve(root, '.cache/official/validation-runs.json'), 'utf8'));
   assert.equal(runs.length, expectedCommands.length);
   for (let index = 0; index < runs.length; index++) {
@@ -110,7 +159,7 @@ async function checkedExecution(hashes) {
   }
   return reports;
 }
-const schema = 'cordis-harness.official-validation/v1';
+const schema = 'cordis-harness.official-validation/v2';
 assert(process.argv.length <= 3 && (!process.argv[2] || process.argv[2] === '--check'), 'Usage: record-official-validation.mjs [--check]');
 if (process.argv[2] === '--check') {
   const report = JSON.parse(await readFile(reportPath, 'utf8'));
@@ -124,19 +173,23 @@ if (process.argv[2] === '--check') {
   const evidence = await checkedExecution(report.executionHashes);
   assert.deepEqual(report.web, webSummary(evidence), 'Official Web summary differs from execution evidence');
   assert.deepEqual(report.headless, headlessSummary(evidence), 'Official headless summary differs from execution evidence');
+  assert.deepEqual(report.extensions,extensionsSummary(evidence,report.executionHashes));
+  await verifyRustAddon();
   await verifyOfficial();
   console.log('Official-mode validation matches source, installed artifacts, execution logs, and environment. Hash check only.');
 } else {
   await mkdir(resolve(root, '.cache/official'), { recursive: true });
   const report = { schema, status: 'running', environment: env(), startedAt: new Date().toISOString(),
-    scope: 'Official npm Web/standard and headless; only Node-host Cordis replaced. Browser Cordis remains official JavaScript.',
+    scope: 'Official npm Web/standard and headless; only Node-host Cordis replaced. Browser Cordis remains official JavaScript. Includes JS/Rust extension tools on the official Loader and AgentLoop.',
     proofExecuted: false, releaseAcceptance: false, paidModelRequests: false, browserExecution: false };
   await writeFile(reportPath, JSON.stringify(report, null, 2) + '\n');
   try {
     await verifyOfficial();
+    await verifyRustAddon();
     const before = await sources(), installEvidenceSha256 = await hash(evidencePath);
+    const addonHashes = Object.fromEntries(await Promise.all([addonEvidenceRelativePath,addonRelativePath].map(async file=>[file,await hash(file)])));
     const reports = {}, executionHashes = {}, runs = [];
-    runs.push(await execute(process.execPath, ['--test', 'tests/official/bootstrap.test.mjs', 'tests/official/roster.test.mjs']));
+    runs.push(await execute(process.execPath, officialUnitTests));
     for (const kind of ['web', 'headless']) for (const backend of ['upstream', 'native']) {
       console.log(`Checking official ${kind} with ${backend} Cordis...`);
       runs.push(await execute(process.execPath, [`scripts/check-official-${kind}.mjs`, '--backend', backend]));
@@ -150,6 +203,21 @@ if (process.argv[2] === '--check') {
       assert.equal(evidence.logSha256, await hash(evidence.log));
       executionHashes[evidence.log] = evidence.logSha256;
     }
+    for (const run of extensionRuns) {
+      console.log(`Checking official extensions with ${run.name}...`);
+      runs.push(await execute(process.execPath,extensionCommand(run),300000));
+      const file=`.cache/official-extensions/${run.name}.json`;
+      const evidence=JSON.parse(await readFile(resolve(root,file),'utf8'));
+      reports[`extensions/${run.name}`]=evidence;
+      executionHashes[file]=await hash(file);
+      executionHashes[evidence.log]=await hash(evidence.log);
+    }
+    await verifyRustAddon();
+    for (const [file,expected] of Object.entries(addonHashes)) {
+      assert.equal(await hash(file),expected,`Addon changed during validation: ${file}`);
+      executionHashes[file]=expected;
+    }
+    const extensions=extensionsSummary(reports,executionHashes);
     const web = webSummary(reports), headless = headlessSummary(reports);
     await verifyOfficial();
     assert.equal(await hash(evidencePath), installEvidenceSha256, 'Installation changed during execution');
@@ -160,9 +228,9 @@ if (process.argv[2] === '--check') {
     await checkedExecution(executionHashes);
     Object.assign(report, { status: 'passed', checkedAt: new Date().toISOString(),
       sourceHashes: before, sourceFingerprint: digest(JSON.stringify(before)), installEvidenceSha256, executionHashes,
-      web, headless });
+      web, headless, extensions });
     await writeFile(reportPath, JSON.stringify(report, null, 2) + '\n');
-    console.log(`Recorded official Web/standard and headless acceptance for both backends; ${web.activeEntries} active default Web entries.`);
+    console.log(`Recorded official Web/standard, headless and JS/Rust extensions acceptance; ${web.activeEntries} active default Web entries.`);
   } catch (error) {
     await writeFile(reportPath, JSON.stringify({ ...report, status: 'failed', error: error.stack ?? String(error) }, null, 2) + '\n');
     throw error;

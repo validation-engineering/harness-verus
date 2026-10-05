@@ -12,7 +12,8 @@
     "cordis-harness": "src/cli.mjs"
   },
   "exports": {
-    "./plugin-api": "./src/plugin-api.mjs"
+    "./plugin-api": "./src/plugin-api.mjs",
+    "./official-plugin-api": "./src/official-plugin-api.mjs"
   },
   "scripts": {
     "bootstrap": "node scripts/bootstrap.mjs",
@@ -27,7 +28,12 @@
     "official:install": "node scripts/install-official.mjs",
     "official:verify": "node scripts/verify-official.mjs",
     "official": "node scripts/official.mjs",
-    "official:check": "node scripts/record-official-validation.mjs"
+    "official:check": "node scripts/record-official-validation.mjs",
+    "rust:build": "node scripts/build-rust-addon.mjs",
+    "rust:verify": "node scripts/verify-rust-addon.mjs",
+    "rust:test": "node --test tests/official/rust-addon.test.mjs",
+    "official:extensions": "node scripts/official-extensions.mjs",
+    "official:extensions:check": "node scripts/check-official-extensions.mjs --backend native --rust"
   },
   "dependencies": {
     "@cordis-verus/compat-cordis": "file:.vendor/cordis/cordis-verus-compat-cordis-0.1.0.tgz",

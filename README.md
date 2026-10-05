@@ -27,6 +27,25 @@ npm run official -- headless --json "阅读当前项目并概述其用途"
 
 默认 Web、完整插件清单、实际 native Context、官方工具和跨进程恢复的验收见[官方模式](docs/official-mode.md)。这证明锁定版本和已测试流程的宿主替换，不代表所有第三方插件或浏览器运行时均已形式验证。
 
+## 在官方模式中组合 JS 与 Rust 插件
+
+下面的入口保留官方默认组合，额外加载 `cordis_greet` 和 `rust_text_analyze`。
+Rust 工具通过同一个 native Driver 提供服务；JS 桥使用官方工具 API 注册。
+
+```sh
+npm run official:install -- --offline
+npm run rust:build -- --offline
+npm run official:extensions
+# 或使用原版 headless：
+npm run official:extensions -- headless --json "统计文本 Hello 世界的字符和字节数"
+```
+
+首次启动为 Web/headless 创建官方 profile，默认使用独立数据目录
+`.cordis-harness/official-extensions`；已有 profile 文件保留不覆盖。
+官方插件面板可以禁用、启用插件，Settings 可以修改问候前缀。
+真实模型仍需用户配置；本项目的自动验收使用本机模型 fixture。
+示例、配置和验证范围见[官方扩展指南](docs/official-extensions.md)。
+
 ## 精简组合与离线 demo
 
 当前工作目录已经安装、构建完成：
@@ -49,7 +68,7 @@ npm test
 npm run demo
 ```
 
-缺少公开 npm 依赖缓存时可使用 `--online`。当前还没有公开 runtime 下载服务；`sources.lock.json` 已记录干净的核心源码提交，可按 `baseCommit` 恢复对应源码。安装仍需经过验收的本地制品，精确字节由源码指纹和制品哈希绑定；重新构建需刷新来源锁并重新验收。两个仓库目前均为私有，需要相应访问权限。详见[独立构建](docs/build.md)。
+缺少公开 npm 依赖缓存时可使用 `--online`。当前还没有公开 runtime 下载服务；`sources.lock.json` 记录核心基准提交、工作树状态和精确源码指纹；只有 `workingTreeDirty: false` 时才可仅按 `baseCommit` 恢复全部输入。安装仍需经过验收的本地制品，精确字节由源码指纹和制品哈希绑定；重新构建需刷新来源锁并重新验收。两个仓库目前均为私有，需要相应访问权限。详见[独立构建](docs/build.md)。
 
 ## 使用真实模型
 
@@ -100,6 +119,8 @@ npm start -- inspect work-1 --config examples/deepseek.config.json
 npm run verify
 npm test
 node scripts/record-validation.mjs
+# 官方默认组合和 JS/Rust 扩展（先完成 official:install、rust:build）
+npm run official:check
 ```
 
 测试覆盖真实官方循环、跨进程会话恢复、官方 HTTP adapter、插件增删重载、路径/UTF-8/取消边界，以及来源和安装产物被改动后的拒绝行为。[验收记录](docs/validation-report.json)绑定本项目源文件与构建证据；它不是新的 Verus 证明。

@@ -2,12 +2,12 @@
   "schema": "cordis-harness.sources/v1",
   "cordis": {
     "repository": "https://github.com/Stool233/cordis-verus.git",
-    "baseCommit": "19172aa55f56173b18360cb248d983ecc9a2d8ba",
-    "workingTreeDirty": false,
+    "baseCommit": "53c58ce548a35ef16c6ca445bc8353540e276605",
+    "workingTreeDirty": true,
     "sourceIdentity": "verified working-tree file hashes; baseCommit is metadata, not snapshot identity",
-    "sourceFingerprint": "cd1f6d1748381393f6d3caef61882c4c80d1cdb044414561556fed0746d0bd54",
-    "developmentReportSha256": "2e8f5ae4591512924570cabf4836d43e881e0bbc9af49044ea00370e0d991e52",
-    "packageReportSha256": "8eac5cdebb94e6b4cbc10971d91f4f1e2407408ae2a30ce52450b1a7bb1a5e93",
+    "sourceFingerprint": "f69dbdf0e47d7e9553cfa780cbc468becda68e7331f00d8345fa65be805fa72a",
+    "developmentReportSha256": "9dc8b4297dbd7853b67d9e3ff65414c4b02de34a9424904d2891cbf8b8334873",
+    "packageReportSha256": "d9ff772d117c1b70731c9b8f5f4bdf944f776b496a5aeceee62867340e9ee096",
     "developmentAcceptance": true,
     "releaseAcceptance": false,
     "paperCompletion": false,
@@ -26,19 +26,19 @@
         "name": "@cordis-verus/compat-cordis",
         "version": "0.1.0",
         "file": ".vendor/cordis/cordis-verus-compat-cordis-0.1.0.tgz",
-        "sha256": "a4a903540be905094f0d7ea394e6196afcc5cf3a53017ceae5a6f5dbc52f494f"
+        "sha256": "702b5d7a6bafe927fe513819f5c1a43689b4569a10d457354e91d33e679bcf1c"
       },
       {
         "name": "@cordis-verus/compat-harness",
         "version": "0.1.0",
         "file": ".vendor/cordis/cordis-verus-compat-harness-0.1.0.tgz",
-        "sha256": "5d10e38ec138468373758e5bbe2b45f8a68a37705504a9cd4c2f244bf92b6f60"
+        "sha256": "913b42b90cd6d1254b45ff922cdc91b693442e9990c0517f2b0d5efd750cc3e0"
       },
       {
         "name": "@cordis-verus/compat-loader",
         "version": "0.1.0",
         "file": ".vendor/cordis/cordis-verus-compat-loader-0.1.0.tgz",
-        "sha256": "b42c61bf73b6fd593be3ec246b0ecb527f3316b0a1a15e30920e37561ed07803"
+        "sha256": "bd86dae6145727a93b898c306e9dff13da74a673582264bec64a63fcaf164051"
       }
     ]
   },

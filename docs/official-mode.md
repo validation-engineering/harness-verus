@@ -40,6 +40,7 @@ npm run official -- headless --session-id <真实已有会话ID> "继续上次�
 
 ```sh
 npm run official:verify
+npm run rust:build -- --offline
 npm run official:check
 node scripts/record-official-validation.mjs --check
 ```
@@ -55,6 +56,8 @@ npm run official:install -- --refresh-runtime-lock --offline
 验收分别运行原版 Cordis baseline 和 native 宿主，保留未经修改的官方入口与默认业务组合；测试通过官方开关关闭 telemetry，并隔离配置和凭据。Web 检查真实 HTTP 登录令牌交换、官方 HTML/JS/CSS、客户端模块、插件清单、默认 presets 和关闭；专用观察器记录实际 native Context 与插件图，关闭后检查清理结果。Headless 仅把模型端点改为本机 HTTP/SSE fixture，执行原版工具并在另一个进程恢复官方持久会话。
 
 插件清单逐条比较顺序、名称、启用状态和激活状态；只有官方目录选择器自动创建的两个 native 插件按模块名对应随机实例 ID，其余 ID 严格一致，原始 ID 全部保存在子报告中。
+
+完整 gate 也验证[官方模式的 JS/Rust 扩展](official-extensions.md)，需要先构建来源匹配的示例 addon。默认启动仍使用随包核心；扩展启动器显式选择已验证的用户 addon。
 
 结果保存在 [官方模式验收记录](official-validation-report.json)，绑定源文件、完整安装与各项执行日志。HTTP 检查与浏览器交互验收分开记录；本机结果不代表跨平台发布、任意插件兼容、任意模型效果或整篇论文 refinement 完成。
 

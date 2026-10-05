@@ -6,9 +6,9 @@
 
 ## 第一次准备
 
-需要一个已完成开发验收、持有三个 npm 制品和锁定官方上游 checkout 的 `cordis-verus` 工作目录。当前 `sources.lock.json` 的 `workingTreeDirty` 为 `false`，`baseCommit` 对应已提交的核心源码；源码指纹和 tarball SHA-256 仍是精确内容校验依据。
+需要一个已完成开发验收、持有三个 npm 制品和锁定官方上游 checkout 的 `cordis-verus` 工作目录。`sources.lock.json` 的 `baseCommit` 记录基准提交；`workingTreeDirty: true` 表示还包含该提交之后的工作区变更，不能仅检出该提交冒充匹配输入。源码指纹和 tarball SHA-256 是精确内容校验依据。
 
-新机器先克隆私有的 `Stool233/cordis-verus` 和 `Stool233/cordis-harness`，将核心切换到 `sources.lock.json` 的 `baseCommit`，按核心 README 准备锁定工具链与依赖并运行 `python3 scripts/record-development.py`。还需准备 `deepseekHarness.revision` 对应的干净官方 checkout，放在核心的 `upstream/deepseek-harness` 或用 `--upstream-source` 指定。重新构建会生成新的本机验收记录，制品也可能不同，首次导入应显式使用 `--refresh-lock` 并重新完成本应用验收；不要求新构建冒充原机器的制品字节。
+新机器先克隆私有的 `Stool233/cordis-verus` 和 `Stool233/cordis-harness`，在 `workingTreeDirty: false` 时将核心切换到 `sources.lock.json` 的 `baseCommit`；开发中的 dirty 快照需要保留对应工作区和制品。按核心 README 准备锁定工具链与依赖并运行 `python3 scripts/record-development.py`。还需准备 `deepseekHarness.revision` 对应的干净官方 checkout，放在核心的 `upstream/deepseek-harness` 或用 `--upstream-source` 指定。重新构建会生成新的本机验收记录，制品也可能不同，首次导入应显式使用 `--refresh-lock` 并重新完成本应用验收；不要求新构建冒充原机器的制品字节。
 
 若已有锁中记录的已验收制品与缓存，可直接：
 
@@ -59,3 +59,15 @@ LLM 的 attribution 使用 `createRequire(import.meta.url)('../package.json')`�
 `tests/bootstrap.test.mjs` 用隔离的真实 npm cache 验证同版本 tarball 替换、拒绝未经确认的更新、离线重装和失败锁回滚。`tests/build.test.mjs` 把独立项目输入复制到临时目录，验证可移植的解包安装，并修改输入、输出、tarball、runtime 文件和锁文件来确认旧证据不能继续通过。它不修改工作目录中的实际构建结果。
 
 这些检查验证来源闭包与本机组装，不证明任意 JavaScript 插件、网络 provider、文件系统或模型行为，也不代表完整 Harness 兼容、全部论文 refinement 或跨平台发布验收。
+
+## 官方模式 Rust 扩展
+
+完成核心导入和 `npm run official:install -- --offline` 后，运行
+`npm run rust:build -- --offline`。独立 Cargo crate 位于 `native/text-analysis`，
+构建使用相邻 `../cordis-verus` 的匹配 native 源码及锁定工具链，输出仅写入 `.cache/rust-addon`。
+`npm run rust:verify` 核对 addon 源码、Cargo.lock、core 来源、已安装 facade、当前平台和实际二进制。
+运行时不需要相邻 core checkout；新构建仍需要该源码。
+
+`npm run official:extensions` 在原版 Web/headless profile 中添加 JS/Rust 工具；
+普通 `npm run official` 保持使用默认发行 addon。`npm run official:check` 验证两种入口，
+原来的精简 CLI `npm test`/demo 不要求构建这个可选 addon。详见[扩展指南](official-extensions.md)。
