@@ -10,6 +10,7 @@
   "dependencies": {
     "@deepseek-ai/dsh": "0.2.0-rc.2",
     "@cordis-verus/compat-cordis": "file:../.vendor/cordis/cordis-verus-compat-cordis-0.1.0.tgz",
-    "@cordis-verus/compat-harness": "file:../.vendor/cordis/cordis-verus-compat-harness-0.1.0.tgz"
+    "@cordis-verus/compat-harness": "file:../.vendor/cordis/cordis-verus-compat-harness-0.1.0.tgz",
+    "@cordis-verus/compat-loader": "file:../.vendor/cordis/cordis-verus-compat-loader-0.1.0.tgz"
   }
 }

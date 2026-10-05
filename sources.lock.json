@@ -2,12 +2,12 @@
   "schema": "cordis-harness.sources/v1",
   "cordis": {
     "repository": "https://github.com/Stool233/cordis-verus.git",
-    "baseCommit": "b7d716994010245346a59bced6212f22dee19601",
+    "baseCommit": "51c84b40440ccee4ecd861e4dd8f5a0a82425deb",
     "workingTreeDirty": false,
     "sourceIdentity": "verified working-tree file hashes; baseCommit is metadata, not snapshot identity",
-    "sourceFingerprint": "d0bb5931a6e808f65b6e861ef293d4fc5b8809d3b76f76fc694536b82a2d7649",
-    "developmentReportSha256": "69fff81d6503826a8cbb67ce3ca01c767553cf7925dbf09b5a53518e65de20ca",
-    "packageReportSha256": "9c5a05743aab76af25e8392469707c9077e8f984c0bf364624171f16956b597f",
+    "sourceFingerprint": "e5b45c0236124769abd5dbeff2a306a8ddaebeb160aac99c0272dc24b0948dd6",
+    "developmentReportSha256": "52ea8ed151fd10b94a50720c4fb9196d59293da00a7e5c3352c73c225406ad98",
+    "packageReportSha256": "15a0ab11df6822312d4b60bd00a0dea336c68b8c2dec3d84015b23e847a9f7da",
     "developmentAcceptance": true,
     "releaseAcceptance": false,
     "paperCompletion": false,
@@ -26,19 +26,19 @@
         "name": "@cordis-verus/compat-cordis",
         "version": "0.1.0",
         "file": ".vendor/cordis/cordis-verus-compat-cordis-0.1.0.tgz",
-        "sha256": "b60c2ae5b8d1a30501118792dfcb28543304cfb78576c561b1a82f8bf54a5ae6"
+        "sha256": "abd62fbdfcf0553fa55e3ec2af65a91d64a8b5a21490bb662cdc26f26a68829e"
       },
       {
         "name": "@cordis-verus/compat-harness",
         "version": "0.1.0",
         "file": ".vendor/cordis/cordis-verus-compat-harness-0.1.0.tgz",
-        "sha256": "913b42b90cd6d1254b45ff922cdc91b693442e9990c0517f2b0d5efd750cc3e0"
+        "sha256": "af6d6e0552fa6abbce49f93869cb7d79a1948587d0eb961ffe17dec707bea16d"
       },
       {
         "name": "@cordis-verus/compat-loader",
         "version": "0.1.0",
         "file": ".vendor/cordis/cordis-verus-compat-loader-0.1.0.tgz",
-        "sha256": "bd86dae6145727a93b898c306e9dff13da74a673582264bec64a63fcaf164051"
+        "sha256": "849a36f6c6e28895d81889c5c0dde21ef3d0278fc8e1e01b1579ca5a71a22c89"
       }
     ]
   },

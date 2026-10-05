@@ -8,7 +8,7 @@ import { fileURLToPath, pathToFileURL } from 'node:url';
 export const projectRoot = fileURLToPath(new URL('../', import.meta.url));
 export const runtimeRoot = path.join(projectRoot, 'official-runtime');
 export const evidencePath = path.join(projectRoot, '.cache/official/install-manifest.json');
-export const runtimeNames = ['@cordis-verus/compat-cordis', '@cordis-verus/compat-harness'];
+export const runtimeNames = ['@cordis-verus/compat-cordis', '@cordis-verus/compat-harness', '@cordis-verus/compat-loader'];
 export const officialVersion = '0.2.0-rc.2';
 export const hash = async file => createHash('sha256').update(await readFile(file)).digest('hex');
 export const json = async file => JSON.parse(await readFile(file, 'utf8'));

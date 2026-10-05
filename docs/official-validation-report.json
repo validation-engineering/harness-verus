@@ -6,13 +6,13 @@
     "platform": "darwin",
     "architecture": "arm64"
   },
-  "startedAt": "2026-10-05T15:22:34.537Z",
+  "startedAt": "2026-10-05T17:53:19.871Z",
   "scope": "Official npm Web/standard and headless; only Node-host Cordis replaced. Browser Cordis remains official JavaScript. Includes JS/Rust extension tools on the official Loader and AgentLoop.",
   "proofExecuted": false,
   "releaseAcceptance": false,
   "paidModelRequests": false,
   "browserExecution": false,
-  "checkedAt": "2026-10-05T15:23:41.383Z",
+  "checkedAt": "2026-10-05T17:54:39.049Z",
   "sourceHashes": {
     ".env.example": "c46d5e44193b5debefa6ea77145ce1ceae68199dd2d97828f3dfea2fde4ca843",
     ".gitignore": "236b43ba36efe8d61cea486f267d7b5acf80c98aab78c832061671a60f04600a",
@@ -20,10 +20,11 @@
     "CONTRIBUTING.md": "fd681b5d11ca1e82a805aa9a4857694d5b111c82a35004ffdb7b132050a5b5e7",
     "LICENSE": "904e81164dc8b217b6348ab5467a12a1fc02bba2182a756d85b49d5bac779f0f",
     "NOTICE": "4c49220e1431bcc6d960a38cc28e11fbbc90989a2890ba75580e1034b050db60",
-    "README.md": "45b1b638d5406a541dfb0446a95baff0ca56cf5fa5729c0a9d7a6af19bfaf3bb",
+    "README.md": "77a84607f9f927f537ee82e2785992975c428ad35c1925ce11a9fedeea06f00d",
     "docs/architecture.md": "341b8b27a01eceaaaa30e2f4be34e3ece0290548e0957a29f5d36d760985aa7b",
     "docs/build.md": "f62daac1270af2ba69088754a28e334c6dd372e089acfe09c3be650fbdec8924",
-    "docs/official-extensions.md": "af1f7fe78cc9690562cb90bbe5e2a4a469ad1af2c593b057117fd34a0151e522",
+    "docs/loader-transactions.md": "08c4210ee7ad8bd9efb3391f0b662e19b49ad73e7e07e1592a194c16d5cda9da",
+    "docs/official-extensions.md": "c76e61f7492147b4a792d54b832f833380f171179afa9b27dba9dee788097706",
     "docs/official-mode.md": "e92eaa6b969af7bd347a0b235f586a4e4d69a3070cabda01e7b917c55b858254",
     "docs/performance.md": "4c45ff27d8c78de2e0ae32a081ad0470ee697aa6a32a46cb0f0576367dd0a748",
     "docs/performance/2026-10-05-installed-artifacts.json": "2672f9d2d0f6884f19e7166204ffa78f9be073ce165b1ca75b5fd2b40c8ef70b",
@@ -39,10 +40,10 @@
     "native/text-analysis/README.md": "842ac14e59ca24654df18b26cc3a4234ec15fee5c46de7a747eeb9eaa0afc229",
     "native/text-analysis/build.rs": "fcbd1ff3f627a7553fa1704dc6f558998daff8bc256015c37aace62cc49ce584",
     "native/text-analysis/src/lib.rs": "dd15b25c5edaf436f5e1cf7da7b6c8bc8a323968c3ecb263341034086f04387d",
-    "official-runtime/package-lock.json": "ce4b6259920fbb83db1c5b62b94844ae3732af24a31d7e8489ca6cced5eb73ab",
-    "official-runtime/package.json": "6cb45ee47b12d48fcc763bd55c55257bcfa961346214355fb9b84986fd66132c",
-    "package-lock.json": "62a87c041ff86da46fdc71959f0b6a70b6124ae2478b5af64ccbae4579d7fb8a",
-    "package.json": "319f885272bdf9d306f1f1bdd2aa2da96ec7ebd301abb582ffa68b467046a101",
+    "official-runtime/package-lock.json": "56b0517828e9c01f45cd420d76dbe3452d81c7a57334bcbf0ce75623c180ad01",
+    "official-runtime/package.json": "e7ec57e2a1112bdbd8c9b936c8a9c423bfa8694145dda7c205af77ef862a5426",
+    "package-lock.json": "c36cae7592e615bdc7872c5c3fd76c6c6dee7d1e773d0b4518605ed0d5b6c24c",
+    "package.json": "71bae3ec8398bbab4db77b52e7c9a22d8892469b708843e50551f3cd755b8f3d",
     "plugins/hello.mjs": "98313c28fc5253db0d4c233afda8e335f9731d59ce387716b763a5fd79502ee8",
     "scripts/bootstrap.mjs": "e89ec3b4a77233f2cb5728f728f1cb539a11b9e1a21c94c6581ae8feeb2dfc3f",
     "scripts/build-rust-addon.mjs": "ccfdf70f8fb7b93b93e69fb7a71c5116a202d46e465e0331b213c9788284cd39",
@@ -58,14 +59,15 @@
     "scripts/official-roster.mjs": "d4b58b9a66db9a48348ae8ed124f4625fb4494c22144a967e83f03f33ddbf872",
     "scripts/official-test-entry.mjs": "2de22d8f6d9b087de79ed480427603158432c9f908abbcf380f2490f3276cba0",
     "scripts/official.mjs": "4a3db9146c5f5b0eb9314e739377f57853d4503ee29f3e074d55baa51dc9d41a",
-    "scripts/record-official-validation.mjs": "545e2a9719625dfb5e2b6d2bfaf1ccdb4cdc4ed329c136e2478fc7fc85b7b219",
+    "scripts/record-official-validation.mjs": "7aa5f91769952fa151c1088b4ad3b01a5c618e3bd15579a394fb52feed0ddb33",
     "scripts/record-validation.mjs": "e4c7ad557532b082d913322a1667f5eb7e2a9da618d517bab192b22d31542878",
     "scripts/verify-install.mjs": "5db095f5cbe0027afa5d26ab2a936767ca84b6ab9c151281787b514c16f2fe90",
-    "scripts/verify-official.mjs": "9d8af26f2ef76cd838c6a935a15d3f202689ea6f098eaa6f2249f672b7fbae1a",
+    "scripts/verify-official.mjs": "ba42afd072cad42236c4f071420681d4d3978be6023b53ffbffad6695f6ac79e",
     "scripts/verify-rust-addon.mjs": "3a65a340ff79f7e0413d9544a26d4e0de02afc14303a97ba675edc2740e7cabd",
-    "sources.lock.json": "c044854b0885d35488610c3e5ce2e95a9f04d39f1951edc55fc6132f9ce235bb",
+    "sources.lock.json": "891b8434c0153d4c793b2c8f48c0c97b6515faf998b1e33ac46350fe4215dd7c",
     "src/app.mjs": "aa6c60705efa1cb7bedaea78816e39cc3474127d9031c11644bd5a019051aab0",
     "src/cli.mjs": "2ea870a39af12a7de0bd53685f8b06f5a4d0581b97f5aa6297c8486500e6eab8",
+    "src/official-loader-api.mjs": "161fb3b01afa667e184b712df796de91969817b7d94f874cb7e5dfbe1107d684",
     "src/official-plugin-api.mjs": "3442a9341b41291b875bfe163e65012bca4959656564d2fc15158b279001cc75",
     "src/plugin-api.mjs": "d313fbd7b5398c29cf154e87af4c2e06557ba1ccded00486d77d951899f1a359",
     "src/plugin-manager.mjs": "dd7e79ac97f44661d17017bd29bc8ba028c31913315e8902255cd5d1b121c1b0",
@@ -85,6 +87,7 @@
     "tests/official/bootstrap.test.mjs": "26edfb236d5e2787ee2faaf9e0b74d6a6e4193081f2b71fe68476e80f0879f8d",
     "tests/official/extension-loader-mutation.test.mjs": "fd3f659e494060c5445d8b3bd511bd034777dca6b22087ed0e4d68b2535b2614",
     "tests/official/extensions-launcher.test.mjs": "400d6e5f41bd3b4cfe42770bc965aaf3b12e34f0dc4c497e6f0d3ad3713aba69",
+    "tests/official/loader-transactions.test.mjs": "f8231761fcb15a9abdb159320e6bb225baa920bef71e6bd135cab97386d70cb0",
     "tests/official/roster.test.mjs": "ea1023f740890a6fe02097edf82e8cf228c91d349774b686d6a8e951242b0972",
     "tests/official/rust-addon.test.mjs": "37570d52f691e212155219d4cfa0328955a9cd528b4c29a74dfdf069786e83b2",
     "tests/provider.test.mjs": "7432c74a3cc356a462bb0b70b04792dd4718fbcd9b1feb5997a7f9e55ecc4930",
@@ -97,26 +100,26 @@
     "third-party/esbuild.LICENSE": "b40ec5baec7bb34fa5b1c09521fa3cd52d5fad7adafed74932a2010d3612a681",
     "third-party/eventsource-parser.LICENSE": "835eb611a23301b27115ca1be9f754c876e643ceb7fe63049c6b50609a1cafeb"
   },
-  "sourceFingerprint": "017b0e9d56a85d9fee4c29fd65968cf833caa125314db0b945f38e72ec7fa77e",
-  "installEvidenceSha256": "747ca424923ae6d22c952c65f79f45ff87c11bf0f8e7360c54c162a5d372da04",
+  "sourceFingerprint": "424c4650bc4d331abc14425dc15bbdbec5fa1c5f1b0267d90ac30e7c06c94df1",
+  "installEvidenceSha256": "5f7d04e6cb1ebfc3e019b46e4a1b20467890849953067b40f987ac1513222975",
   "executionHashes": {
-    ".cache/official-web/upstream.json": "f3d2f923e538288908653e82741b75afde51ed05bf219fa71b8c614936f58249",
-    ".cache/official-web/upstream.log": "13a5e08a0acc9960b47598c06631fd3e682676836edb8a0d9a54185df3d09fa2",
-    ".cache/official-web/native.json": "219c0e807f34f47d343b8ad45309565181bf7363a00c2a521cab3fc6a7f46ccb",
-    ".cache/official-web/native.log": "c51d0a610c6ba93257a665c271e84e6ab533a09e1ffa94279fedb4ef485a4652",
-    ".cache/official-headless/upstream.json": "287720996c7ed96ceebf6c4ecf4469d1e5a04da7192cff39795bdac7ee91b64f",
-    ".cache/official-headless/upstream.log": "c6f0b2b235e8c58ed170b568d512c161f02f4038770130a858bd76ecfc347db9",
-    ".cache/official-headless/native.json": "e66208ebb56caa9091ff4e68c5e5f1b5bb0b0d17ff3a59595c5c9f8795c14ba1",
-    ".cache/official-headless/native.log": "cd7e278117a3cb1e1a6782996ef1d44ec89dabcf381297e9b10bf682513cd1d0",
-    ".cache/official-extensions/upstream.json": "8fe4c1bebbb2ffd80e48e9af6d16dd197a1fc38b28f9e4aa788694338aa76649",
-    ".cache/official-extensions/upstream.log": "629f146f550a9c97313c8980926c40fdeb00fa3b9c2cbb0dedde8ce99070ca4f",
-    ".cache/official-extensions/native.json": "4743b2fb93608a439c94b79c1c67f6a2ffd5b77a6948a1383aeea87c9fb7b0fb",
-    ".cache/official-extensions/native.log": "5ae2bf9a542849a12fe85b2c89015dde42aec92ef3faf626ade888752e55337e",
-    ".cache/official-extensions/native-rust.json": "8ec50891daa0639aea0fd42d70261f7aaaf83d4ab7341575b89375e4be3d7576",
-    ".cache/official-extensions/native-rust.log": "a3ee2aa17f5b4c1e983ce3305b1df230f87d0859a8d4a519b9183f36e0be9139",
-    ".cache/rust-addon/build.json": "85ac573f1caf78432e2e0f9861d962d95d1a7be7fbf69f66968ea703bd207d18",
+    ".cache/official-web/upstream.json": "28a91511fc707d44199d3d150d62f71fe346ce43de0bc333756db0f2baf49f1f",
+    ".cache/official-web/upstream.log": "a40fb9cb2092fb5cc1d59ce5ff0709d8084254dca642fdb853b462cd6f792ae1",
+    ".cache/official-web/native.json": "99d50129f4cedf3ec2aed1e15d4dd6b6f50f2c47dec5849624d6ca8334778a8f",
+    ".cache/official-web/native.log": "cd13a22d29a51301b50bfa683e0ffbe681d9eba3e1e99dfb664c8262b313a34b",
+    ".cache/official-headless/upstream.json": "2fa4a15b1b0290fd3544dc6bffc89c33aaa3773df072c97a45f2ed99dc21fc8a",
+    ".cache/official-headless/upstream.log": "5f89fa4578c6431983a0a93a7c0fe3bf42e2efa3528d75c8d8fec1cc7737d9dc",
+    ".cache/official-headless/native.json": "82e6a71b4238b2e6e339e45da570a79ae98a227b18f6869fb9476943e34ba0d8",
+    ".cache/official-headless/native.log": "5d3b5c24ff71cbbcc4e4dac93a1c98a6fc7f20edd2c4ad73a13facbed3facdcb",
+    ".cache/official-extensions/upstream.json": "e27be8743e9c962ce3e250bfc9961b5319943a60c6a3e80937efd10a8c2ab2c7",
+    ".cache/official-extensions/upstream.log": "234dbafbf0e3bdc04db58bc92093bfd9f491c28ff13c0d1a12b365429e5f0aef",
+    ".cache/official-extensions/native.json": "ade494f5f61c5014a306b769a06daaf15a9c3f1f8753b0b576d4f0c427417e34",
+    ".cache/official-extensions/native.log": "91e4e737913610710d6de5bf21a9911fcfcac4e7891feec36a31888b0948ea9e",
+    ".cache/official-extensions/native-rust.json": "971477d56627ec2acb37937c5e1423ffe9d4644775ad661a7c957334b474ddcc",
+    ".cache/official-extensions/native-rust.log": "06fb117de326b1283d5a25d8b2b4ccfb5326b3203726d489240e7e5c0750d812",
+    ".cache/rust-addon/build.json": "803808564aa364e4e7304b5bc27c47d98d51b06584e692317e3c87621b4a2935",
     ".cache/rust-addon/text-analysis.node": "8727fb543c40ba2db5561cf086a884ad2fd9662ec60504c815e229b762cd3fee",
-    ".cache/official/validation-runs.json": "71ff3519cf41b59ce1cf2b9653077414abb70bad20321e8cfd69e4b1c269c19d"
+    ".cache/official/validation-runs.json": "749a8ac440d11f253bd992570d68fc015ccd4dfa4c53c70e4516ade26ae46089"
   },
   "web": {
     "officialVersion": "0.2.0-rc.2",
@@ -138,7 +141,7 @@
       "code": 0,
       "signal": null,
       "forced": false,
-      "elapsedMs": 332,
+      "elapsedMs": 346,
       "registryEmpty": true
     }
   },
@@ -162,16 +165,16 @@
         "code": 0,
         "signal": null,
         "forced": false,
-        "elapsedMs": 698,
-        "afterFinalMs": 61
+        "elapsedMs": 744,
+        "afterFinalMs": 66
       },
       {
         "resumed": true,
         "code": 0,
         "signal": null,
         "forced": false,
-        "elapsedMs": 659,
-        "afterFinalMs": 62
+        "elapsedMs": 713,
+        "afterFinalMs": 67
       }
     ]
   },
@@ -197,7 +200,7 @@
           "code": 0,
           "signal": null,
           "forced": false,
-          "elapsedMs": 526,
+          "elapsedMs": 569,
           "singleContext": true,
           "registryEmpty": true
         },
@@ -206,7 +209,7 @@
           "code": 0,
           "signal": null,
           "forced": false,
-          "elapsedMs": 1808,
+          "elapsedMs": 1967,
           "singleContext": true,
           "registryEmpty": true
         }
@@ -237,7 +240,7 @@
           "code": 0,
           "signal": null,
           "forced": false,
-          "elapsedMs": 694,
+          "elapsedMs": 753,
           "nativePluginsAtExit": 0,
           "singleContext": true,
           "registryEmpty": true
@@ -247,7 +250,7 @@
           "code": 0,
           "signal": null,
           "forced": false,
-          "elapsedMs": 2508,
+          "elapsedMs": 3046,
           "nativePluginsAtExit": 0,
           "singleContext": true,
           "registryEmpty": true
@@ -280,7 +283,7 @@
           "code": 0,
           "signal": null,
           "forced": false,
-          "elapsedMs": 2695,
+          "elapsedMs": 2963,
           "nativePluginsAtExit": 0,
           "singleContext": true,
           "registryEmpty": true
@@ -290,7 +293,7 @@
           "code": 0,
           "signal": null,
           "forced": false,
-          "elapsedMs": 2690,
+          "elapsedMs": 2818,
           "nativePluginsAtExit": 0,
           "singleContext": true,
           "registryEmpty": true
@@ -300,7 +303,7 @@
           "code": 0,
           "signal": null,
           "forced": false,
-          "elapsedMs": 4671,
+          "elapsedMs": 5073,
           "nativePluginsAtExit": 0,
           "singleContext": true,
           "registryEmpty": true
@@ -311,7 +314,7 @@
         "cancelledToolResult": true
       },
       "rustAddon": {
-        "manifestSha256": "85ac573f1caf78432e2e0f9861d962d95d1a7be7fbf69f66968ea703bd207d18",
+        "manifestSha256": "803808564aa364e4e7304b5bc27c47d98d51b06584e692317e3c87621b4a2935",
         "coreSourceDigest": "e1de3fc444464855a0810090d0e4ce9692dcde48e54e8d5b72b5970c3f19ef3d",
         "binarySha256": "8727fb543c40ba2db5561cf086a884ad2fd9662ec60504c815e229b762cd3fee"
       }

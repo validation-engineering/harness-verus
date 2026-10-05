@@ -13,7 +13,8 @@
   },
   "exports": {
     "./plugin-api": "./src/plugin-api.mjs",
-    "./official-plugin-api": "./src/official-plugin-api.mjs"
+    "./official-plugin-api": "./src/official-plugin-api.mjs",
+    "./official-loader-api": "./src/official-loader-api.mjs"
   },
   "scripts": {
     "bootstrap": "node scripts/bootstrap.mjs",

@@ -39,6 +39,15 @@ Use a real absolute file URL or an installed package specifier. Existing profile
 
 A `--patch` overlay also works for fixed configuration, but it takes priority over profile edits. For editable settings and enablement, put the insertion in the profile's own patch. Launcher flags precede app flags: `web --patch <file> --no-open`, not `web --no-open --patch <file>`. The slim `harness.config.json` does not configure official profiles.
 
+## Host-owned Loader edits
+
+For an explicit host operation against an owned official Include file, use
+`LoaderTransactions` from `@cordis-harness/app/official-loader-api`. Its
+create/update/remove calls join the native domain queue and wait for actual
+Include persistence as well as lifecycle completion. This does not transparently
+wrap the Settings UI or ConfigEditor's separate profile transaction. See the
+[transaction contract and real-file regressions](loader-transactions.md).
+
 ## Rust tool
 
 [`rust-text-analysis.mjs`](../examples/official/rust-text-analysis.mjs) mounts the `harness.text-analysis` Rust factory and registers `rust_text_analyze({ text })`. The factory must be present in the verified native addon selected before the official Context is created. Loading the bridge with an unextended host fails explicitly.

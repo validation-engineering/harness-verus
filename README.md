@@ -46,6 +46,8 @@ npm run official:extensions -- headless --json "统计文本 Hello 世界的字�
 真实模型仍需用户配置；本项目的自动验收使用本机模型 fixture。
 示例、配置和验证范围见[官方扩展指南](docs/official-extensions.md)。
 
+宿主还可通过[官方 Loader 事务接口](docs/loader-transactions.md)显式创建、更新和删除条目，等待插件生命周期与实际 Include 文件写入完成；默认 UI 的 ConfigEditor 外层事务尚未自动接入。
+
 ## 精简组合与离线 demo
 
 当前工作目录已经安装、构建完成：
@@ -125,6 +127,6 @@ npm run official:check
 
 测试覆盖真实官方循环、跨进程会话恢复、官方 HTTP adapter、插件增删重载、路径/UTF-8/取消边界，以及来源和安装产物被改动后的拒绝行为。[验收记录](docs/validation-report.json)绑定本项目源文件与构建证据；它不是新的 Verus 证明。
 
-优化编译和静止图复用已在实际安装的官方组合中验收。本机 Web 完整流程从单次 81.46 秒降至三次中位数 2.59 秒；同期原版为 1.86 秒。测量范围、全部样本及限制见[性能观测](docs/performance.md)。
+2026-10-05 的优化编译和静止图复用已在实际安装的官方组合中验收。本机 Web 完整流程从单次 81.46 秒降至三次中位数 2.59 秒；同期原版为 1.86 秒。测量范围、全部样本及限制见[性能观测](docs/performance.md)。
 
 长期还需要：更多第三方插件与模块图 HMR、原生 Rust typed 动态服务迁移、跨平台制品、长时间运行与大历史性能、完整宿主 refinement 和发布门禁。这个项目给这些工作提供实际使用场景。
