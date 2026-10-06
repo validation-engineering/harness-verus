@@ -46,7 +46,7 @@ npm run official:extensions -- headless --json "统计文本 Hello 世界的字�
 真实模型仍需用户配置；本项目的自动验收使用本机模型 fixture。
 示例、配置和验证范围见[官方扩展指南](docs/official-extensions.md)。
 
-宿主还可通过[官方 Loader 事务接口](docs/loader-transactions.md)显式创建、更新和删除条目，等待插件生命周期与实际 Include 文件写入完成；默认 UI 的 ConfigEditor 外层事务尚未自动接入。
+默认 UI 的 ConfigEditor、Include 文件刷新和 HMR 配置队列现在统一进入 native 域事务，在文件锁和写入前接纳，并等待生命周期、实际写入及官方回滚完成。宿主还可通过[官方 Loader 事务接口](docs/loader-transactions.md)显式创建、更新和删除条目。官方原地模块 HMR 会在修改缓存前明确拒绝；模块图替换使用核心库的 Worker 代次路径。
 
 ## 精简组合与离线 demo
 
@@ -129,4 +129,4 @@ npm run official:check
 
 2026-10-05 的优化编译和静止图复用已在实际安装的官方组合中验收。本机 Web 完整流程从单次 81.46 秒降至三次中位数 2.59 秒；同期原版为 1.86 秒。测量范围、全部样本及限制见[性能观测](docs/performance.md)。
 
-长期还需要：更多第三方插件与模块图 HMR、原生 Rust typed 动态服务迁移、跨平台制品、长时间运行与大历史性能、完整宿主 refinement 和发布门禁。这个项目给这些工作提供实际使用场景。
+长期还需要：更多第三方插件、将核心库的 Worker 模块图与 typed Rust 迁移能力接入更多应用场景、跨平台制品、长时间运行与大历史性能、完整宿主 refinement 和发布门禁。默认官方应用尚未自动迁入 Worker，也不宣称原地模块 HMR 完成。

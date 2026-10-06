@@ -2,7 +2,7 @@
 
 本轮提供一个可选的宿主接口，将原版 Loader 的创建、更新、删除与实际 Include 文件写入放进 native Cordis 的同一 mutation 队列。原版 Loader/Include 源码保持不变，仍使用其模块解析、YAML 表达式和 volatile 配置语义。
 
-这一步补齐的是可调用、可验收的事务边界。默认 Settings、PluginManager 和 ConfigEditor 继续运行原来的调用链；它们不会因为存在这个导出就自动取得整条文件事务保证。
+默认 native 启动脚本还会安装透明的官方配置协调：ConfigEditor.edit、Include.refresh 和 HMR 配置队列在文件锁与写入前进入同一域事务，并等待生命周期、写入及官方回滚。Settings 等调用 ConfigEditor 的界面自动使用这一边界。下面的显式接口仍适用于宿主拥有的普通 Loader/Include 条目。
 
 ## 使用
 
@@ -35,19 +35,33 @@ await edits.close();
 - `OFFICIAL_PERSISTENCE_FAILED` 明确报告文件写入失败及原因。内存配置或插件效果可能已改变，不声称回滚；后续显式修改可以重试官方写队列。
 - 清理失败保持阻塞，只有实际清理恢复后才接受新 revision。原本缺少依赖的 Pending 状态仍遵循官方语义；请求完成不表示所有插件都 Active。
 
-完成写入队列表示官方文件操作已经返回，不是断电后的物理磁盘持久性证明。直接绕过接口修改同一 tree、`Include.refresh()`、ConfigEditor 的外层文件锁/写入/回滚、HMR 队列以及模块缓存尚未统一接入。这个 API 也不认证任意 EntryTree 子类或不同版本的官方私有字段合同。
+完成写入队列表示官方文件操作已经返回，不是断电后的物理磁盘持久性证明。直接修改 options、使用无关文件 API 或绕过已接入入口的代码不在这个保证内。官方原地模块缓存替换在开始前拒绝，不能视为配置 HMR 的一部分。这个 API 也不认证任意 EntryTree 子类或不同版本的官方私有字段合同。
 
 ## 验收
 
 ```sh
-node --test --test-timeout=60000 tests/official/loader-transactions.test.mjs
+node --test --test-timeout=60000 tests/official/loader-transactions.test.mjs tests/official/config-transactions.test.mjs
 npm run official:check
 ```
 
-10 项回归使用真实安装的官方 Loader/Include 和真实临时文件，覆盖：两个 Include 的 FIFO、异步 inverse 与文件写入屏障、关闭等待、文件失败后重试、实际模块 import、根树完整 ID 删除、YAML 表达式保存与新 Context 恢复、volatile 配置不 remount、生命周期重入拒绝、旧 owner 代次拒绝和清理失败时禁止后续修改。阻塞测试由可控 Promise 门触发，不依赖睡眠时长推断顺序。
+显式接口回归使用真实安装的官方 Loader/Include 和真实临时文件，覆盖：两个 Include 的 FIFO、异步 inverse 与文件写入屏障、关闭等待、文件失败后重试、实际模块 import、根树完整 ID 删除、YAML 表达式保存与新 Context 恢复、volatile 配置不 remount、生命周期重入拒绝、旧 owner 代次拒绝和清理失败时禁止后续修改。阻塞测试由可控 Promise 门触发，不依赖睡眠时长推断顺序。
 
 默认核心测试另检查同步 capture 权限、同域与跨域接纳、方法形状、参数快照边界和类型声明；这些检查不能替代上述官方实现验收。最终[官方验收记录](official-validation-report.json)绑定安装制品、源码和执行日志，普通[应用验收](validation-report.json)继续覆盖真实 AgentLoop 离线 demo。
 
-## 长期方案下一步
+## 默认官方配置协调
 
-优先把 ConfigEditor 的外层持久化与恢复、Include.refresh 和 HMR 的异步续程接到同一个接纳边界，避免把权限自动传播给任意插件回调。随后扩大模块依赖图更新、动态 typed Rust 能力和长期运行的资源/历史成本测量。稳定 identity 与 publication 历史尚不能按“活资源泄漏”处理，回收设计需要保持旧 handle 失效保证。跨平台制品、完整发布负控和宿主到论文的 refinement 仍按独立门槛推进。
+`scripts/official-register.mjs` 先注册唯一 native facade，再加载真实官方 Loader、HMR 与 ConfigEditor 类，调用 `installOfficialTransactions()`，最后由官方 CLI 挂载应用。安装只增加宿主方法边界，不修改官方源码文件。独立 Include、app-boot 内嵌 Include 和打包入口的 `HostResolvedRootInclude` 都沿同一 EntryGroup 初始化路径接入。
+
+ConfigEditor 保留官方的文件锁、配置合并、校验、写入、reconcile 与 rollback。即使没有 HMR 服务也先进行域接纳。HMR 的配置 watch 与手动 `runExclusive()` 共用这一顺序。关闭会等待已接纳请求；服务重启后，旧 ConfigEditor/HMR 对象返回 `STALE_OFFICIAL_SERVICE`。
+
+`change(current, inherited)` 仍是同步配置回调，其观察者身份与协调器分离；插件 setup、cleanup、观察者或它们的异步后代不能借用当前事务的生命周期权限。`hmr.runExclusive(operation)` 是可信宿主发起的操作入口，不是执行不可信 JavaScript 的沙箱。
+
+候选激活失败后，会等待官方回滚完成再拒绝。实际回滚写入失败也如实报告，不会假称恢复成功。清理失败时，后续修改在 options 和文件变化前拒绝，需显式恢复清理。直接操作 JavaScript 对象或任意文件 API 仍由调用者负责。
+
+新配置回归使用真实官方 ConfigEditor/HMR/Timer、临时 profile 和实际文件锁，覆盖排队、关闭、异步刷新、回调权限、成功回滚、实际 rollback rename 失败、清理阻塞恢复和旧服务拒绝。完整实现合同见核心库的[官方配置事务设计](https://github.com/Stool233/cordis-verus/blob/main/docs/official-config-transactions.md)。
+
+## 模块更新与后续工作
+
+官方原地 `Hmr.partialReload()` 在清理完成前修改 Node 模块缓存，并会吞掉部分清理失败。native 入口因此在触碰缓存前返回 `OFFICIAL_IN_PROCESS_HMR_UNSUPPORTED`，保留当前运行代次。模块依赖图更新使用核心库的 [WorkerDomain 代次方案](https://github.com/Stool233/cordis-verus/tree/main/packages/compat-loader)。默认官方应用并未自动迁入 Worker，也不宣称其原地模块 HMR 已完成。
+
+后续继续扩大动态 typed Rust 能力的应用集成和长期运行的资源/历史成本测量。稳定 identity 与 publication 历史不能直接按“活资源泄漏”处理，回收设计需要保持旧 handle 失效保证。跨平台制品、完整发布负控和宿主到论文的 refinement 仍按独立门槛推进。

@@ -23,3 +23,13 @@ registerHooks({
     return nextLoad(url, context);
   },
 });
+
+// Keep published implementations intact and coordinate their host entrypoints
+// before any default CLI composition can mount them. All use the routed facade.
+const [{ installOfficialTransactions }, { Entry, EntryGroup, EntryTree }, { default: Hmr }, { ConfigEditor }] = await Promise.all([
+  import('../official-runtime/node_modules/@cordis-verus/compat-loader/harness.js'),
+  import('../official-runtime/node_modules/@deepseek-ai/cordis-plugin-loader/lib/index.js'),
+  import('../official-runtime/node_modules/@deepseek-ai/dsh-hmr/lib/index.js'),
+  import('../official-runtime/node_modules/@deepseek-ai/dsh-config-editor/lib/index.js'),
+]);
+installOfficialTransactions({ Entry, EntryGroup, EntryTree, Hmr, ConfigEditor });
