@@ -5,7 +5,7 @@ Design and behavior references:
 - Cordis, https://github.com/cordiverse/cordis (MIT)
 - DeepSeek Harness, https://github.com/deepseek-ai/deepseek-harness (MIT)
 - A Programming Paradigm for Spatiotemporal Composability,
-  https://arxiv.org/abs/2608.25512v1 (https://github.com/Stool233/cordis-verus/blob/main/reference/README.md)
+  https://arxiv.org/abs/2608.25512v1 (https://github.com/validation-engineering/cordis-verus/blob/main/reference/README.md)
 
 The ignored upstream checkouts retain their own license and copyright files.
 The reference paper is not covered by this project's MIT license.

@@ -1,5 +1,7 @@
 # Cordis Harness
 
+Part of [Validation Engineering](https://github.com/validation-engineering). The runtime [evidence guide](https://github.com/validation-engineering/cordis-verus/blob/main/docs/evidence-guide.md) connects lifecycle cases, paper contracts and reproducible results; this repository supplies application integration evidence.
+
 用 **Rust / Verus Cordis** 管理生命周期，组合**未改写的官方 DeepSeek Harness 插件**和自有插件的独立 CLI 项目。目标是在真实应用里检验插件兼容性、组合能力和清理语义。
 
 已经接入官方 AgentLoop、AgentRegistry、SessionStore、SystemPrompt、ToolRuntime、SessionProjectionRegistry、Todo 和 DeepSeek API-key provider。自有插件提供文件操作、会话持久化、请求限额及一个简单的 Hello 工具。
@@ -150,4 +152,4 @@ npm run official:check
 
 2026-10-05 的优化编译和静止图复用已在实际安装的官方组合中验收。本机 Web 完整流程从单次 81.46 秒降至三次中位数 2.59 秒；同期原版为 1.86 秒。测量范围、全部样本及限制见[性能观测](docs/performance.md)。
 
-长期还需要：更多第三方插件、将核心库的 Worker 模块图与 typed Rust 迁移能力接入更多应用场景、跨平台制品、长时间运行与大历史性能、完整宿主 refinement 和发布门禁。默认官方应用保持同一原生 Context；原地 HMR 的具体模块边界与失败合同见[核心官方事务指南](https://github.com/Stool233/cordis-verus/blob/main/docs/official-config-transactions.md)，不承诺任意模块顶层副作用可回滚。
+长期还需要：更多第三方插件、将核心库的 Worker 模块图与 typed Rust 迁移能力接入更多应用场景、跨平台制品、长时间运行与大历史性能、完整宿主 refinement 和发布门禁。默认官方应用保持同一原生 Context；原地 HMR 的具体模块边界与失败合同见[核心官方事务指南](https://github.com/validation-engineering/cordis-verus/blob/main/docs/official-config-transactions.md)，不承诺任意模块顶层副作用可回滚。

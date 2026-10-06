@@ -8,7 +8,7 @@
 
 需要一个已完成开发验收、持有三个 npm 制品和锁定官方上游 checkout 的 `cordis-verus` 工作目录。`sources.lock.json` 的 `baseCommit` 记录基准提交；`workingTreeDirty: true` 表示还包含该提交之后的工作区变更，不能仅检出该提交冒充匹配输入。源码指纹和 tarball SHA-256 是精确内容校验依据。
 
-新机器先克隆私有的 `Stool233/cordis-verus` 和 `Stool233/cordis-harness`，在 `workingTreeDirty: false` 时将核心切换到 `sources.lock.json` 的 `baseCommit`；开发中的 dirty 快照需要保留对应工作区和制品。按核心 README 准备锁定工具链与依赖并运行 `python3 scripts/record-development.py`。还需准备 `deepseekHarness.revision` 对应的干净官方 checkout，放在核心的 `upstream/deepseek-harness` 或用 `--upstream-source` 指定。重新构建会生成新的本机验收记录，制品也可能不同，首次导入应显式使用 `--refresh-lock` 并重新完成本应用验收；不要求新构建冒充原机器的制品字节。
+新机器先克隆私有的 `validation-engineering/cordis-verus` 和 `validation-engineering/cordis-harness`，在 `workingTreeDirty: false` 时将核心切换到 `sources.lock.json` 的 `baseCommit`；开发中的 dirty 快照需要保留对应工作区和制品。按核心 README 准备锁定工具链与依赖并运行 `python3 scripts/record-development.py`。还需准备 `deepseekHarness.revision` 对应的干净官方 checkout，放在核心的 `upstream/deepseek-harness` 或用 `--upstream-source` 指定。重新构建会生成新的本机验收记录，制品也可能不同，首次导入应显式使用 `--refresh-lock` 并重新完成本应用验收；不要求新构建冒充原机器的制品字节。
 
 若已有锁中记录的已验收制品与缓存，可直接：
 

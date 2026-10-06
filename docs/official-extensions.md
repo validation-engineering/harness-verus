@@ -49,7 +49,7 @@ coordinates Settings/ConfigEditor, Include refresh and the HMR configuration
 queue before their filesystem writes, retaining the official rollback path. See
 the [transaction contract and real-file regressions](loader-transactions.md).
 
-The official watcher and `Hmr.partialReload()` support [in-place module reload](https://github.com/Stool233/cordis-verus/blob/main/docs/official-in-place-hmr.md) for the observed JavaScript plugin dependency graph, with confirmed old cleanup and resumable failed-candidate recovery. The separate [official Web process supervisor](process-supervisor.md) now runs the real default application through ProcessDomain and supports captured module updates with failed-candidate recovery. It is opt-in; the ordinary entry remains unchanged.
+The official watcher and `Hmr.partialReload()` support [in-place module reload](https://github.com/validation-engineering/cordis-verus/blob/main/docs/official-in-place-hmr.md) for the observed JavaScript plugin dependency graph, with confirmed old cleanup and resumable failed-candidate recovery. The separate [official Web process supervisor](process-supervisor.md) now runs the real default application through ProcessDomain and supports captured module updates with failed-candidate recovery. It is opt-in; the ordinary entry remains unchanged.
 
 ## Rust tool
 

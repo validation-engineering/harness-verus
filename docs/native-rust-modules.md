@@ -227,4 +227,4 @@ await module.dispose();
 - 改动 Rust 源码仍须编译新动态库。已提供官方 Web 构建监视器及显式逻辑 checkpoint 迁移；不支持任意内存快照或物理卸载，不能热替换常驻内核/Node binding。
 - 原生插件是可信代码。动态加载可能执行构造器；panic abort、越界行为、无限 Future、后台线程和动态依赖均不受 C ABI 隔离保护。需要故障隔离时采用独立进程。
 
-本轮证据来自 macOS ARM64 / Node 22.22.0 的本地执行。FFI、OS loader 和任意插件回调未因此获得 Verus 证明；其他平台仍需独立执行验收。完整 ABI 与恢复合同见[核心原生模块指南](https://github.com/Stool233/cordis-verus/blob/main/docs/native-rust-modules.md)。
+本轮证据来自 macOS ARM64 / Node 22.22.0 的本地执行。FFI、OS loader 和任意插件回调未因此获得 Verus 证明；其他平台仍需独立执行验收。完整 ABI 与恢复合同见[核心原生模块指南](https://github.com/validation-engineering/cordis-verus/blob/main/docs/native-rust-modules.md)。

@@ -11,7 +11,7 @@ The exact revision, tree and archive digest are recorded in sources.lock.json.
 Its MIT license is preserved in third-party/DeepSeek-Harness.LICENSE. Bundled
 upstream sources retain their legal comments and dist/THIRD-PARTY-NOTICES.txt.
 
-cordis-verus source: https://github.com/Stool233/cordis-verus
+cordis-verus source: https://github.com/validation-engineering/cordis-verus
 The current runtime is an unpublished, development-validated source snapshot.
 sources.lock.json records its clean source commit, content fingerprint and
 package digests. Restoring that commit recovers source; native artifacts and

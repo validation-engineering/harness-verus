@@ -58,10 +58,10 @@ ConfigEditor 保留官方的文件锁、配置合并、校验、写入、reconci
 
 候选激活失败后，会等待官方回滚完成再拒绝。实际回滚写入失败也如实报告，不会假称恢复成功。清理失败时，后续修改在 options 和文件变化前拒绝，需显式恢复清理。直接操作 JavaScript 对象或任意文件 API 仍由调用者负责。
 
-新配置回归使用真实官方 ConfigEditor/HMR/Timer、临时 profile 和实际文件锁，覆盖排队、关闭、异步刷新、回调权限、成功回滚、实际 rollback rename 失败、清理阻塞恢复和旧服务拒绝。完整实现合同见核心库的[官方配置事务设计](https://github.com/Stool233/cordis-verus/blob/main/docs/official-config-transactions.md)。
+新配置回归使用真实官方 ConfigEditor/HMR/Timer、临时 profile 和实际文件锁，覆盖排队、关闭、异步刷新、回调权限、成功回滚、实际 rollback rename 失败、清理阻塞恢复和旧服务拒绝。完整实现合同见核心库的[官方配置事务设计](https://github.com/validation-engineering/cordis-verus/blob/main/docs/official-config-transactions.md)。
 
 ## 模块更新与后续工作
 
-官方 `Hmr.partialReload()` 已由 native 宿主适配器接入原地模块替换：按已观察的 ESM/CJS 依赖闭包排空旧实例，确认清理后更新缓存和 factory，失败时先清理候选再恢复旧缓存与插件。未确认清理会保留恢复记录；修复并显式重试失败 inverse 后，下次正常 reload 先继续恢复。使用方式、错误与模块边界见[原地 HMR 指南](https://github.com/Stool233/cordis-verus/blob/main/docs/official-in-place-hmr.md)。应用 native addon 与无法安全原地替换的宿主模块继续使用隔离路径。`npm run official:watch` 通过 ProcessDomain 运行真实官方 Web/standard，详见[进程监督模式](process-supervisor.md)。
+官方 `Hmr.partialReload()` 已由 native 宿主适配器接入原地模块替换：按已观察的 ESM/CJS 依赖闭包排空旧实例，确认清理后更新缓存和 factory，失败时先清理候选再恢复旧缓存与插件。未确认清理会保留恢复记录；修复并显式重试失败 inverse 后，下次正常 reload 先继续恢复。使用方式、错误与模块边界见[原地 HMR 指南](https://github.com/validation-engineering/cordis-verus/blob/main/docs/official-in-place-hmr.md)。应用 native addon 与无法安全原地替换的宿主模块继续使用隔离路径。`npm run official:watch` 通过 ProcessDomain 运行真实官方 Web/standard，详见[进程监督模式](process-supervisor.md)。
 
 后续继续扩大动态 typed Rust 能力的应用集成和长期运行的资源/历史成本测量。稳定 identity 与 publication 历史不能直接按“活资源泄漏”处理，回收设计需要保持旧 handle 失效保证。跨平台制品、完整发布负控和宿主到论文的 refinement 仍按独立门槛推进。

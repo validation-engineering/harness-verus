@@ -1,13 +1,13 @@
 {
   "schema": "cordis-harness.sources/v1",
   "cordis": {
-    "repository": "https://github.com/Stool233/cordis-verus.git",
-    "baseCommit": "bc970bc2cbe275b405142c9e9c1c628f54a3dde3",
-    "workingTreeDirty": true,
+    "repository": "https://github.com/validation-engineering/cordis-verus.git",
+    "baseCommit": "0918e8571a10408226ccbe57c5be0ebfe05d1186",
+    "workingTreeDirty": false,
     "sourceIdentity": "verified working-tree file hashes; baseCommit is metadata, not snapshot identity",
-    "sourceFingerprint": "a0dc35a4af3f1d080dabfa9dc681f262f91e7cbef5ad8f0b3939c9726287c20f",
-    "developmentReportSha256": "84939d7fc39cc3676a7cd9a9a381b7a5ef8fb8683c23040498f7029ebbadd034",
-    "packageReportSha256": "fb0ca15b32d6b8c26c2ef20439c02dcab0c78edf6f12c636bfda8a413a520033",
+    "sourceFingerprint": "9a0f09366c5b52a255da7b69778bb166319fbdc9d4675611564229f6fcb3db65",
+    "developmentReportSha256": "f9b251ccd9522e473e1555433d8c420e4839b2f0eec5f29406d02c7a1e314abe",
+    "packageReportSha256": "ebf6b356d7c2ca8fc5686f20f92a2db6a525082799bdfde0a2e23e5381cb4129",
     "developmentAcceptance": true,
     "releaseAcceptance": false,
     "paperCompletion": false,
@@ -26,19 +26,19 @@
         "name": "@cordis-verus/compat-cordis",
         "version": "0.1.0",
         "file": ".vendor/cordis/cordis-verus-compat-cordis-0.1.0.tgz",
-        "sha256": "ba802a77342912a90fd5e0601c77bb19d9648ae79c5f9f43172bddc75ea3e978"
+        "sha256": "17190f834725672f0697448794fac2f605056a19f270ca91da3466221b52326f"
       },
       {
         "name": "@cordis-verus/compat-harness",
         "version": "0.1.0",
         "file": ".vendor/cordis/cordis-verus-compat-harness-0.1.0.tgz",
-        "sha256": "d2408785f2c43de692d1729ce93f0db6165f197fdf66649cd7f9e8f080a6cbc7"
+        "sha256": "63435b68afc8c09915230787fba94802202dba2653dd2663450a6450522a3766"
       },
       {
         "name": "@cordis-verus/compat-loader",
         "version": "0.1.0",
         "file": ".vendor/cordis/cordis-verus-compat-loader-0.1.0.tgz",
-        "sha256": "9b0dbd58b9a34b13f25421ca5960e3a9546436d4ee4646082df8fe305de1fc78"
+        "sha256": "98c34d1e8a58cbae9e15a44608c38a1816eaeb733abd64d2c653919e3623aca8"
       }
     ]
   },
