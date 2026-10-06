@@ -1,65 +1,97 @@
 # Cordis Harness
 
-Part of [Validation Engineering](https://github.com/validation-engineering). The runtime [evidence guide](https://github.com/validation-engineering/cordis-verus/blob/main/docs/evidence-guide.md) connects lifecycle cases, paper contracts and reproducible results; this repository supplies application integration evidence.
+**Official DeepSeek Harness plugins on a Rust runtime with a Verus-verified lifecycle kernel.**
 
-用 **Rust / Verus Cordis** 管理生命周期，组合**未改写的官方 DeepSeek Harness 插件**和自有插件的独立 CLI 项目。目标是在真实应用里检验插件兼容性、组合能力和清理语义。
+[简体中文](README.zh-CN.md) · [Build guide](docs/build.md) · [Official mode](docs/official-mode.md) · [Plugin guide](docs/plugins.md) · [Contributing](CONTRIBUTING.md)
 
-已经接入官方 AgentLoop、AgentRegistry、SessionStore、SystemPrompt、ToolRuntime、SessionProjectionRegistry、Todo 和 DeepSeek API-key provider。自有插件提供文件操作、会话持久化、请求限额及一个简单的 Hello 工具。
+Cordis Harness combines unchanged official [DeepSeek Harness](https://github.com/deepseek-ai/deepseek-harness) plugins with custom JavaScript and Rust plugins on [cordis-verus](https://github.com/validation-engineering/cordis-verus). It evaluates Cordis functional alignment in real agent workflows: plugin composition, tool execution, session recovery, configuration changes and cleanup.
 
-这是可运行的开发验证项目，包含自有精简组合与官方发行的宿主替换入口，尚未正式发布。当前已验收 macOS ARM64 / Node 22.22.0；runtime 是固定指纹的未发布开发制品。
+The core runtime connects formal constraints to executable lifecycle code; this project supplies application integration evidence. Follow the core's [paper-to-code guide](https://github.com/validation-engineering/cordis-verus/blob/main/docs/paper-review-guide.md) to inspect the verified contracts and their host boundaries. Both projects are part of [Validation Engineering](https://github.com/validation-engineering).
 
-## 官方默认 Web 模式
+**Status:** Experimental, pre-1.0, with no published release. Recorded local acceptance covers macOS ARM64 and Node 22.22.0. The runtime packages are unpublished development artifacts with exact inputs recorded in [sources.lock.json](sources.lock.json). Both repositories currently require access.
 
-现在另有完整的官方发行安装：保留官方 `dsh web` 入口、Web 界面、默认 `standard` preset、Loader/Include、插件和 JSONL 会话存储，预加载我们的 Rust/Verus Cordis **Node 宿主**。浏览器中的 Cordis 客户端仍为官方 JavaScript 实现。
+## Features
+
+- **Official application workflows.** Run the official Web and headless entries, default `standard` composition, Loader/Include, frontend and JSONL session storage with the Rust-backed Node Cordis host. Browser-side Cordis remains upstream JavaScript.
+- **Original plugins with custom extensions.** Use the official AgentLoop, AgentRegistry, SessionStore, SystemPrompt, ToolRuntime, SessionProjectionRegistry, Todo and DeepSeek API-key provider. Add file tools, request limits and your own plugins.
+- **JavaScript and Rust in one lifecycle graph.** Register Rust services and tools alongside JavaScript plugins through the same native Driver. Cleanup failures remain visible and retain the resources needed for explicit recovery.
+- **Configuration and plugin updates.** Use supported official configuration transactions and in-place module HMR, optional Web process supervision, or independently built Rust `cdylib` plugins with explicit checkpoint migration.
+- **An offline demonstration.** Exercise the real official agent/tool loop using a deterministic scripted provider, without a model API request.
+
+## Getting started
+
+Use Node **22.22.0**, npm and Git. Preparing runtime artifacts also requires the core project's pinned Rust/Verus toolchain; compiling the optional Rust extensions requires the matching core source checkout and Rust toolchain.
+
+Start with the [build guide](docs/build.md) to prepare a development-validated `../cordis-verus` checkout, its three npm runtime archives and the locked official Harness source snapshot. There is currently no public runtime artifact download service.
+
+For a new local build, import those artifacts and explicitly refresh the source lock:
 
 ```sh
-npm run official:install -- --offline
-npm run official
-# 等价：npm run official -- web
+node scripts/bootstrap.mjs --cordis-source ../cordis-verus --refresh-lock --online
+npm run build
+npm run verify
+npm run demo
 ```
 
-官方默认端口为 3080，会打开浏览器。服务器参数原样转发：
+Use `--offline` instead of `--online` when public npm dependencies are cached. To reuse the exact artifacts already recorded in the lock, omit `--refresh-lock`. Review lock changes and rerun validation after an artifact refresh. Source fingerprints and artifact hashes identify the inputs; a `baseCommit` alone is sufficient to restore source only when `workingTreeDirty` is `false`. Runtime execution does not require the adjacent core checkout.
+
+The demo runs the **real official AgentLoop and tool loop** with a scripted provider. It creates a workspace under `.cordis-harness/demos/`, reads a README, writes `DEMO_RESULT.md`, completes Todo items and persists a session. The terminal reports the workspace and session ID. This deterministic demonstration does not interpret arbitrary natural-language tasks.
+
+## Official Web and headless modes
+
+After the base setup, install the official distribution and start its default Web mode:
+
+```sh
+npm run official:install -- --refresh-runtime-lock
+npm run official
+# Equivalent: npm run official -- web
+```
+
+`--refresh-runtime-lock` updates the local runtime archive entries after a deliberate artifact refresh. When those entries already match, use `npm run official:install`; add `-- --offline` if all dependencies are cached. The official source version remains locked.
+
+The default Web port is 3080 and the official CLI opens a browser. Server arguments are forwarded unchanged:
 
 ```sh
 npm run official -- web --no-open --port 3080
-npm run official -- headless --json "阅读当前项目并概述其用途"
+npm run official -- headless --json "Read this project and explain its purpose"
 ```
 
-真实模型需要用户在官方界面配置账号或 API key。默认数据保存在本项目 `.cordis-harness/official`；显式 `DSH_HOME` 可选择其他目录。验收不会调用付费模型。固定发行包和所有依赖保持原始布局；启动前核对安装字节，并阻止宿主加载原版 JS Cordis 调度器。
+Configure your model account or API key in the official application for interactive use. Data defaults to `.cordis-harness/official`; set `DSH_HOME` to choose another directory. The pinned distribution retains its original layout. Startup verifies installed artifacts and prevents the Node host from loading the upstream JavaScript Cordis scheduler.
 
-默认 Web、完整插件清单、实际 native Context、官方工具和跨进程恢复的验收见[官方模式](docs/official-mode.md)。这证明锁定版本和已测试流程的宿主替换，不代表所有第三方插件或浏览器运行时均已形式验证。
+The [official-mode guide](docs/official-mode.md) describes the default plugin roster, native Context, tools and cross-process session recovery. These checks establish host replacement for the locked version and tested workflows; they do not establish complete third-party plugin compatibility or a formal proof of the application.
 
-## 在官方模式中组合 JS 与 Rust 插件
+## JavaScript and Rust extensions
 
-下面的入口保留官方默认组合，额外加载 `cordis_greet` 和 `rust_text_analyze`。
-Rust 工具通过同一个 native Driver 提供服务；JS 桥使用官方工具 API 注册。
+The extension entry preserves the official default composition and adds `cordis_greet` and `rust_text_analyze`. The Rust tool exposes its service through the same native Driver; a JavaScript bridge registers it through the official tool API.
+
+After base setup and official installation:
 
 ```sh
-npm run official:install -- --offline
 npm run rust:build -- --offline
 npm run official:extensions
-# 或使用原版 headless：
-npm run official:extensions -- headless --json "统计文本 Hello 世界的字符和字节数"
+npm run official:extensions -- headless --json "Count the characters and bytes in Hello world"
 ```
 
-首次启动为 Web/headless 创建官方 profile，默认使用独立数据目录
-`.cordis-harness/official-extensions`；已有 profile 文件保留不覆盖。
-官方插件面板可以禁用、启用插件，Settings 可以修改问候前缀。
-真实模型仍需用户配置；本项目的自动验收使用本机模型 fixture。
-示例、配置和验证范围见[官方扩展指南](docs/official-extensions.md)。
+Use the Rust build command without `--offline` if Cargo dependencies are not cached. First launch creates official Web/headless profiles under `.cordis-harness/official-extensions`, preserving existing profile files. The official plugin panel can disable and enable the extensions, and Settings can change the greeting prefix. Interactive use needs model configuration; automated acceptance uses a local model fixture. See the [extension guide](docs/official-extensions.md) for examples and scope.
 
-默认 UI 的 ConfigEditor、Include 文件刷新和 HMR 配置队列现在统一进入 native 域事务，在文件锁和写入前接纳，并等待生命周期、实际写入及官方回滚完成。宿主还可通过[官方 Loader 事务接口](docs/loader-transactions.md)显式创建、更新和删除条目。官方原地模块 HMR 使用宿主适配器，在旧插件实际清理完成后替换支持范围内的模块，并保留候选失败的恢复结果；涉及 native addon 或无法安全替换的共享宿主模块时，需要 Worker/Process 隔离路径。真实官方 Web 应用另有可选的进程监督入口：
+## Configuration and reload
+
+The default UI's ConfigEditor, Include refresh and HMR configuration queue share a native domain transaction queue. Admission happens before file locking or writing, and operations wait for lifecycle work, persistence and official rollback. Hosts can also explicitly create, update and remove entries through the [official Loader transaction API](docs/loader-transactions.md).
+
+Supported official in-place module HMR waits for old plugin cleanup before replacing modules and retains the outcome of candidate recovery. Native addon changes or shared host modules that cannot be safely replaced need a Worker or process boundary. An optional supervisor provides process replacement for the actual official Web application:
 
 ```sh
 npm run official:watch
-# 修改 examples/process-plugins/version.mjs 后，打开新进程输出的官方启动链接
+# Edit examples/process-plugins/version.mjs, then open the new process's startup URL.
 ```
 
-它保留默认 `standard` 和官方会话存储，先确认旧进程清理，再启动捕获后的插件模块。坏候选清理成功后可恢复旧制品；清理未确认会阻止替换。此模式仅覆盖 Web，重启会断开连接并轮换登录 token；详见[进程监督与插件更新](docs/process-supervisor.md)。
+This mode preserves the default `standard` composition and official session storage. It confirms old-process cleanup before starting the captured plugin modules. If a bad candidate is cleaned up successfully, the previous artifacts can be restored; unconfirmed cleanup blocks replacement. The supervisor supports Web mode only. Restarts disconnect clients and rotate the login token. See [process supervision](docs/process-supervisor.md).
 
-## Rust 插件的同进程代码更新
+## Native Rust plugin updates
 
-独立 `cdylib` 插件可通过版本化 C ABI 加入常驻 Driver，并在旧实例真实清理后替换代码。示例用同一个进程和官方 AgentLoop 完成 v1 → v2，再验证坏候选恢复；不需要重新链接 Node addon。
+Independently built `cdylib` plugins join the resident Driver through a versioned C ABI. The demo uses the same process and official AgentLoop to replace v1 with v2 and recover from a bad candidate, without relinking the Node addon.
+
+After base setup and official installation:
 
 ```sh
 npm run rust:modules:build -- --offline
@@ -69,11 +101,13 @@ npm run official:rust -- web --no-open
 npm run official:rust:watch -- --no-open
 ```
 
-需先完成基础构建与官方安装。支持 JSON 服务、流/对象、动态子插件，以及显式启用的有界逻辑 checkpoint 迁移；旧映像保留到退出，不执行物理卸载。官方 Loader 条目已接入配置面板；Web watcher 在后台编译源码，通过 ConfigEditor 更新不可变制品配置并检查工具消费者就绪。用法、迁移边界与来源验证见[原生模块指南](docs/native-rust-modules.md)。
+Use the module build command without `--offline` if Cargo dependencies are not cached. The module interface supports JSON services, streams, objects, dynamic child plugins and opt-in bounded logical checkpoints. Each code update requires a newly built library; old library images remain loaded until process exit. Official Loader entries appear in the configuration panel. The Web watcher compiles source in the background, updates immutable artifact configuration through ConfigEditor, and checks tool-consumer readiness. See [native Rust modules](docs/native-rust-modules.md) for loading, migration and provenance rules.
 
-## 精简组合与离线 demo
+## The compact CLI
 
-当前工作目录已经安装、构建完成：
+The compact composition provides a separate CLI for custom plugin arrangements. It uses `harness.config.json`; the official modes above use their own profiles and storage.
+
+After base setup:
 
 ```sh
 npm run demo
@@ -81,75 +115,86 @@ npm start -- plugins
 npm test
 ```
 
-离线 demo 使用**真实官方 agent/tool 循环**和确定性的 scripted provider，不调用模型 API，也不会理解任意自然语言任务。它在 `.cordis-harness/demos/` 下建立新工作区，读取 README、生成 `DEMO_RESULT.md`、完成 Todo，并持久化会话。终端返回实际工作区和 session id。
+### Use a model provider
 
-新 checkout 首先准备固定版本的 runtime 和官方源码：
-
-```sh
-node scripts/bootstrap.mjs --cordis-source ../cordis-verus --offline
-npm run build
-npm run verify
-npm test
-npm run demo
-```
-
-缺少公开 npm 依赖缓存时可使用 `--online`。当前还没有公开 runtime 下载服务；`sources.lock.json` 记录核心基准提交、工作树状态和精确源码指纹；只有 `workingTreeDirty: false` 时才可仅按 `baseCommit` 恢复全部输入。安装仍需经过验收的本地制品，精确字节由源码指纹和制品哈希绑定；重新构建需刷新来源锁并重新验收。两个仓库目前均为私有，需要相应访问权限。详见[独立构建](docs/build.md)。
-
-## 使用真实模型
-
-配置 shell 中的 `DEEPSEEK_API_KEY`，不要把密钥写进配置或 Git。示例使用锁定官方源码中的 `deepseek-flash`，实际账户支持哪些模型需由部署方确认：
+Set `DEEPSEEK_API_KEY` in your shell environment. Keep credentials out of configuration files and Git. The example selects `deepseek-flash` from the pinned official source; confirm model availability for your account.
 
 ```sh
-npm start -- run "阅读 README，说明这个项目的用途" --config examples/deepseek.config.json
+npm start -- run "Read README and explain this project's purpose" --config examples/deepseek.config.json
 npm start -- chat --config examples/deepseek.config.json
 ```
 
-示例默认只读；明确添加 `--allow-write` 才启用写文件工具。provider 是官方 Messages SSE 适配器。本机 HTTP fixture 已验证真实请求、工具循环和取消；本项目验收没有调用付费 API。配置细节见 [provider 指南](docs/providers.md)。
+The example is read-only by default; add `--allow-write` explicitly to enable file-writing tools. The provider uses the official Messages SSE adapter. Local HTTP fixtures exercise actual request construction, tool loops and cancellation; acceptance makes no paid API requests. See [providers](docs/providers.md).
 
-## 保存与恢复
+### Save and resume sessions
 
 ```sh
-npm start -- run "阅读 README" --config examples/deepseek.config.json --session work-1
-npm start -- run "继续分析" --config examples/deepseek.config.json --session work-1 --resume
+npm start -- run "Read README" --config examples/deepseek.config.json --session work-1
+npm start -- run "Continue the analysis" --config examples/deepseek.config.json --session work-1 --resume
 npm start -- sessions --config examples/deepseek.config.json
 npm start -- inspect work-1 --config examples/deepseek.config.json
 ```
 
-自有 `FileSessions` 实现官方 `SessionPersistence` 接口，恢复走官方 `agents.resume`。快照保留原始事件与序号，不把对话摘要冒充原始历史。完成一个回合和正常退出都会等待持久化屏障。当前采用有大小上限的原子 JSON 快照，不包含官方 JSONL 迁移、自动清理遗留锁或分布式租约恢复；详见[架构与边界](docs/architecture.md)。
+The compact CLI's `FileSessions` implements the official `SessionPersistence` interface and resumes through `agents.resume`. Snapshots preserve original events and sequence numbers. Turn completion and normal shutdown wait for persistence. Storage uses atomic JSON snapshots with a size limit; it does not implement official JSONL migration, automatic stale-lock cleanup or distributed lease recovery. Official mode retains upstream JSONL storage. See [architecture and boundaries](docs/architecture.md).
 
-## 组合自己的插件
+### Compose your own plugins
 
-修改 `harness.config.json` 的 `plugins`：
+Add an entry to the `plugins` array in `harness.config.json`:
 
 ```json
-{ "id": "hello", "module": "./plugins/hello.mjs", "config": { "prefix": "你好" } }
+{ "id": "hello", "module": "./plugins/hello.mjs", "config": { "prefix": "Hello" } }
 ```
 
-[Hello 示例](plugins/hello.mjs)展示官方 `defineTool` 的完整注册方式。在交互 CLI 里，agent 空闲时可以：
+The [Hello example](plugins/hello.mjs) demonstrates registration through the official `defineTool` API. In an idle interactive CLI session:
 
 ```text
 /plugins
 /unload hello
-/load hello ./plugins/hello.mjs {"prefix":"你好"}
+/load hello ./plugins/hello.mjs {"prefix":"Hello"}
 /reload hello {"prefix":"Welcome"}
 ```
 
-这些命令改变当前运行中的组合；持久配置请编辑配置文件。重载失败且新实例已完成清理时恢复旧实例；清理失败则保留实例并阻止替换，修复资源后用 `/retry-cleanup <id>` 显式重试。第三方插件是在同一进程运行的可信代码，工作区文件限制不是插件沙箱。
+These commands change the running composition; edit the configuration file to persist changes. Reload refreshes the local `.mjs` entry, without promising transitive dependency HMR. If replacement fails after successful candidate cleanup, it attempts to restore the previous module and configuration through a new activation. Failed cleanup retains the instance and blocks replacement; correct the resource problem and use `/retry-cleanup <id>` to retry.
 
-更多接口、分页读文件和生命周期写法见[插件指南](docs/plugins.md)。
+Third-party plugins are trusted code running in the same process. Workspace file restrictions are not a plugin sandbox. See the [plugin guide](docs/plugins.md) for interfaces, paginated file reads and lifecycle examples.
 
-## 验证
+## Validation scope
+
+With base setup complete:
 
 ```sh
 npm run verify
 npm test
+npm run demo
 node scripts/record-validation.mjs
-# 官方默认组合和 JS/Rust 扩展（先完成 build、official:install、rust:build、rust:modules:build）
-npm run official:check
 ```
 
-测试覆盖真实官方循环、跨进程会话恢复、官方 HTTP adapter、插件增删重载、路径/UTF-8/取消边界，以及来源和安装产物被改动后的拒绝行为。[验收记录](docs/validation-report.json)绑定本项目源文件与构建证据；它不是新的 Verus 证明。
+For official default compositions and JavaScript/Rust extensions, first complete `official:install`, `rust:build` and `rust:modules:build`, then run:
 
-2026-10-05 的优化编译和静止图复用已在实际安装的官方组合中验收。本机 Web 完整流程从单次 81.46 秒降至三次中位数 2.59 秒；同期原版为 1.86 秒。测量范围、全部样本及限制见[性能观测](docs/performance.md)。
+```sh
+npm run official:check
+node scripts/record-validation.mjs
+```
 
-长期还需要：更多第三方插件、将核心库的 Worker 模块图与 typed Rust 迁移能力接入更多应用场景、跨平台制品、长时间运行与大历史性能、完整宿主 refinement 和发布门禁。默认官方应用保持同一原生 Context；原地 HMR 的具体模块边界与失败合同见[核心官方事务指南](https://github.com/validation-engineering/cordis-verus/blob/main/docs/official-config-transactions.md)，不承诺任意模块顶层副作用可回滚。
+The compact recorder runs last because its source fingerprint includes the official validation report. The [application record](docs/validation-report.json) and [official acceptance record](docs/official-validation-report.json) bind their results to source and artifact inputs. They cover the official agent loop, cross-process recovery, provider transport, plugin updates, cancellation and rejection of altered inputs. Recorded snapshots require fresh validation when their inputs change.
+
+These are application tests. Formal guarantees belong to the core kernel's specified contracts and assumptions; arbitrary plugins, asynchronous host execution, external I/O and model behavior are outside that proof scope. Complete host refinement, broader third-party coverage, cross-platform artifacts and release acceptance remain open.
+
+Performance optimization continues; historical methods and samples remain in the [performance notes](docs/performance.md) for engineering reference.
+
+## Documentation and contributing
+
+| Topic | Guide |
+| --- | --- |
+| Installation and exact source inputs | [Build](docs/build.md) |
+| Official default workflows | [Official mode](docs/official-mode.md) |
+| Custom plugins and model providers | [Plugins](docs/plugins.md) · [Providers](docs/providers.md) |
+| JavaScript/Rust extensions and native updates | [Extensions](docs/official-extensions.md) · [Native modules](docs/native-rust-modules.md) |
+| Configuration and process replacement | [Loader transactions](docs/loader-transactions.md) · [Process supervision](docs/process-supervisor.md) |
+| Implementation and limitations | [Architecture](docs/architecture.md) |
+
+Detailed guides are currently primarily in Chinese. Read [CONTRIBUTING.md](CONTRIBUTING.md) for development and review expectations. Compatibility cases, plugin examples and focused fixes are welcome.
+
+## License
+
+[MIT](LICENSE). Upstream components retain their licenses and attribution in [NOTICE](NOTICE) and [third-party/](third-party). Cordis Harness is an independent project, not an official Cordis or DeepSeek release.
