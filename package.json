@@ -34,7 +34,10 @@
     "rust:verify": "node scripts/verify-rust-addon.mjs",
     "rust:test": "node --test tests/official/rust-addon.test.mjs",
     "official:extensions": "node scripts/official-extensions.mjs",
-    "official:extensions:check": "node scripts/check-official-extensions.mjs --backend native --rust"
+    "official:extensions:check": "node scripts/check-official-extensions.mjs --backend native --rust",
+    "official:supervise": "node scripts/official-supervise.mjs",
+    "official:watch": "node scripts/official-supervise.mjs --watch",
+    "official:process:test": "node --test --test-timeout=120000 tests/official/process-supervisor.test.mjs"
   },
   "dependencies": {
     "@cordis-verus/compat-cordis": "file:.vendor/cordis/cordis-verus-compat-cordis-0.1.0.tgz",

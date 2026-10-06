@@ -51,8 +51,7 @@ the [transaction contract and real-file regressions](loader-transactions.md).
 
 The official in-process module replacement is rejected before it changes Node
 caches (`OFFICIAL_IN_PROCESS_HMR_UNSUPPORTED`). Module graph replacement uses
-the core WorkerDomain generation path; the default official application has not
-been automatically migrated into a Worker.
+the core WorkerDomain generation path. The separate [official Web process supervisor](process-supervisor.md) now runs the real default application through ProcessDomain and supports captured module updates with failed-candidate recovery. It is opt-in; the ordinary entry remains unchanged.
 
 ## Rust tool
 
@@ -90,4 +89,4 @@ These checks retain the full official composition, adding only the extension ent
 
 Reports and redacted logs are under `.cache/official-extensions/`; they bind the checked script, plugin inputs, runtime lock, preload, and Rust addon evidence where applicable. The scripts use isolated homes and workspaces, allowlisted environment variables, fake credentials, and loopback model endpoints.
 
-This is HTTP-level Web integration, not automated browser execution or live paid-model testing. Invalid-configuration rejection and recovery from a failed tool call are tested; this does not prove rollback of arbitrary plugin startup/cleanup failures. Transparent in-process module HMR, broader third-party plugin coverage, and complete host refinement remain separate work. The explicit Worker module graph path is validated independently in the core project.
+This is HTTP-level Web integration, not automated browser execution or live paid-model testing. Invalid-configuration rejection and recovery from a failed tool call are tested; this does not prove rollback of arbitrary plugin startup/cleanup failures. Transparent in-process module HMR, broader third-party plugin coverage, and complete host refinement remain separate work. The explicit Worker and Process module graph paths are validated independently in the core project; the opt-in Web process supervisor also has real application startup, reload, reconnect, failure and cleanup tests.

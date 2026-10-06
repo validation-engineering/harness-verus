@@ -62,6 +62,6 @@ ConfigEditor 保留官方的文件锁、配置合并、校验、写入、reconci
 
 ## 模块更新与后续工作
 
-官方原地 `Hmr.partialReload()` 在清理完成前修改 Node 模块缓存，并会吞掉部分清理失败。native 入口因此在触碰缓存前返回 `OFFICIAL_IN_PROCESS_HMR_UNSUPPORTED`，保留当前运行代次。模块依赖图更新使用核心库的 [WorkerDomain 代次方案](https://github.com/Stool233/cordis-verus/tree/main/packages/compat-loader)。默认官方应用并未自动迁入 Worker，也不宣称其原地模块 HMR 已完成。
+官方原地 `Hmr.partialReload()` 在清理完成前修改 Node 模块缓存，并会吞掉部分清理失败。native 入口因此在触碰缓存前返回 `OFFICIAL_IN_PROCESS_HMR_UNSUPPORTED`，保留当前运行代次。模块依赖图更新使用核心库的 [WorkerDomain 代次方案](https://github.com/Stool233/cordis-verus/tree/main/packages/compat-loader)。默认入口并未自动迁入 Worker。另有显式 `npm run official:watch`，通过 ProcessDomain 运行真实官方 Web/standard，完成旧进程清理、候选启动及旧制品恢复，详见[进程监督模式](process-supervisor.md)。这仍不表示原地模块 HMR 已完成。
 
 后续继续扩大动态 typed Rust 能力的应用集成和长期运行的资源/历史成本测量。稳定 identity 与 publication 历史不能直接按“活资源泄漏”处理，回收设计需要保持旧 handle 失效保证。跨平台制品、完整发布负控和宿主到论文的 refinement 仍按独立门槛推进。

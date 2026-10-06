@@ -46,7 +46,14 @@ npm run official:extensions -- headless --json "统计文本 Hello 世界的字�
 真实模型仍需用户配置；本项目的自动验收使用本机模型 fixture。
 示例、配置和验证范围见[官方扩展指南](docs/official-extensions.md)。
 
-默认 UI 的 ConfigEditor、Include 文件刷新和 HMR 配置队列现在统一进入 native 域事务，在文件锁和写入前接纳，并等待生命周期、实际写入及官方回滚完成。宿主还可通过[官方 Loader 事务接口](docs/loader-transactions.md)显式创建、更新和删除条目。官方原地模块 HMR 会在修改缓存前明确拒绝；模块图替换使用核心库的 Worker 代次路径。
+默认 UI 的 ConfigEditor、Include 文件刷新和 HMR 配置队列现在统一进入 native 域事务，在文件锁和写入前接纳，并等待生命周期、实际写入及官方回滚完成。宿主还可通过[官方 Loader 事务接口](docs/loader-transactions.md)显式创建、更新和删除条目。官方原地模块 HMR 会在修改缓存前明确拒绝；模块图替换可使用核心库的 Worker/Process 代次路径。真实官方 Web 应用另有可选的进程监督入口：
+
+```sh
+npm run official:watch
+# 修改 examples/process-plugins/version.mjs 后，打开新进程输出的官方启动链接
+```
+
+它保留默认 `standard` 和官方会话存储，先确认旧进程清理，再启动捕获后的插件模块。坏候选清理成功后可恢复旧制品；清理未确认会阻止替换。此模式仅覆盖 Web，重启会断开连接并轮换登录 token；详见[进程监督与插件更新](docs/process-supervisor.md)。
 
 ## 精简组合与离线 demo
 
