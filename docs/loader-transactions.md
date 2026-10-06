@@ -35,7 +35,7 @@ await edits.close();
 - `OFFICIAL_PERSISTENCE_FAILED` 明确报告文件写入失败及原因。内存配置或插件效果可能已改变，不声称回滚；后续显式修改可以重试官方写队列。
 - 清理失败保持阻塞，只有实际清理恢复后才接受新 revision。原本缺少依赖的 Pending 状态仍遵循官方语义；请求完成不表示所有插件都 Active。
 
-完成写入队列表示官方文件操作已经返回，不是断电后的物理磁盘持久性证明。直接修改 options、使用无关文件 API 或绕过已接入入口的代码不在这个保证内。官方原地模块缓存替换在开始前拒绝，不能视为配置 HMR 的一部分。这个 API 也不认证任意 EntryTree 子类或不同版本的官方私有字段合同。
+完成写入队列表示官方文件操作已经返回，不是断电后的物理磁盘持久性证明。直接修改 options、使用无关文件 API 或绕过已接入入口的代码不在这个保证内。官方原地模块替换使用单独的依赖图与缓存恢复协议，与配置事务共用域队列。这个 API 也不认证任意 EntryTree 子类或不同版本的官方私有字段合同。
 
 ## 验收
 
@@ -62,6 +62,6 @@ ConfigEditor 保留官方的文件锁、配置合并、校验、写入、reconci
 
 ## 模块更新与后续工作
 
-官方原地 `Hmr.partialReload()` 在清理完成前修改 Node 模块缓存，并会吞掉部分清理失败。native 入口因此在触碰缓存前返回 `OFFICIAL_IN_PROCESS_HMR_UNSUPPORTED`，保留当前运行代次。模块依赖图更新使用核心库的 [WorkerDomain 代次方案](https://github.com/Stool233/cordis-verus/tree/main/packages/compat-loader)。默认入口并未自动迁入 Worker。另有显式 `npm run official:watch`，通过 ProcessDomain 运行真实官方 Web/standard，完成旧进程清理、候选启动及旧制品恢复，详见[进程监督模式](process-supervisor.md)。这仍不表示原地模块 HMR 已完成。
+官方 `Hmr.partialReload()` 已由 native 宿主适配器接入原地模块替换：按已观察的 ESM/CJS 依赖闭包排空旧实例，确认清理后更新缓存和 factory，失败时先清理候选再恢复旧缓存与插件。未确认清理会保留恢复记录；修复并显式重试失败 inverse 后，下次正常 reload 先继续恢复。使用方式、错误与模块边界见[原地 HMR 指南](https://github.com/Stool233/cordis-verus/blob/main/docs/official-in-place-hmr.md)。应用 native addon 与无法安全原地替换的宿主模块继续使用隔离路径。`npm run official:watch` 通过 ProcessDomain 运行真实官方 Web/standard，详见[进程监督模式](process-supervisor.md)。
 
 后续继续扩大动态 typed Rust 能力的应用集成和长期运行的资源/历史成本测量。稳定 identity 与 publication 历史不能直接按“活资源泄漏”处理，回收设计需要保持旧 handle 失效保证。跨平台制品、完整发布负控和宿主到论文的 refinement 仍按独立门槛推进。

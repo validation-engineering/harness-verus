@@ -2,12 +2,12 @@
   "schema": "cordis-harness.sources/v1",
   "cordis": {
     "repository": "https://github.com/Stool233/cordis-verus.git",
-    "baseCommit": "b36d6a4ff39a8dc32f26b8d5ea3a7343eec7c4ea",
+    "baseCommit": "cf6668f7944e087698af036aa85d9dc2a85a90bb",
     "workingTreeDirty": false,
     "sourceIdentity": "verified working-tree file hashes; baseCommit is metadata, not snapshot identity",
-    "sourceFingerprint": "afafb9d2b8cb2a392bd83800d4a713e8d4dd7233f06872f1086804a8496b0bc3",
-    "developmentReportSha256": "ebbecd9ce820742dd7cbdc287fab0ad0a68d367bc1ee4d6491d90a5a4d7a9043",
-    "packageReportSha256": "1e14d45f977af334ea6be6da3932cb0d8470f43f1d57f3310079fb28d94d2bda",
+    "sourceFingerprint": "36fc784c9fb39b89c0b03d885bec150cfaabaeac8a6e2a12a7841375094a28c9",
+    "developmentReportSha256": "db2ccbc09954c9111a0568db5c28c993ae77d511b5e8c71930fa68ab060c0368",
+    "packageReportSha256": "918d0de9b1e728f1d0d2a052cf8a1b85e03ad6ab06400d7afd80f6083c7ca7aa",
     "developmentAcceptance": true,
     "releaseAcceptance": false,
     "paperCompletion": false,
@@ -20,13 +20,13 @@
       "driverAbi": 1
     },
     "nativeTarget": "darwin-arm64-napi8",
-    "nativeArtifactSha256": "8c13a7d06bf8a88c3e87ecbac3ec9bba00550a8ef5da05c13485ef310257dbf4",
+    "nativeArtifactSha256": "e6e779680c7acfa88f366a5b96ca0845de8c4b6008be692a7212eb298360b7c1",
     "archives": [
       {
         "name": "@cordis-verus/compat-cordis",
         "version": "0.1.0",
         "file": ".vendor/cordis/cordis-verus-compat-cordis-0.1.0.tgz",
-        "sha256": "d84d744c2d891a7fdbf78ff4065b2e7ff125033937b8bd3d1d7892ebc24956e5"
+        "sha256": "6af36d6bb186aa59918a01648a1cc861f6dd3bdc12bb3857469a0dd4fba39701"
       },
       {
         "name": "@cordis-verus/compat-harness",
@@ -38,7 +38,7 @@
         "name": "@cordis-verus/compat-loader",
         "version": "0.1.0",
         "file": ".vendor/cordis/cordis-verus-compat-loader-0.1.0.tgz",
-        "sha256": "1af91c20349d0b0507f996ec9b73b63c480a26a8b7b49e46d3e1e53b60564293"
+        "sha256": "2d3f522bed7f9a5f7ab70e4df828f799c56dc33978a7254daba58436c3a10ae0"
       }
     ]
   },

@@ -42,8 +42,8 @@ async function sources() {
   }
   return hashes;
 }
-const officialUnitTests = ['--test', '--test-timeout=60000', 'tests/official/bootstrap.test.mjs', 'tests/official/roster.test.mjs',
-  'tests/official/rust-addon.test.mjs', 'tests/official/extensions-launcher.test.mjs', 'tests/official/extension-loader-mutation.test.mjs', 'tests/official/loader-transactions.test.mjs', 'tests/official/config-transactions.test.mjs', 'tests/official/process-supervisor.test.mjs'];
+const officialUnitTests = ['--expose-internals', '--test', '--test-timeout=60000', 'tests/official/bootstrap.test.mjs', 'tests/official/roster.test.mjs',
+  'tests/official/rust-addon.test.mjs', 'tests/official/extensions-launcher.test.mjs', 'tests/official/extension-loader-mutation.test.mjs', 'tests/official/loader-transactions.test.mjs', 'tests/official/config-transactions.test.mjs', 'tests/official/in-place-hmr.test.mjs', 'tests/official/process-supervisor.test.mjs'];
 const extensionRuns = [
   {name:'upstream', backend:'upstream', rust:false},
   {name:'native', backend:'native', rust:false},

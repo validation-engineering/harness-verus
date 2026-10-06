@@ -144,12 +144,12 @@ test('HMR config queue remains behind the domain queue before its callback can t
   } finally { release.resolve(); await f.dispose(); }
 });
 
-test('official in-process module reload refuses before altering the live module cache', { timeout: 20000 }, async () => {
+test('an unobserved config path does not alter the live module cache', { timeout: 20000 }, async () => {
   const f = await fixture();
   try {
     const hmr = f.ctx.hmr, cache = new Map(hmr.internal.loadCache);
     hmr.stashed.add(pathToFileURL(f.configPath).href);
-    await assert.rejects(hmr.runExclusive(() => hmr.partialReload()), { code: 'OFFICIAL_IN_PROCESS_HMR_UNSUPPORTED' });
+    await hmr.runExclusive(() => hmr.partialReload());
     assert.deepEqual(new Map(hmr.internal.loadCache), cache);
     assert.equal(f.active.get('probe'), 1);
   } finally { await f.dispose(); }

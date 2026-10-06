@@ -46,7 +46,7 @@ npm run official:extensions -- headless --json "统计文本 Hello 世界的字�
 真实模型仍需用户配置；本项目的自动验收使用本机模型 fixture。
 示例、配置和验证范围见[官方扩展指南](docs/official-extensions.md)。
 
-默认 UI 的 ConfigEditor、Include 文件刷新和 HMR 配置队列现在统一进入 native 域事务，在文件锁和写入前接纳，并等待生命周期、实际写入及官方回滚完成。宿主还可通过[官方 Loader 事务接口](docs/loader-transactions.md)显式创建、更新和删除条目。官方原地模块 HMR 会在修改缓存前明确拒绝；模块图替换可使用核心库的 Worker/Process 代次路径。真实官方 Web 应用另有可选的进程监督入口：
+默认 UI 的 ConfigEditor、Include 文件刷新和 HMR 配置队列现在统一进入 native 域事务，在文件锁和写入前接纳，并等待生命周期、实际写入及官方回滚完成。宿主还可通过[官方 Loader 事务接口](docs/loader-transactions.md)显式创建、更新和删除条目。官方原地模块 HMR 使用宿主适配器，在旧插件实际清理完成后替换支持范围内的模块，并保留候选失败的恢复结果；涉及 native addon 或无法安全替换的共享宿主模块时，需要 Worker/Process 隔离路径。真实官方 Web 应用另有可选的进程监督入口：
 
 ```sh
 npm run official:watch
@@ -136,4 +136,4 @@ npm run official:check
 
 2026-10-05 的优化编译和静止图复用已在实际安装的官方组合中验收。本机 Web 完整流程从单次 81.46 秒降至三次中位数 2.59 秒；同期原版为 1.86 秒。测量范围、全部样本及限制见[性能观测](docs/performance.md)。
 
-长期还需要：更多第三方插件、将核心库的 Worker 模块图与 typed Rust 迁移能力接入更多应用场景、跨平台制品、长时间运行与大历史性能、完整宿主 refinement 和发布门禁。默认官方应用尚未自动迁入 Worker，也不宣称原地模块 HMR 完成。
+长期还需要：更多第三方插件、将核心库的 Worker 模块图与 typed Rust 迁移能力接入更多应用场景、跨平台制品、长时间运行与大历史性能、完整宿主 refinement 和发布门禁。默认官方应用保持同一原生 Context；原地 HMR 的具体模块边界与失败合同见[核心官方事务指南](https://github.com/Stool233/cordis-verus/blob/main/docs/official-config-transactions.md)，不承诺任意模块顶层副作用可回滚。
