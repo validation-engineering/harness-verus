@@ -47,9 +47,10 @@ test('installed official ToolRuntime follows native generations and unregisters 
 test('dynamic artifact evidence rejects source, bytes, and installed runtime drift', async t => {
   const temporary = await mkdtemp(path.join(tmpdir(), 'cordis-dynamic-evidence-'));
   t.after(() => rm(temporary, { recursive: true, force: true }));
-  const { evidence, artifacts } = await verifyRustModules();
+  const { evidence, artifacts, published } = await verifyRustModules();
   const paths = [...Object.keys(evidence.inputs), moduleEvidenceRelativePath,
     ...Object.values(artifacts).map(item => path.relative(projectRoot, item.path)),
+    ...Object.values(published).flatMap(item => [item.manifestPath, item.config.path].map(file => path.relative(projectRoot, file))),
     'sources.lock.json', '.vendor/cordis/provenance/package-report.json'];
   for (const file of paths) {
     const destination = path.join(temporary, file);

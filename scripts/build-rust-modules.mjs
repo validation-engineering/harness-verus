@@ -1,5 +1,6 @@
 #!/usr/bin/env node
 import assert from 'node:assert/strict';
+import { publishNativeModule } from '../src/native-module-artifacts.mjs';
 import { spawnSync } from 'node:child_process';
 import { copyFile, mkdir, readFile, realpath, rm, writeFile } from 'node:fs/promises';
 import path from 'node:path';
@@ -57,7 +58,10 @@ export async function buildRustModules({ offline = false } = {}) {
     const output = path.join(projectRoot, relative);
     await mkdir(path.dirname(output), { recursive: true });
     await copyFile(candidates[0], output);
-    artifacts[revision] = { path: relative, sha256: await sha256(output), revision, compilerProfile: emitted[0].profile };
+    const published = await publishNativeModule({ libraryPath: output, directory: path.join(projectRoot, '.cache/rust-modules/published'),
+      plugins: [{ id: 'analysis', factory: moduleFactoryName }] });
+    artifacts[revision] = { path: relative, sha256: await sha256(output), revision, compilerProfile: emitted[0].profile,
+      published: { manifestPath: path.relative(projectRoot, published.manifestPath), manifestSha256: published.manifestSha256 } };
   }
   assert.deepEqual(await moduleSources(), before, 'Native module source changed during compilation');
   assert.deepEqual(await coreSources(coreRoot), approved, 'Core source changed during native module compilation');

@@ -4,7 +4,7 @@ import { createHash } from 'node:crypto';
 import { spawn } from 'node:child_process';
 import { readFile, writeFile, mkdir, lstat } from 'node:fs/promises';
 import { fileURLToPath } from 'node:url';
-import { resolve } from 'node:path';
+import { resolve, relative } from 'node:path';
 import { verifyOfficial, evidencePath } from './verify-official.mjs';
 import { verifyRustAddon, addonEvidenceRelativePath, addonRelativePath } from './verify-rust-addon.mjs';
 import { verifyRustModules, moduleEvidenceRelativePath, moduleArtifactRelativePaths } from './verify-rust-modules.mjs';
@@ -44,25 +44,30 @@ async function sources() {
   return hashes;
 }
 const officialUnitTests = ['--expose-internals', '--test', '--test-timeout=60000', 'tests/official/bootstrap.test.mjs', 'tests/official/roster.test.mjs',
-  'tests/official/rust-addon.test.mjs', 'tests/official/rust-modules.test.mjs', 'tests/official/dynamic-rust-loop.test.mjs', 'tests/official/extensions-launcher.test.mjs', 'tests/official/extension-loader-mutation.test.mjs', 'tests/official/loader-transactions.test.mjs', 'tests/official/config-transactions.test.mjs', 'tests/official/in-place-hmr.test.mjs', 'tests/official/process-supervisor.test.mjs'];
+  'tests/official/native-build-reload.test.mjs', 'tests/official/native-loader.test.mjs', 'tests/official/native-reverse-services.test.mjs', 'tests/official/native-resources.test.mjs', 'tests/official/native-reverse-resources.test.mjs', 'tests/official/native-publications.test.mjs', 'tests/official/native-migration.test.mjs', 'tests/official/native-launcher.test.mjs', 'tests/official/rust-addon.test.mjs', 'tests/official/rust-modules.test.mjs', 'tests/official/dynamic-rust-loop.test.mjs', 'tests/official/extensions-launcher.test.mjs', 'tests/official/extension-loader-mutation.test.mjs', 'tests/official/loader-transactions.test.mjs', 'tests/official/config-transactions.test.mjs', 'tests/official/in-place-hmr.test.mjs', 'tests/official/process-supervisor.test.mjs'];
 const extensionRuns = [
   {name:'upstream', backend:'upstream', rust:false},
   {name:'native', backend:'native', rust:false},
   {name:'native-rust', backend:'native', rust:true},
+  {name:'native-dynamic', backend:'native', rust:false, dynamic:true},
 ];
-const extensionCommand = run => ['scripts/check-official-extensions.mjs', '--backend', run.backend, ...(run.rust ? ['--rust'] : [])];
+const extensionCommand = run => ['scripts/check-official-extensions.mjs', '--backend', run.backend, ...(run.rust ? ['--rust'] : []), ...(run.dynamic ? ['--dynamic'] : [])];
+const watchLauncherTests = ['--test', '--test-timeout=120000', 'tests/official/native-watch-launcher.test.mjs'];
 const expectedCommands = [
+  watchLauncherTests,
   ['scripts/verify-install.mjs'],
   officialUnitTests,
   ...['web', 'headless'].flatMap(kind => ['upstream', 'native'].map(backend => [`scripts/check-official-${kind}.mjs`, '--backend', backend])),
   ...extensionRuns.map(extensionCommand),
 ];
+const publications = (await verifyRustModules()).published;
 const executionFiles = [
+  ...Object.values(publications).flatMap(item => [item.manifestPath, item.config.path].map(file => relative(root, file))),
   ...['web', 'headless'].flatMap(kind => ['upstream', 'native'].flatMap(backend => [`.cache/official-${kind}/${backend}.json`, `.cache/official-${kind}/${backend}.log`])),
   ...extensionRuns.flatMap(run => [`.cache/official-extensions/${run.name}.json`, `.cache/official-extensions/${run.name}.log`]),
   addonEvidenceRelativePath, addonRelativePath, moduleEvidenceRelativePath, ...Object.values(moduleArtifactRelativePaths),
   'dist/build-report.json', '.cache/official/validation-runs.json',
-].sort();
+].filter((file, index, all) => all.indexOf(file) === index).sort();
 function webSummary(reports) {
   const upstream = reports['web/upstream'].checks, native = reports['web/native'].checks;
   assertEquivalentRoster(native.pluginInventory.entries, upstream.pluginInventory.entries);
@@ -72,7 +77,7 @@ function webSummary(reports) {
   return { officialVersion: reports['web/native'].version, defaultPreset: native.presets.default,
     totalEntries: native.pluginInventory.total, activeEntries: native.pluginInventory.active,
     activeFibers: native.runtime.activeFibers, originalRosterEqual: true,
-    rosterComparison: { generatedIdsComparedByModule: generatedIdModules, allOtherEntryIds: 'exact' },
+    rosterComparison: { generatedIdsComparedByModule: generatedIdModules, generatedEntryPositions: 'by-module', allOtherEntryIds: 'exact', allOtherEntryOrder: 'exact-relative' },
     staticAssets: native.staticAssets.length, browserEntries: native.browserGraph.entries,
     shutdown: native.shutdown };
 }
@@ -108,14 +113,15 @@ function extensionsSummary(reports, hashes) {
     const report = reports[`extensions/${run.name}`];
     assert.equal(report.browserExecution, false); assert.equal(report.paidModelRequests, false);
     assert.equal(report.rust, run.rust);
+    assert.equal(report.dynamic, !!run.dynamic);
     assert.equal(report.checks.evidenceUnchanged, true);
     const tools = report.checks.headless.map(item => { assert.equal(item.toolCalled, true); return item.tool; });
-    assert.deepEqual(tools, run.rust ? ['cordis_greet','rust_text_analyze'] : ['cordis_greet']);
+    assert.deepEqual(tools, run.dynamic ? ['cordis_greet','rust_dynamic_text_analyze'] : run.rust ? ['cordis_greet','rust_text_analyze'] : ['cordis_greet']);
     const web = report.checks.web;
     for (const key of ['standardPreset','toolCalls','invalidConfigurationRejected','configurationUpdated',
       'toolFailureRecovered','cancelled','unloadedToolAbsent','reenabledToolCalled']) assert.equal(web[key], true, key);
     assert.equal(web.rustToolCalled, run.rust);
-    assert.equal(report.processes.length, run.rust ? 3 : 2);
+    assert.equal(report.processes.length, run.rust || run.dynamic ? 3 : 2);
     for (const process of report.processes) {
       assert.equal(process.code, 0); assert.equal(process.signal, null); assert.equal(process.forced, false);
       assert.equal(process.singleContext, true); assert.equal(process.registryEmpty, true);
@@ -127,9 +133,20 @@ function extensionsSummary(reports, hashes) {
       assert.equal(report.rustAddon.manifestSha256, hashes[addonEvidenceRelativePath]);
       assert.equal(report.rustAddon.binarySha256, hashes[addonRelativePath]);
     }
+    if (run.dynamic) {
+      assert.equal(web.dynamicToolCalled, true); assert.equal(web.nativeModuleActive, true);
+      assert.equal(report.rustModule.manifestSha256, hashes[moduleEvidenceRelativePath]);
+      assert.equal(report.rustModule.binarySha256, hashes[moduleArtifactRelativePaths.v1]);
+      assert.equal(report.rustModule.publicationManifestSha256, publications.v1.manifestSha256);
+      assert.deepEqual(report.checks.persistence.dynamicToolResults.map(row => row.profile), ['headless', 'web']);
+      for (const row of report.checks.persistence.dynamicToolResults) {
+        assert.equal(row.tool, 'rust_dynamic_text_analyze');
+        assert.deepEqual(row.value, { backend: 'rust-dynamic', revision: 'v1', bytes: 17, characters: 13, lines: 2, words: 3 });
+      }
+    }
     return [run.name, {tools, web, processes:report.processes.map(({runtime,...summary}) => summary),
       persistence: {sessions:report.checks.persistence.sessions,cancelledToolResult:true},
-      ...(run.rust ? {rustAddon:report.rustAddon} : {})}];
+      ...(run.rust ? {rustAddon:report.rustAddon} : {}), ...(run.dynamic ? {rustModule:report.rustModule, dynamicToolResults:report.checks.persistence.dynamicToolResults} : {})}];
   }));
 }
 async function checkedExecution(hashes) {
@@ -186,7 +203,7 @@ if (process.argv[2] === '--check') {
 } else {
   await mkdir(resolve(root, '.cache/official'), { recursive: true });
   const report = { schema, status: 'running', environment: env(), startedAt: new Date().toISOString(),
-    scope: 'Official npm Web/standard and headless; only Node-host Cordis replaced. Browser Cordis remains official JavaScript. Includes JS/Rust extension tools on the official Loader and AgentLoop, and native module replacement in the slim AgentLoop and official ToolRuntime.',
+    scope: 'Official npm Web/standard and headless; only Node-host Cordis replaced. Browser Cordis remains official JavaScript. Includes JS/Rust extension tools on the official Loader and AgentLoop, native module replacement in the slim AgentLoop and official ToolRuntime, default Loader/configuration integration, real Cargo build watching, independent Rust-to-JavaScript service dependencies, and bidirectional streams and object interfaces with action-scoped reverse acquisition, cancellation drain, retryable close, same-process code replacement, and dynamically published native worker children with real official tool consumers explicit cleanup retries, and opt-in logical checkpoint migration through official ConfigEditor updates and consumer-aware recovery.',
     proofExecuted: false, releaseAcceptance: false, paidModelRequests: false, browserExecution: false };
   await writeFile(reportPath, JSON.stringify(report, null, 2) + '\n');
   try {
@@ -195,8 +212,13 @@ if (process.argv[2] === '--check') {
     await verifyRustModules();
     await verifyRustModules({ runtime: 'slim' });
     const before = await sources(), installEvidenceSha256 = await hash(evidencePath);
-    const addonHashes = Object.fromEntries(await Promise.all([addonEvidenceRelativePath,addonRelativePath,moduleEvidenceRelativePath,...Object.values(moduleArtifactRelativePaths),'dist/build-report.json'].map(async file=>[file,await hash(file)])));
-    const reports = {}, executionHashes = {}, runs = [];
+    // This development-launcher test intentionally builds native artifacts.
+    // Complete it before freezing the artifact evidence used by all later runs.
+    const reports = {}, executionHashes = {}, runs = [await execute(process.execPath, watchLauncherTests)];
+    const addonHashes = Object.fromEntries(await Promise.all([addonEvidenceRelativePath,addonRelativePath,moduleEvidenceRelativePath,
+      ...Object.values(moduleArtifactRelativePaths), 'dist/build-report.json',
+      ...Object.values(publications).flatMap(item => [item.manifestPath, item.config.path].map(file => relative(root, file))),
+    ].map(async file=>[file,await hash(file)])));
     runs.push(await execute(process.execPath, ['scripts/verify-install.mjs']));
     runs.push(await execute(process.execPath, officialUnitTests));
     for (const kind of ['web', 'headless']) for (const backend of ['upstream', 'native']) {

@@ -55,7 +55,7 @@ npm run official:install -- --refresh-runtime-lock --offline
 
 验收分别运行原版 Cordis baseline 和 native 宿主，保留未经修改的官方入口与默认业务组合；测试通过官方开关关闭 telemetry，并隔离配置和凭据。Web 检查真实 HTTP 登录令牌交换、官方 HTML/JS/CSS、客户端模块、插件清单、默认 presets 和关闭；专用观察器记录实际 native Context 与插件图，关闭后检查清理结果。Headless 仅把模型端点改为本机 HTTP/SSE fixture，执行原版工具并在另一个进程恢复官方持久会话。
 
-插件清单逐条比较顺序、名称、启用状态和激活状态；只有官方目录选择器自动创建的两个 native 插件按模块名对应随机实例 ID，其余 ID 严格一致，原始 ID 全部保存在子报告中。
+插件清单比较名称、启用状态和激活状态。官方目录选择器自动创建的两个 native 插件使用随机实例 ID；纯数字 ID 会改变 JavaScript 对象的枚举位置，因此这两个条目按模块名对应 ID 和位置。其余条目的相对顺序和 ID 均严格一致，原始 ID 和顺序全部保存在子报告中。
 
 完整 gate 也验证[官方模式的 JS/Rust 扩展](official-extensions.md)，需要先构建来源匹配的示例 addon。默认启动仍使用随包核心；扩展启动器显式选择已验证的用户 addon。
 
@@ -71,4 +71,4 @@ npm run official:install -- --refresh-runtime-lock --offline
 
 同一浏览器检查也已在本机 Chrome 中执行；它仅覆盖界面启动与上述面板，不是浏览器内核的形式化验证或真实模型端到端验收。
 
-独立 Rust 动态插件另有[同进程更新示例](native-rust-modules.md)：默认 addon 常驻，模块通过 C ABI 换代。当前由宿主显式操作，未接入默认 Web 插件面板和 watcher。官方验收还覆盖安装后的 ToolRuntime 调用与精简组合的真实 AgentLoop。
+独立 Rust 动态插件另有[同进程更新示例](native-rust-modules.md)：默认 addon 常驻，模块通过 C ABI 换代。`npm run official:rust` 将它作为普通官方 Loader 条目接入配置面板，`official:rust:watch` 提供 Web 构建监视与配置更新；低层 Controller 仍可由自定义宿主显式操作。官方验收还覆盖安装后的 ToolRuntime 调用与精简组合的真实 AgentLoop。

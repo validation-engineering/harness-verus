@@ -33,3 +33,10 @@ const [{ installOfficialTransactions }, { Entry, EntryGroup, EntryTree }, { defa
   import('../official-runtime/node_modules/@deepseek-ai/dsh-config-editor/lib/index.js'),
 ]);
 installOfficialTransactions({ Entry, EntryGroup, EntryTree, Hmr, ConfigEditor });
+
+// Native modules are ordinary entries in the unchanged official Loader.
+const [{ installOfficialRustModules }, { default: Schema }] = await Promise.all([
+  import('../src/official-native-modules.mjs'),
+  import('../official-runtime/node_modules/@deepseek-ai/schemastery/lib/index.mjs'),
+]);
+installOfficialRustModules({ EntryTree, Schema });

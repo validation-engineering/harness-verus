@@ -1,5 +1,6 @@
 #!/usr/bin/env node
 import assert from 'node:assert/strict';
+import { readNativeModule } from '../src/native-module-artifacts.mjs';
 import { createHash } from 'node:crypto';
 import { lstat, readFile, readdir } from 'node:fs/promises';
 import path from 'node:path';
@@ -17,7 +18,7 @@ const json = async file => JSON.parse(await readFile(file, 'utf8'));
 
 export async function moduleSources(root = projectRoot) {
   const files = ['native/dynamic-text-analysis/Cargo.toml', 'native/dynamic-text-analysis/Cargo.lock',
-    'scripts/build-rust-modules.mjs', 'scripts/verify-rust-modules.mjs', 'scripts/verify-rust-addon.mjs'];
+    'src/native-module-artifacts.mjs', 'scripts/build-rust-modules.mjs', 'scripts/verify-rust-modules.mjs', 'scripts/verify-rust-addon.mjs'];
   async function visit(relative) {
     for (const name of (await readdir(path.join(root, relative))).sort()) {
       const file = `${relative}/${name}`, stat = await lstat(path.join(root, file));
@@ -60,7 +61,7 @@ export async function verifyRustModules({ root = projectRoot, runtime = 'officia
         `Installed Cordis runtime differs from native module provenance: ${name}/${file}`);
     }
   }
-  const artifacts = {};
+  const artifacts = {}, published = {};
   for (const [revision, relative] of Object.entries(moduleArtifactRelativePaths)) {
     const entry = evidence.artifacts[revision];
     assert.equal(entry.path, relative);
@@ -72,8 +73,12 @@ export async function verifyRustModules({ root = projectRoot, runtime = 'officia
     assert(stat.isFile() && !stat.isSymbolicLink(), `Native module must be a regular file: ${relative}`);
     assert.equal(await sha256(file), entry.sha256, `Native module bytes differ from build evidence: ${revision}`);
     artifacts[revision] = { path: file, sha256: entry.sha256 };
+    assert.match(entry.published?.manifestPath ?? '', /^\.cache\/rust-modules\/published\/[a-f0-9]{64}\.json$/);
+    published[revision] = await readNativeModule(path.join(root, entry.published.manifestPath), { sha256: entry.published.manifestSha256 });
+    assert.equal(published[revision].config.sha256, entry.sha256);
+    assert.deepEqual(published[revision].config.plugins, [{ id: 'analysis', factory: moduleFactoryName }]);
   }
-  return { artifacts, evidence, manifestSha256: await sha256(evidencePath),
+  return { artifacts, published, evidence, manifestSha256: await sha256(evidencePath),
     coreSourceDigest: createHash('sha256').update(JSON.stringify(evidence.coreSources)).digest('hex') };
 }
 

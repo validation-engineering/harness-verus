@@ -63,9 +63,11 @@ npm run official:watch
 npm run rust:modules:build -- --offline
 npm run rust:modules:demo
 npm run rust:modules:test
+npm run official:rust -- web --no-open
+npm run official:rust:watch -- --no-open
 ```
 
-需先完成基础构建与官方安装。旧映像保留到退出，当前支持 sync/async JSON 服务，不含状态迁移、物理卸载或默认 Web watcher 接入。用法与来源验证见[原生模块指南](docs/native-rust-modules.md)。
+需先完成基础构建与官方安装。支持 JSON 服务、流/对象、动态子插件，以及显式启用的有界逻辑 checkpoint 迁移；旧映像保留到退出，不执行物理卸载。官方 Loader 条目已接入配置面板；Web watcher 在后台编译源码，通过 ConfigEditor 更新不可变制品配置并检查工具消费者就绪。用法、迁移边界与来源验证见[原生模块指南](docs/native-rust-modules.md)。
 
 ## 精简组合与离线 demo
 

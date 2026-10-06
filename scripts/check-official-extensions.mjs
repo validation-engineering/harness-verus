@@ -13,30 +13,32 @@ import { parseArgs } from 'node:util';
 import { zstdDecompressSync } from 'node:zlib';
 
 const root = fileURLToPath(new URL('../', import.meta.url));
-const { values } = parseArgs({ options: { backend: { type: 'string', default: 'native' }, register: { type: 'string' }, rust: { type: 'boolean', default: false } } });
+const { values } = parseArgs({ options: { backend: { type: 'string', default: 'native' }, register: { type: 'string' }, rust: { type: 'boolean', default: false }, dynamic: { type: 'boolean', default: false } } });
 const backend = values.backend;
 assert(['upstream', 'native'].includes(backend));
 assert(!values.register || backend === 'native');
 assert(!values.rust || backend === 'native', 'Rust addon requires the native backend');
+assert(!values.dynamic || backend === 'native', 'Dynamic Rust modules require the native backend');
+assert(!(values.dynamic && values.rust), '--dynamic and --rust are mutually exclusive');
 assert(!Object.hasOwn(process.env, 'CORDIS_NATIVE_BINDING'), 'Use a verified register, not CORDIS_NATIVE_BINDING');
 const register = path.resolve(values.register ?? path.join(root, values.rust ? 'scripts/official-extensions-register.mjs' : 'scripts/official-register.mjs'));
 const directory = path.join(root, '.cache/official-extensions');
 await mkdir(directory, { recursive: true });
-const suffix = `${backend}${values.rust ? '-rust' : ''}${values.register ? '-development' : ''}`;
+const suffix = `${backend}${values.dynamic ? '-dynamic' : values.rust ? '-rust' : ''}${values.register ? '-development' : ''}`;
 const temporary = await mkdtemp(path.join(tmpdir(), 'cordis-extensions-'));
 const home = path.join(temporary, 'home'), workspace = path.join(temporary, 'workspace'), dshHome = path.join(temporary, 'dsh');
 await Promise.all([mkdir(home), mkdir(workspace)]);
 const sha = bytes => createHash('sha256').update(bytes).digest('hex');
 const key = 'fixture-key-not-a-real-credential', keyName = 'CORDIS_HARNESS_TEST_API_KEY', model = 'local-extension-fixture';
 const id = 'cordis-greeting';
-const report = { schemaVersion: 1, status: 'running', backend, rust: values.rust,
+const report = { schemaVersion: 1, status: 'running', backend, rust: values.rust, dynamic: values.dynamic,
   evidence: values.register ? 'development-source-runtime' : 'installed-artifacts',
   browserExecution: false, paidModelRequests: false, releaseAcceptance: false,
   node: process.version, platform: `${process.platform}-${process.arch}`, startedAt: new Date().toISOString(),
   checks: {}, processes: [], requests: [], inputs: {} };
 await writeFile(path.join(directory, `${suffix}.json`), JSON.stringify(report, null, 2) + '\n');
 const logs = [], requests = [], cases = new Map(), sessions = new Map();
-let failure, active, baseURL;
+let failure, active, baseURL, dynamicModule;
 const abort = new AbortController();
 const interrupt = () => abort.abort(new Error('Extension acceptance interrupted'));
 process.once('SIGINT', interrupt); process.once('SIGTERM', interrupt);
@@ -96,7 +98,11 @@ const server = createServer(async (request, response) => {
   } catch (error) { abort.abort(error); response.destroy(); }
 });
 const extensionRows = () => [{ id, name: pathToFileURL(path.join(root, 'examples/official/greeting.mjs')).href },
-  ...(values.rust ? [{ id: 'cordis-rust-text-analysis', name: pathToFileURL(path.join(root, 'examples/official/rust-text-analysis.mjs')).href }] : [])];
+  ...(values.rust ? [{ id: 'cordis-rust-text-analysis', name: pathToFileURL(path.join(root, 'examples/official/rust-text-analysis.mjs')).href }] : []),
+  ...(values.dynamic ? [
+    { id: 'cordis-rust-module', name: 'cordis:rust-module', config: dynamicModule.config },
+    { id: 'cordis-rust-dynamic-tool', name: pathToFileURL(path.join(root, 'examples/official/rust-dynamic-text-analysis.mjs')).href },
+  ] : [])];
 async function prepare(profile) {
   const { initProfile, PROFILE_TEMPLATES } = await import('../official-runtime/node_modules/@deepseek-ai/dsh-app-boot/lib/index.js');
   const directory = path.join(dshHome, 'profiles', profile);
@@ -170,17 +176,29 @@ async function durableSessions() {
 try {
   for (const file of ['scripts/check-official-extensions.mjs', 'scripts/official-test-entry.mjs', 'src/official-plugin-api.mjs',
     'examples/official/greeting.mjs', 'examples/official/rust-text-analysis.mjs', 'official-runtime/package-lock.json']) report.inputs[file] = sha(await readFile(path.join(root, file)));
+  if (values.dynamic) for (const file of ['scripts/official-native.mjs', 'scripts/verify-rust-modules.mjs',
+    'src/native-module-artifacts.mjs', 'src/official-native-modules.mjs', 'src/official-loader-api.mjs',
+    'examples/official/rust-dynamic-text-analysis.mjs', 'examples/shared/dynamic-text-tool.mjs']) report.inputs[file] = sha(await readFile(path.join(root, file)));
   if (backend === 'native') report.registerSha256 = sha(await readFile(register));
   if (values.rust) {
     const { verifyRustAddon } = await import('./verify-rust-addon.mjs');
     const addon = await verifyRustAddon();
     report.rustAddon = { manifestSha256: addon.manifestSha256, coreSourceDigest: addon.coreSourceDigest, binarySha256: sha(await readFile(addon.addonPath)) };
   }
+  if (values.dynamic) {
+    const { verifyRustModules } = await import('./verify-rust-modules.mjs');
+    const modules = await verifyRustModules();
+    dynamicModule = modules.published.v1;
+    report.rustModule = { manifestSha256: modules.manifestSha256, coreSourceDigest: modules.coreSourceDigest,
+      publicationManifestSha256: dynamicModule.manifestSha256, binarySha256: dynamicModule.config.sha256 };
+  }
   await new Promise((resolve, reject) => { server.once('error', reject); server.listen(0, '127.0.0.1', resolve); });
   baseURL = `http://127.0.0.1:${server.address().port}`;
-  const rustScenario = { tool: 'rust_text_analyze', args: { text: 'Hello 世界\nRust' }, fields: { backend: 'rust', bytes: 17, characters: 13, lines: 2, words: 3 } };
+  const rustScenario = { tool: values.dynamic ? 'rust_dynamic_text_analyze' : 'rust_text_analyze', args: { text: 'Hello 世界\nRust' },
+    fields: { backend: values.dynamic ? 'rust-dynamic' : 'rust', ...(values.dynamic ? { revision: 'v1' } : {}), bytes: 17, characters: 13, lines: 2, words: 3 } };
+  const nativeCase = values.dynamic ? 'dynamic' : 'rust';
   report.checks.headless = [];
-  for (const [label, scenario] of [['headless', { expected: 'Hello, Ada!' }], ...(values.rust ? [['headless_rust', rustScenario]] : [])]) {
+  for (const [label, scenario] of [['headless', { expected: 'Hello, Ada!' }], ...(values.rust || values.dynamic ? [[`headless_${nativeCase}`, rustScenario]] : [])]) {
     cases.set(label, scenario);
     const headless = launch(['headless', '--patch', await prepare('headless'), '--json', `CORDIS_EXTENSION_${label}`], label);
     await Promise.race([headless.done, new Promise((_, reject) => { const timer = setTimeout(() => reject(new Error('Headless timeout')), 45000); timer.unref(); })]);
@@ -215,6 +233,9 @@ try {
   async function inventory() { return (await rpc('pluginInventory/list')).entries; }
   let entries = await inventory();
   assert(entries.some(row => row.moduleName === extensionRows()[0].name && row.fiberPhase === 'active'));
+  if (values.dynamic) for (const entry of extensionRows().slice(1)) {
+    assert(entries.some(row => row.moduleName === entry.name && row.fiberPhase === 'active'), `Native Loader entry must be active: ${entry.name}`);
+  }
   assert.equal((await rpc('agentPresets/list')).presets.find(row => row.id === 'standard').isDefault, true);
   async function turn(label, scenario = {}) {
     cases.set(label, scenario);
@@ -246,15 +267,33 @@ try {
   await turn('unloaded', { absent: true }); await idle('unloaded');
   const enabled = await rpc('pluginManager/setPluginEnabled', { id: plugin.entryId, enabled: true }); assert.equal(enabled.application, 'applied');
   await turn('reloaded', { expected: 'Welcome, Ada!' }); await idle('reloaded');
-  if (values.rust) { await turn('rust', { ...rustScenario, requested: false, callSent: false, completed: false }); await idle('rust'); }
+  if (values.rust || values.dynamic) { await turn(nativeCase, { ...rustScenario, requested: false, callSent: false, completed: false }); await idle(nativeCase); }
   report.checks.web = { standardPreset: true, toolCalls: true, invalidConfigurationRejected: true, configurationUpdated: true,
-    toolFailureRecovered: true, cancelled: true, unloadedToolAbsent: true, reenabledToolCalled: true, rustToolCalled: values.rust };
+    toolFailureRecovered: true, cancelled: true, unloadedToolAbsent: true, reenabledToolCalled: true, rustToolCalled: values.rust,
+    ...(values.dynamic ? { dynamicToolCalled: true, nativeModuleActive: true } : {}) };
   await stop(web);
   const durable = await durableSessions();
   const cancelled = durable.find(row => row.id === cancelId); assert(cancelled);
   const result = cancelled.artifact.events.find(event => event.type === 'tool/result' && event.data.message.toolCallId === 'call-cancelled');
   assert(result && /cancel|abort/i.test(JSON.stringify(result)), 'Durable official history must contain cancelled tool result');
   report.checks.persistence = { sessions: durable.length, cancelledToolResult: result, hashes: Object.fromEntries(durable.map(row => [row.id, row.sha256])) };
+  if (values.dynamic) {
+    report.checks.persistence.dynamicToolResults = ['headless_dynamic', 'dynamic'].map(label => {
+      const callId = `call-${label}`;
+      const records = durable.flatMap(session => session.artifact.events
+        .filter(event => event.type === 'tool/call' && event.data.callId === callId).map(call => ({ session, call })));
+      assert.equal(records.length, 1, `One durable native tool call required for ${label}`);
+      const { session, call } = records[0];
+      assert.equal(call.data.name, rustScenario.tool);
+      const results = session.artifact.events.filter(event => event.type === 'tool/result' && event.data.message.toolCallId === callId);
+      assert.equal(results.length, 1, `One durable native tool result required for ${label}`);
+      const message = results[0].data.message;
+      assert.equal(message.isError, false); assert.equal(message.content.length, 1); assert.equal(message.content[0].type, 'text');
+      const value = JSON.parse(message.content[0].text);
+      for (const [field, expected] of Object.entries(rustScenario.fields)) assert.equal(value[field], expected, `Persisted native ${field}: ${label}`);
+      return { profile: label === 'dynamic' ? 'web' : 'headless', sessionId: session.id, callId, tool: call.data.name, value };
+    });
+  }
   assert(!abort.signal.aborted, String(abort.signal.reason));
   for (const [file, expected] of Object.entries(report.inputs)) assert.equal(sha(await readFile(path.join(root, file))), expected, `Input changed during acceptance: ${file}`);
   if (backend === 'native') assert.equal(sha(await readFile(register)), report.registerSha256, 'Register changed during acceptance');
@@ -263,6 +302,13 @@ try {
     const addon = await verifyRustAddon();
     assert.deepEqual({ manifestSha256: addon.manifestSha256, coreSourceDigest: addon.coreSourceDigest, binarySha256: sha(await readFile(addon.addonPath)) },
       report.rustAddon, 'Rust addon evidence changed during acceptance');
+  }
+  if (values.dynamic) {
+    const { verifyRustModules } = await import('./verify-rust-modules.mjs');
+    const modules = await verifyRustModules();
+    assert.deepEqual({ manifestSha256: modules.manifestSha256, coreSourceDigest: modules.coreSourceDigest,
+      publicationManifestSha256: modules.published.v1.manifestSha256, binarySha256: modules.published.v1.config.sha256 },
+    report.rustModule, 'Native module evidence changed during acceptance');
   }
   report.checks.evidenceUnchanged = true;
 } catch (error) { failure = error; }
@@ -279,5 +325,5 @@ finally {
   await rm(temporary, { recursive: true, force: true });
   process.removeListener('SIGINT', interrupt); process.removeListener('SIGTERM', interrupt);
 }
-console.log(JSON.stringify({ status: report.status, backend, checks: report.checks, report: `.cache/official-extensions/${suffix}.json`, ...(failure ? { error: failure.message } : {}) }, null, 2));
+console.log(JSON.stringify({ status: report.status, backend, dynamic: values.dynamic, checks: report.checks, report: `.cache/official-extensions/${suffix}.json`, ...(failure ? { error: failure.message } : {}) }, null, 2));
 if (failure) process.exitCode = 1;

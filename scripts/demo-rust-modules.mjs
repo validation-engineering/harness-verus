@@ -57,7 +57,7 @@ export async function runRustModuleDemo(workspace) {
     await controller.dispose();
     report.cleanupDiagnostics = controller.inspect().images;
     for (const module of report.cleanupDiagnostics.modules) {
-      assert.deepEqual(module.resources, { instances: 0, jobs: 0, retainedInstances: 0, retainedJobs: 0 });
+      assert.deepEqual(module.resources, { instances: 0, jobs: 0, reverseCalls: 0, streams: 0, objects: 0, retainedInstances: 0, retainedJobs: 0, retainedReverseCalls: 0, retainedStreams: 0, retainedObjects: 0 });
     }
     assert.equal(app.tools().some(tool => tool.name === 'rust_dynamic_text_analyze'), false);
   } finally { await app.close(); }

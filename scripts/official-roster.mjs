@@ -15,8 +15,16 @@ export function comparableRoster(entries) {
     assert.equal(matches[0].fiberPhase, 'active');
     assert.match(matches[0].entryId, /^[0-9a-f]{1,8}$/);
   }
-  return entries.map(entry => generatedIdModules.includes(entry.moduleName)
-    ? { ...entry, entryId: `dynamic:${entry.moduleName}` } : { ...entry });
+  // Numeric-only generated IDs are array-index keys in the official loader's
+  // object registry and enumerate before named entries. Compare only these two
+  // generated entries by module, including their positions; every stable entry
+  // retains its original order. Never rewrite the raw evidence.
+  return [
+    ...entries.filter(entry => !generatedIdModules.includes(entry.moduleName)).map(entry => ({ ...entry })),
+    ...generatedIdModules.map(moduleName => ({
+      ...entries.find(entry => entry.moduleName === moduleName), entryId: `dynamic:${moduleName}`,
+    })),
+  ];
 }
 export function assertEquivalentRoster(actual, expected) {
   assert.deepEqual(comparableRoster(actual), comparableRoster(expected), 'Default official plugin roster or activation differs');

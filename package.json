@@ -14,7 +14,8 @@
   "exports": {
     "./plugin-api": "./src/plugin-api.mjs",
     "./official-plugin-api": "./src/official-plugin-api.mjs",
-    "./official-loader-api": "./src/official-loader-api.mjs"
+    "./official-loader-api": "./src/official-loader-api.mjs",
+    "./native-module-artifacts": "./src/native-module-artifacts.mjs"
   },
   "scripts": {
     "bootstrap": "node scripts/bootstrap.mjs",
@@ -43,7 +44,9 @@
     "rust:modules:demo": "node --import @cordis-verus/compat-harness/register scripts/demo-rust-modules.mjs",
     "rust:modules:test": "node --test --test-timeout=30000 tests/official/rust-modules.test.mjs tests/official/dynamic-rust-loop.test.mjs",
     "prerust:modules:demo": "node scripts/verify-install.mjs",
-    "prerust:modules:test": "node scripts/verify-install.mjs"
+    "prerust:modules:test": "node scripts/verify-install.mjs",
+    "official:rust": "node scripts/official-native.mjs",
+    "official:rust:watch": "node scripts/official-native.mjs --watch"
   },
   "dependencies": {
     "@cordis-verus/compat-cordis": "file:.vendor/cordis/cordis-verus-compat-cordis-0.1.0.tgz",

@@ -3,11 +3,11 @@
   "cordis": {
     "repository": "https://github.com/Stool233/cordis-verus.git",
     "baseCommit": "1cee52327ea2aa9fe675239d900f8762ce39c0b0",
-    "workingTreeDirty": false,
+    "workingTreeDirty": true,
     "sourceIdentity": "verified working-tree file hashes; baseCommit is metadata, not snapshot identity",
-    "sourceFingerprint": "bf21e5b281c76a57c87ec751ebb1ee49cdb33c4d215ec0c074213456d6cd8337",
-    "developmentReportSha256": "0bf8fe9651f94a5ce694690b0b0c2ab231fbea2e0e3acbced119b664989a5cc6",
-    "packageReportSha256": "a8168a7d6e079dafd550b63bb0cf0a5cd93317858a1e25d336e58c4e1883b1fe",
+    "sourceFingerprint": "2dcb62cbb667a9afeee58047ec422f5a893b0589c5c626207b6bc46bcf32d65e",
+    "developmentReportSha256": "413c6d290708c3e20b6f3399a9a170f93f60ee7a3dbc3855ffeae6f9636f35c4",
+    "packageReportSha256": "7be1b5d726b115b95090e9adb4574230ff776ed788bd676963985e3ebdd1bfca",
     "developmentAcceptance": true,
     "releaseAcceptance": false,
     "paperCompletion": false,
@@ -20,13 +20,13 @@
       "driverAbi": 1
     },
     "nativeTarget": "darwin-arm64-napi8",
-    "nativeArtifactSha256": "ffe8eb4ed18bec60ff8b91add0a9eae92acbf168ac34a36fca77e044592b00fa",
+    "nativeArtifactSha256": "542bd5ae6192e5ce914a9731cc0ea1204b31c5b27ed1325b7b205a5c3e2366dd",
     "archives": [
       {
         "name": "@cordis-verus/compat-cordis",
         "version": "0.1.0",
         "file": ".vendor/cordis/cordis-verus-compat-cordis-0.1.0.tgz",
-        "sha256": "aaf41c75f00487c5bb02cfae2952ae2bef720029fb564f6d85138a8745a1c654"
+        "sha256": "dfd723a3f6bd5e634b5ecc7c72018fb5c6a14e82faf4360fe2c9955d9f7aa96c"
       },
       {
         "name": "@cordis-verus/compat-harness",
@@ -38,7 +38,7 @@
         "name": "@cordis-verus/compat-loader",
         "version": "0.1.0",
         "file": ".vendor/cordis/cordis-verus-compat-loader-0.1.0.tgz",
-        "sha256": "cfe1dce10a9fbf033868327e5897064a6b56c791a2d027fa3faeaac8191096c3"
+        "sha256": "9b0dbd58b9a34b13f25421ca5960e3a9546436d4ee4646082df8fe305de1fc78"
       }
     ]
   },
