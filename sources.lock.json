@@ -2,12 +2,12 @@
   "schema": "cordis-harness.sources/v1",
   "cordis": {
     "repository": "https://github.com/Stool233/cordis-verus.git",
-    "baseCommit": "1cee52327ea2aa9fe675239d900f8762ce39c0b0",
+    "baseCommit": "bc970bc2cbe275b405142c9e9c1c628f54a3dde3",
     "workingTreeDirty": true,
     "sourceIdentity": "verified working-tree file hashes; baseCommit is metadata, not snapshot identity",
-    "sourceFingerprint": "2dcb62cbb667a9afeee58047ec422f5a893b0589c5c626207b6bc46bcf32d65e",
-    "developmentReportSha256": "413c6d290708c3e20b6f3399a9a170f93f60ee7a3dbc3855ffeae6f9636f35c4",
-    "packageReportSha256": "7be1b5d726b115b95090e9adb4574230ff776ed788bd676963985e3ebdd1bfca",
+    "sourceFingerprint": "a0dc35a4af3f1d080dabfa9dc681f262f91e7cbef5ad8f0b3939c9726287c20f",
+    "developmentReportSha256": "84939d7fc39cc3676a7cd9a9a381b7a5ef8fb8683c23040498f7029ebbadd034",
+    "packageReportSha256": "fb0ca15b32d6b8c26c2ef20439c02dcab0c78edf6f12c636bfda8a413a520033",
     "developmentAcceptance": true,
     "releaseAcceptance": false,
     "paperCompletion": false,
@@ -20,19 +20,19 @@
       "driverAbi": 1
     },
     "nativeTarget": "darwin-arm64-napi8",
-    "nativeArtifactSha256": "542bd5ae6192e5ce914a9731cc0ea1204b31c5b27ed1325b7b205a5c3e2366dd",
+    "nativeArtifactSha256": "6ab82f13c93ee53a0d52b9a4850e173197469b78c02205c986d9891eb1ee662b",
     "archives": [
       {
         "name": "@cordis-verus/compat-cordis",
         "version": "0.1.0",
         "file": ".vendor/cordis/cordis-verus-compat-cordis-0.1.0.tgz",
-        "sha256": "dfd723a3f6bd5e634b5ecc7c72018fb5c6a14e82faf4360fe2c9955d9f7aa96c"
+        "sha256": "ba802a77342912a90fd5e0601c77bb19d9648ae79c5f9f43172bddc75ea3e978"
       },
       {
         "name": "@cordis-verus/compat-harness",
         "version": "0.1.0",
         "file": ".vendor/cordis/cordis-verus-compat-harness-0.1.0.tgz",
-        "sha256": "ed66a96905dee2259832b4b436cf3cc1f989ac948667d6666ebd666f891bad98"
+        "sha256": "d2408785f2c43de692d1729ce93f0db6165f197fdf66649cd7f9e8f080a6cbc7"
       },
       {
         "name": "@cordis-verus/compat-loader",
