@@ -2,12 +2,12 @@
   "schema": "cordis-harness.sources/v1",
   "cordis": {
     "repository": "https://github.com/Stool233/cordis-verus.git",
-    "baseCommit": "cf6668f7944e087698af036aa85d9dc2a85a90bb",
+    "baseCommit": "1cee52327ea2aa9fe675239d900f8762ce39c0b0",
     "workingTreeDirty": false,
     "sourceIdentity": "verified working-tree file hashes; baseCommit is metadata, not snapshot identity",
-    "sourceFingerprint": "36fc784c9fb39b89c0b03d885bec150cfaabaeac8a6e2a12a7841375094a28c9",
-    "developmentReportSha256": "db2ccbc09954c9111a0568db5c28c993ae77d511b5e8c71930fa68ab060c0368",
-    "packageReportSha256": "918d0de9b1e728f1d0d2a052cf8a1b85e03ad6ab06400d7afd80f6083c7ca7aa",
+    "sourceFingerprint": "bf21e5b281c76a57c87ec751ebb1ee49cdb33c4d215ec0c074213456d6cd8337",
+    "developmentReportSha256": "0bf8fe9651f94a5ce694690b0b0c2ab231fbea2e0e3acbced119b664989a5cc6",
+    "packageReportSha256": "a8168a7d6e079dafd550b63bb0cf0a5cd93317858a1e25d336e58c4e1883b1fe",
     "developmentAcceptance": true,
     "releaseAcceptance": false,
     "paperCompletion": false,
@@ -20,13 +20,13 @@
       "driverAbi": 1
     },
     "nativeTarget": "darwin-arm64-napi8",
-    "nativeArtifactSha256": "e6e779680c7acfa88f366a5b96ca0845de8c4b6008be692a7212eb298360b7c1",
+    "nativeArtifactSha256": "ffe8eb4ed18bec60ff8b91add0a9eae92acbf168ac34a36fca77e044592b00fa",
     "archives": [
       {
         "name": "@cordis-verus/compat-cordis",
         "version": "0.1.0",
         "file": ".vendor/cordis/cordis-verus-compat-cordis-0.1.0.tgz",
-        "sha256": "6af36d6bb186aa59918a01648a1cc861f6dd3bdc12bb3857469a0dd4fba39701"
+        "sha256": "aaf41c75f00487c5bb02cfae2952ae2bef720029fb564f6d85138a8745a1c654"
       },
       {
         "name": "@cordis-verus/compat-harness",
@@ -38,7 +38,7 @@
         "name": "@cordis-verus/compat-loader",
         "version": "0.1.0",
         "file": ".vendor/cordis/cordis-verus-compat-loader-0.1.0.tgz",
-        "sha256": "2d3f522bed7f9a5f7ab70e4df828f799c56dc33978a7254daba58436c3a10ae0"
+        "sha256": "cfe1dce10a9fbf033868327e5897064a6b56c791a2d027fa3faeaac8191096c3"
       }
     ]
   },

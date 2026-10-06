@@ -70,3 +70,5 @@ npm run official:install -- --refresh-runtime-lock --offline
 3. 模型未配置时不发送消息；真实模型调用需用户自己的凭据。
 
 同一浏览器检查也已在本机 Chrome 中执行；它仅覆盖界面启动与上述面板，不是浏览器内核的形式化验证或真实模型端到端验收。
+
+独立 Rust 动态插件另有[同进程更新示例](native-rust-modules.md)：默认 addon 常驻，模块通过 C ABI 换代。当前由宿主显式操作，未接入默认 Web 插件面板和 watcher。官方验收还覆盖安装后的 ToolRuntime 调用与精简组合的真实 AgentLoop。

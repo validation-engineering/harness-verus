@@ -7,6 +7,7 @@ import { fileURLToPath } from 'node:url';
 import { resolve } from 'node:path';
 import { verifyOfficial, evidencePath } from './verify-official.mjs';
 import { verifyRustAddon, addonEvidenceRelativePath, addonRelativePath } from './verify-rust-addon.mjs';
+import { verifyRustModules, moduleEvidenceRelativePath, moduleArtifactRelativePaths } from './verify-rust-modules.mjs';
 import { assertEquivalentRoster, generatedIdModules } from './official-roster.mjs';
 
 const root = fileURLToPath(new URL('../', import.meta.url));
@@ -43,7 +44,7 @@ async function sources() {
   return hashes;
 }
 const officialUnitTests = ['--expose-internals', '--test', '--test-timeout=60000', 'tests/official/bootstrap.test.mjs', 'tests/official/roster.test.mjs',
-  'tests/official/rust-addon.test.mjs', 'tests/official/extensions-launcher.test.mjs', 'tests/official/extension-loader-mutation.test.mjs', 'tests/official/loader-transactions.test.mjs', 'tests/official/config-transactions.test.mjs', 'tests/official/in-place-hmr.test.mjs', 'tests/official/process-supervisor.test.mjs'];
+  'tests/official/rust-addon.test.mjs', 'tests/official/rust-modules.test.mjs', 'tests/official/dynamic-rust-loop.test.mjs', 'tests/official/extensions-launcher.test.mjs', 'tests/official/extension-loader-mutation.test.mjs', 'tests/official/loader-transactions.test.mjs', 'tests/official/config-transactions.test.mjs', 'tests/official/in-place-hmr.test.mjs', 'tests/official/process-supervisor.test.mjs'];
 const extensionRuns = [
   {name:'upstream', backend:'upstream', rust:false},
   {name:'native', backend:'native', rust:false},
@@ -51,6 +52,7 @@ const extensionRuns = [
 ];
 const extensionCommand = run => ['scripts/check-official-extensions.mjs', '--backend', run.backend, ...(run.rust ? ['--rust'] : [])];
 const expectedCommands = [
+  ['scripts/verify-install.mjs'],
   officialUnitTests,
   ...['web', 'headless'].flatMap(kind => ['upstream', 'native'].map(backend => [`scripts/check-official-${kind}.mjs`, '--backend', backend])),
   ...extensionRuns.map(extensionCommand),
@@ -58,7 +60,8 @@ const expectedCommands = [
 const executionFiles = [
   ...['web', 'headless'].flatMap(kind => ['upstream', 'native'].flatMap(backend => [`.cache/official-${kind}/${backend}.json`, `.cache/official-${kind}/${backend}.log`])),
   ...extensionRuns.flatMap(run => [`.cache/official-extensions/${run.name}.json`, `.cache/official-extensions/${run.name}.log`]),
-  addonEvidenceRelativePath, addonRelativePath, '.cache/official/validation-runs.json',
+  addonEvidenceRelativePath, addonRelativePath, moduleEvidenceRelativePath, ...Object.values(moduleArtifactRelativePaths),
+  'dist/build-report.json', '.cache/official/validation-runs.json',
 ].sort();
 function webSummary(reports) {
   const upstream = reports['web/upstream'].checks, native = reports['web/native'].checks;
@@ -175,20 +178,26 @@ if (process.argv[2] === '--check') {
   assert.deepEqual(report.headless, headlessSummary(evidence), 'Official headless summary differs from execution evidence');
   assert.deepEqual(report.extensions,extensionsSummary(evidence,report.executionHashes));
   await verifyRustAddon();
+  await verifyRustModules();
+  await verifyRustModules({ runtime: 'slim' });
+  await execute(process.execPath, ['scripts/verify-install.mjs']);
   await verifyOfficial();
   console.log('Official-mode validation matches source, installed artifacts, execution logs, and environment. Hash check only.');
 } else {
   await mkdir(resolve(root, '.cache/official'), { recursive: true });
   const report = { schema, status: 'running', environment: env(), startedAt: new Date().toISOString(),
-    scope: 'Official npm Web/standard and headless; only Node-host Cordis replaced. Browser Cordis remains official JavaScript. Includes JS/Rust extension tools on the official Loader and AgentLoop.',
+    scope: 'Official npm Web/standard and headless; only Node-host Cordis replaced. Browser Cordis remains official JavaScript. Includes JS/Rust extension tools on the official Loader and AgentLoop, and native module replacement in the slim AgentLoop and official ToolRuntime.',
     proofExecuted: false, releaseAcceptance: false, paidModelRequests: false, browserExecution: false };
   await writeFile(reportPath, JSON.stringify(report, null, 2) + '\n');
   try {
     await verifyOfficial();
     await verifyRustAddon();
+    await verifyRustModules();
+    await verifyRustModules({ runtime: 'slim' });
     const before = await sources(), installEvidenceSha256 = await hash(evidencePath);
-    const addonHashes = Object.fromEntries(await Promise.all([addonEvidenceRelativePath,addonRelativePath].map(async file=>[file,await hash(file)])));
+    const addonHashes = Object.fromEntries(await Promise.all([addonEvidenceRelativePath,addonRelativePath,moduleEvidenceRelativePath,...Object.values(moduleArtifactRelativePaths),'dist/build-report.json'].map(async file=>[file,await hash(file)])));
     const reports = {}, executionHashes = {}, runs = [];
+    runs.push(await execute(process.execPath, ['scripts/verify-install.mjs']));
     runs.push(await execute(process.execPath, officialUnitTests));
     for (const kind of ['web', 'headless']) for (const backend of ['upstream', 'native']) {
       console.log(`Checking official ${kind} with ${backend} Cordis...`);
@@ -213,6 +222,8 @@ if (process.argv[2] === '--check') {
       executionHashes[evidence.log]=await hash(evidence.log);
     }
     await verifyRustAddon();
+    await verifyRustModules();
+    await verifyRustModules({ runtime: 'slim' });
     for (const [file,expected] of Object.entries(addonHashes)) {
       assert.equal(await hash(file),expected,`Addon changed during validation: ${file}`);
       executionHashes[file]=expected;

@@ -33,7 +33,7 @@ export async function addonSources(root = projectRoot) {
     'scripts/build-rust-addon.mjs', 'scripts/verify-rust-addon.mjs'], () => true);
 }
 export async function coreSources(root) {
-  return inventory(root, ['cordis-kernel', 'cordis-driver', 'cordis', 'cordis-node'].map(name => `crates/${name}`),
+  return inventory(root, ['cordis-kernel', 'cordis-driver', 'cordis', 'cordis-node', 'cordis-plugin-api'].map(name => `crates/${name}`),
     ['Cargo.toml', 'Cargo.lock', 'toolchain.lock.json', 'scripts/build-node.sh', 'scripts/build-node.mjs',
       'scripts/toolchain-env.sh', 'scripts/write-native-manifest.mjs',
       'packages/compat-cordis/native-artifacts.js', 'packages/compat-cordis/package.json'], file => /\.(rs|toml)$/.test(file));

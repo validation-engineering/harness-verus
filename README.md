@@ -55,6 +55,18 @@ npm run official:watch
 
 它保留默认 `standard` 和官方会话存储，先确认旧进程清理，再启动捕获后的插件模块。坏候选清理成功后可恢复旧制品；清理未确认会阻止替换。此模式仅覆盖 Web，重启会断开连接并轮换登录 token；详见[进程监督与插件更新](docs/process-supervisor.md)。
 
+## Rust 插件的同进程代码更新
+
+独立 `cdylib` 插件可通过版本化 C ABI 加入常驻 Driver，并在旧实例真实清理后替换代码。示例用同一个进程和官方 AgentLoop 完成 v1 → v2，再验证坏候选恢复；不需要重新链接 Node addon。
+
+```sh
+npm run rust:modules:build -- --offline
+npm run rust:modules:demo
+npm run rust:modules:test
+```
+
+需先完成基础构建与官方安装。旧映像保留到退出，当前支持 sync/async JSON 服务，不含状态迁移、物理卸载或默认 Web watcher 接入。用法与来源验证见[原生模块指南](docs/native-rust-modules.md)。
+
 ## 精简组合与离线 demo
 
 当前工作目录已经安装、构建完成：
@@ -128,7 +140,7 @@ npm start -- inspect work-1 --config examples/deepseek.config.json
 npm run verify
 npm test
 node scripts/record-validation.mjs
-# 官方默认组合和 JS/Rust 扩展（先完成 official:install、rust:build）
+# 官方默认组合和 JS/Rust 扩展（先完成 build、official:install、rust:build、rust:modules:build）
 npm run official:check
 ```
 
