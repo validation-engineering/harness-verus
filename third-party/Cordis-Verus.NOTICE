@@ -10,7 +10,10 @@ Design and behavior references:
 The ignored upstream checkouts retain their own license and copyright files.
 The reference paper is not covered by this project's MIT license.
 Verus binaries and vstd retain their upstream licenses. Binary archives are
-downloaded into the ignored .tools directory; they are not redistributed here.
+downloaded into the ignored .tools directory. Project-managed toolchain archives
+preserve original upstream bytes with a source/notices companion; see
+https://github.com/validation-engineering/cordis-verus/blob/main/docs/toolchains/README.md.
+They are separate from Cordis runtime releases.
 
 The experimental JavaScript compatibility package adapts language-layer code
 from Cordis (Copyright (c) 2021-present Shigma, MIT). The original MIT notice
