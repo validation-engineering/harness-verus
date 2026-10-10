@@ -42,6 +42,14 @@ npm run demo
 
 This secondary, compact CLI demo runs the real official loop with a **deterministic scripted provider**, making no model API request. It reads a README, writes `DEMO_RESULT.md`, completes Todo items and saves a session. It does not interpret arbitrary prompts.
 
+To see what lifecycle guarantees protect in practice:
+
+```sh
+npm run demo:recovery
+```
+
+Watch a plugin update encounter a real file-cleanup failure, retain the required service, explain its blockers, recover on explicit retry, and run the new plugin through the official AgentLoop. The [recovery case](docs/recovery-case.md) includes raw diagnostics, paper-to-code review links and a portable review bundle (`npm run reproduce:recovery`) that runs without a core checkout or source compilation.
+
 ## How it works
 
 ```mermaid
@@ -101,6 +109,7 @@ Next priorities are broader third-party plugin coverage, complete host refinemen
 | Build and run | [Build](docs/build.md) · [Official mode](docs/official-mode.md) · [Compact CLI](docs/compact-cli.md) |
 | Write plugins | [Official extensions](docs/official-extensions.md) · [Compact CLI plugins](docs/plugins.md) · [Providers](docs/providers.md) |
 | Update a running application | [Native modules](docs/native-rust-modules.md) · [Loader transactions](docs/loader-transactions.md) · [Process supervision](docs/process-supervisor.md) |
+| Inspect failure and recovery | [Runnable case and independent reproduction](docs/recovery-case.md) |
 | Understand the implementation | [Architecture](docs/architecture.md) · [Performance notes](docs/performance.md) |
 
 Detailed guides include English and Chinese documents. See [Contributing](CONTRIBUTING.md) for development and review expectations. Compatibility cases, plugin examples and focused fixes are welcome.

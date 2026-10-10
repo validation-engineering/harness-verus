@@ -36,6 +36,16 @@ export class PluginManager {
     if (this.#retained(entry.fiber)) this.#entries.set(id, { ...entry, cleanupBlocked: true });
     else this.#entries.delete(id);
   }
+  async #settleDisposalFailure(id, entry, error) {
+    // A child's disposal can reject before its parent's structural inverse
+    // finishes reporting that failure. Drain those existing lifecycle actions
+    // before exposing retry; settlement does not retry any failed inverse.
+    const failures = [error];
+    try { await this.#ctx.settle(); } catch (settlement) { if (settlement !== error) failures.push(settlement); }
+    this.#recordDisposalFailure(id, entry);
+    return failures.length === 1 ? error
+      : new AggregateError(failures, `Plugin ${id} cleanup failed after lifecycle settlement`);
+  }
   async #activate(spec, plugin) {
     const fiber = this.#ctx.plugin(plugin, spec.config ?? {});
     try {
@@ -47,7 +57,7 @@ export class PluginManager {
     } catch (error) {
       try { await fiber.dispose(); }
       catch (cleanup) {
-        this.#recordDisposalFailure(spec.id, { spec, plugin, fiber });
+        cleanup = await this.#settleDisposalFailure(spec.id, { spec, plugin, fiber }, cleanup);
         const detail = this.#entries.has(spec.id) ? 'cleanup is blocked; retain it until explicit retry succeeds' : 'was removed, but disposal reported an error';
         throw new AggregateError([error, cleanup], `Plugin ${spec.id} ${detail}`);
       }
@@ -59,7 +69,7 @@ export class PluginManager {
     if (!entry) throw new Error(`Plugin not loaded: ${id}`);
     if (entry.cleanupBlocked) throw new Error(`Plugin ${id} cleanup is blocked; use retryPluginCleanup`);
     try { await entry.fiber.dispose(); }
-    catch (error) { this.#recordDisposalFailure(id, entry); throw error; }
+    catch (error) { throw await this.#settleDisposalFailure(id, entry, error); }
     this.#entries.delete(id);
   }
   async retryCleanup(id) {
@@ -86,7 +96,7 @@ export class PluginManager {
         await fiber.retryCleanup();
       }
       await entry.fiber.dispose();
-    } catch (error) { this.#recordDisposalFailure(id, entry); throw error; }
+    } catch (error) { throw await this.#settleDisposalFailure(id, entry, error); }
     this.#entries.delete(id);
   }
   async reload(id, config) {

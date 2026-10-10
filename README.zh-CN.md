@@ -42,6 +42,14 @@ npm run demo
 
 这个作为辅助入口的精简 CLI 演示使用真实官方循环与**确定性脚本提供者**，不发起模型 API 请求。它读取 README、写入 `DEMO_RESULT.md`、完成 Todo 条目并保存会话。它不会理解任意自然语言提示。
 
+想直观看到生命周期保证解决的问题，可以运行：
+
+```sh
+npm run demo:recovery
+```
+
+观察插件更新遇到真实的文件清理失败、保留所需服务、解释阻塞原因、显式重试成功，再通过官方 AgentLoop 使用新插件。[恢复案例](docs/recovery-case.zh-CN.md)提供原始诊断、论文到代码的审查路径，以及无需内核源码目录或源码编译即可运行的审查包（`npm run reproduce:recovery`）。
+
 ## 工作原理
 
 ```mermaid
@@ -101,6 +109,7 @@ export function apply(ctx) {
 | 构建与运行 | [构建](docs/build.md) · [官方模式](docs/official-mode.md) · [精简 CLI](docs/compact-cli.md) |
 | 编写插件 | [官方扩展](docs/official-extensions.md) · [精简 CLI 插件](docs/plugins.md) · [模型提供者](docs/providers.md) |
 | 更新运行中的应用 | [原生模块](docs/native-rust-modules.md) · [Loader 事务](docs/loader-transactions.md) · [进程监督](docs/process-supervisor.md) |
+| 检查故障与恢复 | [可运行案例与独立复现](docs/recovery-case.zh-CN.md) |
 | 理解实现 | [架构](docs/architecture.md) · [性能笔记](docs/performance.md) |
 
 详细指南包含英文和中文文档。开发与审查要求见[贡献指南](CONTRIBUTING.md)。欢迎兼容性案例、插件示例与聚焦的问题修复。

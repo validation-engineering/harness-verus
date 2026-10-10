@@ -2,43 +2,43 @@
   "schema": "cordis-harness.sources/v1",
   "cordis": {
     "repository": "https://github.com/validation-engineering/cordis-verus.git",
-    "baseCommit": "06532104b5652d7857c7d501f94baabb0dc06a0b",
+    "baseCommit": "e69a1d546a13dcf573a1a1e0b8cb692ee416250f",
     "workingTreeDirty": false,
     "sourceIdentity": "verified working-tree file hashes; baseCommit is metadata, not snapshot identity",
-    "sourceFingerprint": "8ae5757b5e19410172d7cd01802a9612db83b3b5c574bea9ea860d39fdba11e4",
-    "developmentReportSha256": "248fe8ff8698b54af144f919a2adfb57909f325d620f136e57af8818801868d2",
-    "packageReportSha256": "788e1184ab543904af4faf462275b42d72a02d06e3d6b42a3affccc11cbd8113",
+    "sourceFingerprint": "b5c7930367cf7d2e07fe02d190281535812058714a49a525bda6fa9c5b7bea73",
+    "developmentReportSha256": "d52b0f8e0b9cdea5eeaba952cb7d45895579287a33a334264006225560149be5",
+    "packageReportSha256": "9bce9ce5354d196d8eeceabaf0f355ab7987f77928bacb8a8f7907c0a1da7120",
     "developmentAcceptance": true,
     "releaseAcceptance": false,
     "paperCompletion": false,
     "testedTarget": {
       "platform": "darwin",
       "architecture": "arm64",
-      "node": "v22.22.0",
+      "node": "v24.14.0",
       "nodeApi": "10",
-      "nodeModuleAbi": "127",
+      "nodeModuleAbi": "137",
       "driverAbi": 1
     },
     "nativeTarget": "darwin-arm64-napi8",
-    "nativeArtifactSha256": "87a6ba65981c55a9e68d942375e280f6d3d796d693f5a5851818565c5203bc51",
+    "nativeArtifactSha256": "69c5982eabc7e26985cdbe57ce3d8a97e79ac62b3f9a8421bff31b2625cb1d26",
     "archives": [
       {
         "name": "@cordis-verus/compat-cordis",
         "version": "0.1.0",
         "file": ".vendor/cordis/cordis-verus-compat-cordis-0.1.0.tgz",
-        "sha256": "8e7672daef031ef2e679bf1a3b8f245379452423c04311dd5ccf207d33ad1805"
+        "sha256": "2939afc200d11058391cd25f1f8230f01229dfe1b963b868b7302aa75d0d5dce"
       },
       {
         "name": "@cordis-verus/compat-harness",
         "version": "0.1.0",
         "file": ".vendor/cordis/cordis-verus-compat-harness-0.1.0.tgz",
-        "sha256": "7a888920183975c32f1cc2ec741b80d8767f8ad1272f5a1f4af010f824603d7d"
+        "sha256": "e678f84ae35c12551a3d55526dca765f8be965009d02eb56dd9e4b315c9e7069"
       },
       {
         "name": "@cordis-verus/compat-loader",
         "version": "0.1.0",
         "file": ".vendor/cordis/cordis-verus-compat-loader-0.1.0.tgz",
-        "sha256": "4d39f80f65643fe8f3225a90d9be42263a48b6efe458b39ed476330b8617b88f"
+        "sha256": "66d49ae5ea4de9922e14827647b32606ab64e0344f631a3bcbdcf193d8ee5751"
       }
     ]
   },

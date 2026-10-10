@@ -46,7 +46,9 @@
     "prerust:modules:demo": "node scripts/verify-install.mjs",
     "prerust:modules:test": "node scripts/verify-install.mjs",
     "official:rust": "node scripts/official-native.mjs",
-    "official:rust:watch": "node scripts/official-native.mjs --watch"
+    "official:rust:watch": "node scripts/official-native.mjs --watch",
+    "demo:recovery": "node scripts/run-recovery-case.mjs",
+    "reproduce:recovery": "node scripts/reproduce-recovery.mjs"
   },
   "dependencies": {
     "@cordis-verus/compat-cordis": "file:.vendor/cordis/cordis-verus-compat-cordis-0.1.0.tgz",
