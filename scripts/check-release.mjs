@@ -2,7 +2,7 @@
 import assert from 'node:assert/strict';
 import { spawnSync } from 'node:child_process';
 import { createHash } from 'node:crypto';
-import { mkdir, mkdtemp, readFile, rm, writeFile } from 'node:fs/promises';
+import { mkdir, mkdtemp, readFile, readdir, rm, writeFile } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { basename, join, resolve, sep } from 'node:path';
 import { parseArgs } from 'node:util';
@@ -29,9 +29,17 @@ const env = { ...process.env, HARNESS_VERUS_HOME: data, DSH_HOME: join(data, 'of
   DSH_TELEMETRY_DISABLED: '1', npm_config_cache: join(directory, 'npm cache') };
 for (const name of ['NODE_OPTIONS', 'NODE_PATH', 'CORDIS_NATIVE_BINDING', 'ESBUILD_BINARY_PATH']) delete env[name];
 const [npm, ...prefix] = npmCommand(env);
+const commands = [];
+// A cold official Harness installation extracts many more files than the core
+// runtime alone. Keep CLI execution bounded independently from Windows npm I/O.
+const installationTimeout = process.platform === 'win32' ? 600000 : 240000;
 function run(command, args, cwd = project, timeout = 240000) {
+  const started = Date.now();
   const result = spawnSync(command, args, { cwd, env, encoding: 'utf8', timeout, maxBuffer: 32 * 1024 * 1024 });
-  assert.ifError(result.error);
+  commands.push({ executable: basename(command), arguments: args.map(arg => arg.replaceAll(directory, '<consumer>')),
+    elapsedMs: Date.now() - started, timeoutMs: timeout, status: result.status, signal: result.signal,
+    ...(result.error ? { error: result.error.message } : {}) });
+  assert(!result.error, `${result.error?.message ?? ''}\n${result.stdout ?? ''}\n${result.stderr ?? ''}`);
   assert.equal(result.status, 0, result.stdout + result.stderr);
   assert.equal(result.signal, null);
   return result.stdout;
@@ -39,12 +47,12 @@ function run(command, args, cwd = project, timeout = 240000) {
 const report = { schema: 'harness-verus.npm-installation/v1', status: 'running',
   registry: values.registry, sourceCommit: candidate.sourceCommit, coreCommit: candidate.coreCommit,
   package: candidate, environment: { platform: process.platform, architecture: process.arch, node: process.version },
-  compilerExecuted: false, paidModelRequests: false };
+  compilerExecuted: false, paidModelRequests: false, commands };
 try {
   await writeFile(join(project, 'package.json'), JSON.stringify({ name: 'harness-release-consumer', private: true,
     dependencies: { [candidate.name]: values.registry ? candidate.version : `file:${join(input, candidate.file)}` } }, null, 2));
   const flags = ['--ignore-scripts', '--include=optional', '--include=peer', '--no-audit', '--no-fund'];
-  run(npm, [...prefix, 'install', ...flags]);
+  run(npm, [...prefix, 'install', ...flags], project, installationTimeout);
   const lock = JSON.parse(await readFile(join(project, 'package-lock.json'), 'utf8'));
   assert.equal(lock.packages[`node_modules/${candidate.name}`].integrity, candidate.integrity, 'npm installed different application bytes');
   const installed = join(project, 'node_modules', candidate.name), cli = join(installed, 'bin/harness-verus.mjs');
@@ -69,7 +77,7 @@ try {
     assert.notEqual(rejected.status, 0);
     assert.match(rejected.stderr, /Installed release file changed/);
   } finally { await writeFile(entry, original); }
-  run(npm, [...prefix, 'ci', '--offline', ...flags]);
+  run(npm, [...prefix, 'ci', '--offline', ...flags], project, installationTimeout);
   assert.deepEqual(await smoke(), first);
   Object.assign(report, { status: 'passed', target: first.target, offlineReinstall: 'passed',
     checks: ['exact-npm-archive', 'published-source-and-core-integrity', 'official-cli-entry',
@@ -78,6 +86,14 @@ try {
   await writeFile(output, JSON.stringify(report, null, 2) + '\n');
   console.log(`Installed ${candidate.name}@${candidate.version} on ${first.target}; official CLI and scripted AgentLoop passed before and after offline reinstall.`);
 } catch (error) {
+  const logs = join(env.npm_config_cache, '_logs');
+  // Preserve npm's request/timing diagnostics before deleting the consumer.
+  // Do not collect configuration dumps or the publisher's own npm logs.
+  const files = (await readdir(logs).catch(() => [])).filter(name => name.endsWith('-debug-0.log')).sort().slice(-2);
+  report.npmDiagnostics = await Promise.all(files.map(async name => ({ name,
+    lines: (await readFile(join(logs, name), 'utf8')).split('\n')
+      .filter(line => /^\d+ (?:http fetch|timing|error)\b/.test(line)).slice(-80)
+      .map(line => line.replaceAll(directory, '<consumer>')) })));
   await writeFile(output, JSON.stringify({ ...report, status: 'failed', error: error.stack ?? String(error) }, null, 2) + '\n');
   throw error;
 } finally { await rm(directory, { recursive: true, force: true }); }

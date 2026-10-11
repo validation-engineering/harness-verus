@@ -28,7 +28,12 @@ jobs:
     # Keep this permission out of jobs that execute the installed application.
     permissions:
       contents: write
+    outputs:
+      artifact_name: ${{ steps.name.outputs.artifact_name }}
     steps:
+      - name: Name this attempt's candidate artifact
+        id: name
+        run: echo "artifact_name=application-candidate-${{ github.run_attempt }}" >> "$GITHUB_OUTPUT"
       - name: Download the immutable candidate
         env:
           GH_TOKEN: ${{ github.token }}
@@ -36,7 +41,7 @@ jobs:
         run: gh release download "$CANDIDATE_TAG" --repo "$GITHUB_REPOSITORY" --pattern '*.tgz' --pattern 'candidate.json' --dir "$RUNNER_TEMP/candidate"
       - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
         with:
-          name: application-candidate-${{ github.run_attempt }}
+          name: ${{ steps.name.outputs.artifact_name }}
           path: ${{ runner.temp }}/candidate
           if-no-files-found: error
           retention-days: 14
@@ -45,7 +50,7 @@ jobs:
     needs: candidate
     name: Install Harness (${{ matrix.os }})
     runs-on: ${{ matrix.os }}
-    timeout-minutes: 20
+    timeout-minutes: 30
     strategy:
       fail-fast: false
       matrix:
@@ -62,7 +67,7 @@ jobs:
           node-version: '22.22.0'
       - uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093
         with:
-          name: application-candidate-${{ github.run_attempt }}
+          name: ${{ needs.candidate.outputs.artifact_name }}
           path: ${{ runner.temp }}/candidate
       - name: Install, run official CLI and AgentLoop, and reinstall offline
         env:
