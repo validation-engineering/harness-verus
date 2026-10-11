@@ -78,7 +78,7 @@ manifest.scripts = { start: 'node bin/harness-verus.mjs', demo: 'node bin/harnes
 const include = ['bin', 'src', 'plugins', 'examples', 'dist', 'third-party', 'harness.config.json',
   'scripts/official.mjs', 'scripts/official-register.mjs', 'scripts/verify-published.mjs',
   'LICENSE', 'NOTICE', 'README.md', 'README.zh-CN.md'];
-manifest.files = [...include, 'release-manifest.json'];
+manifest.files = [...include, 'npm-shrinkwrap.json', 'release-manifest.json'];
 const lock = await json(join(root, 'package-lock.json'));
 lock.packages[''] = { name: manifest.name, version: manifest.version, license: manifest.license,
   dependencies: manifest.dependencies, bin: manifest.bin, engines: manifest.engines };
