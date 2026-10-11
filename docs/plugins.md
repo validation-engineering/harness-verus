@@ -7,7 +7,7 @@ The application loads standard Cordis plugins into its existing Rust-backed Cont
 [`plugins/hello.mjs`](../plugins/hello.mjs) is a complete runnable example:
 
 ```js
-import { defineTool } from '@cordis-harness/app/plugin-api';
+import { defineTool } from '@validation-engineering/harness-verus/plugin-api';
 
 export const name = 'hello';
 export const inject = ['tools'];
@@ -34,7 +34,7 @@ export function apply(ctx, config = {}) {
 
 Keep module imports free of resource allocation. Acquire resources in `apply`, register inverses with `ctx.effect(() => async () => { /* cleanup */ })`, observe `exec.signal`, and await admitted work before the inverse resolves. Register through the plugin's own `ctx.tools`: registrations belong to that Context and disappear when its Fiber is disposed. Retaining the root context and registering through it would give the tool the wrong lifetime.
 
-The package self-reference resolves for plugins inside this project's `plugins/` directory. An external npm plugin must make `@cordis-harness/app/plugin-api` resolvable through its own dependencies or peer dependencies; unrelated directories do not inherit this application's Node resolution paths.
+The package self-reference resolves for plugins inside this project's `plugins/` directory. An external npm plugin must make `@validation-engineering/harness-verus/plugin-api` resolvable through its own dependencies or peer dependencies; unrelated directories do not inherit this application's Node resolution paths.
 
 ## Compose and reload
 
@@ -79,10 +79,10 @@ Paths must be relative. Absolute paths, `..`, backslashes and symlinks in any pa
 
 ## Validation
 
-[`tests/workspace.test.mjs`](../tests/workspace.test.mjs) uses isolated temporary directories and the real official `ToolRuntime` and `SystemPrompt` on `@cordis-verus/compat-harness`. It covers schemas, byte pagination, Unicode, traversal and symlink checks, write limits, cancellation, disposal, removal and reload, including the `hello` example.
+[`tests/workspace.test.mjs`](../tests/workspace.test.mjs) uses isolated temporary directories and the real official `ToolRuntime` and `SystemPrompt` on `@validation-engineering/cordis-compat-deepseek`. It covers schemas, byte pagination, Unicode, traversal and symlink checks, write limits, cancellation, disposal, removal and reload, including the `hello` example.
 
 ```sh
-node --import @cordis-verus/compat-harness/register --test --test-timeout=30000 tests/workspace.test.mjs
+node --import @validation-engineering/cordis-compat-deepseek/register --test --test-timeout=30000 tests/workspace.test.mjs
 ```
 
 The tested baseline is Node 22.22.0 on macOS arm64. Tests do not prove arbitrary callbacks, filesystem confinement or cross-platform release readiness.

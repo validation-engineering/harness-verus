@@ -7,7 +7,7 @@ import './official-extensions-register.mjs';
 
 const root = fileURLToPath(new URL('../', import.meta.url));
 process.env.DSH_HOME ??= resolve(root, '.cordis-harness/official-extensions');
-const { initProfile, PROFILE_TEMPLATES } = await import('../official-runtime/node_modules/@deepseek-ai/dsh-app-boot/lib/index.js');
+const { initProfile, PROFILE_TEMPLATES } = await import('@deepseek-ai/dsh-app-boot');
 const profiles = resolve(process.env.DSH_HOME, 'profiles');
 await mkdir(profiles, { recursive: true });
 for (const profile of ['web', 'headless']) {
@@ -21,7 +21,7 @@ for (const profile of ['web', 'headless']) {
   ];
   await writeFile(resolve(directory, 'cordis.patch.yml'), JSON.stringify([{ insert }], null, 2) + '\n', { mode: 0o600 });
 }
-const entry = new URL('../official-runtime/node_modules/@deepseek-ai/dsh/lib/bin.js', import.meta.url);
+const entry = new URL(import.meta.resolve('@deepseek-ai/dsh/lib/bin.js'));
 const args = process.argv.slice(2);
 process.argv = [process.execPath, fileURLToPath(entry), ...(args.length ? args : ['web'])];
 console.error(`[cordis-harness] Official Harness with JS/Rust extension plugins; data: ${process.env.DSH_HOME}`);

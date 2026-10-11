@@ -42,7 +42,7 @@ test('portable review bundle binds the real case, source closure and runtime tar
     } finally { await writeFile(file, before); }
   });
   await t.test('rejects missing native runtime distribution', async () => {
-    const file = path.join(project, '.vendor/cordis/cordis-verus-compat-cordis-0.1.0.tgz');
+    const file = path.join(project, '.vendor/cordis/validation-engineering-cordis-0.1.1.tgz');
     const before = await readFile(file);
     try { await rm(file); await assert.rejects(verifyRecoveryBundle(project), /missing or unrecorded files/); }
     finally { await writeFile(file, before); }

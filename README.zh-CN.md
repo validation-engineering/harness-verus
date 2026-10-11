@@ -1,4 +1,4 @@
-# Cordis Harness
+# Harness Verus
 
 **在 cordis-verus 上运行 DeepSeek Harness 工作流。**
 
@@ -8,7 +8,7 @@
 
 项目属于 [Validation Engineering](https://github.com/validation-engineering)，致力于连接形式化约束、实际运行代码与可复现证据。
 
-**状态：** 实验性、pre-1.0。目前使用本地构建的开发制品，尚未发布发行版。已记录的验收覆盖 macOS ARM64 和 Node 22.22.0，目前需要仓库访问权限。
+**状态：** 实验性、pre-1.0。本应用尚未正式发布。当前工作目录使用完成本地验收的运行时制品；验收记录注明精确源码、平台及 Node 版本。目前需要仓库访问权限。
 
 ## 可以做什么
 
@@ -18,7 +18,7 @@
 
 ## 快速开始
 
-需要 Node **22.22.0**、npm 和 Git。先按[构建指南](docs/build.md)准备完成开发验收的 `../cordis-verus` 工作目录、三个运行时压缩包，以及锁定的官方 Harness 源码快照。构建这些制品需要核心项目固定的 Rust/Verus 工具链。
+需要 Node **22.22.0 或更新版本**、npm 和 Git。先按[构建指南](docs/build.md)准备完成开发验收的 `../cordis-verus` 工作目录、三个运行时压缩包，以及锁定的官方 Harness 源码快照。构建这些制品需要核心项目固定的 Rust/Verus 工具链。
 
 对于一次新的本地构建，在本仓库目录运行：
 
@@ -26,7 +26,7 @@
 node scripts/bootstrap.mjs --cordis-source ../cordis-verus --refresh-lock --online
 npm run build
 npm run verify
-npm run official:install -- --refresh-runtime-lock
+npm run official:install
 npm run official
 ```
 
@@ -51,6 +51,8 @@ npm run demo:recovery
 观察插件更新遇到真实的文件清理失败、保留所需服务、解释阻塞原因、显式重试成功，再通过官方 AgentLoop 使用新插件。[恢复案例](docs/recovery-case.zh-CN.md)提供原始诊断、论文到代码的审查路径，以及无需内核源码目录或源码编译即可运行的审查包（`npm run reproduce:recovery`）。
 
 ## 工作原理
+
+`cordis-verus` 对应 Cordis，本应用对应 DeepSeek Harness。`cordis-compat-deepseek` 兼容包只负责 `@deepseek-ai/cordis` 接口；官方应用集成由本仓库维护。详见[包边界](docs/package-boundaries.zh-CN.md)。
 
 ```mermaid
 flowchart TD

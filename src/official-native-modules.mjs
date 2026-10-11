@@ -1,6 +1,6 @@
 // Trusted host integration; native entries remain ordinary official Loader fibers.
-import { createRustModulePlugin, beginRustModuleMigration } from '../official-runtime/node_modules/@cordis-verus/compat-loader/rust-module-plugin.js';
-import { officialTransaction } from '../official-runtime/node_modules/@cordis-verus/compat-loader/harness.js';
+import { createRustModulePlugin, beginRustModuleMigration } from '@validation-engineering/cordis-loader/rust-module-plugin';
+import { officialTransaction } from './integrations/deepseek-loader.mjs';
 import { readNativeModule } from './native-module-artifacts.mjs';
 import { createNativeBuildWatcher } from './native-build-watch.mjs';
 

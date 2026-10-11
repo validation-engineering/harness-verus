@@ -1,4 +1,4 @@
-# Cordis Harness
+# Harness Verus
 
 **DeepSeek Harness workflows on cordis-verus.**
 
@@ -8,7 +8,7 @@ Run unchanged official [DeepSeek Harness](https://github.com/deepseek-ai/deepsee
 
 Part of [Validation Engineering](https://github.com/validation-engineering): connecting formal constraints to running code and reproducible evidence.
 
-**Status:** Experimental, pre-1.0. Runtime packages are development artifacts built locally; no release is published. Recorded acceptance covers macOS ARM64 with Node 22.22.0. Repository access is currently required.
+**Status:** Experimental, pre-1.0. This application has not yet been published. The current checkout uses locally validated runtime artifacts; its acceptance records identify the exact source, platform and Node version. Repository access is currently required.
 
 ## What you can do
 
@@ -18,7 +18,7 @@ Part of [Validation Engineering](https://github.com/validation-engineering): con
 
 ## Quick start
 
-Use Node **22.22.0**, npm and Git. Follow the [build guide](docs/build.md) to prepare a development-validated `../cordis-verus` checkout, its three runtime archives and the pinned official Harness source snapshot. Building those archives requires the core project's pinned Rust/Verus toolchain.
+Use Node **22.22.0 or later**, npm and Git. Follow the [build guide](docs/build.md) to prepare a development-validated `../cordis-verus` checkout, its three runtime archives and the pinned official Harness source snapshot. Building those archives requires the core project's pinned Rust/Verus toolchain.
 
 For a new local build, run from this repository:
 
@@ -26,7 +26,7 @@ For a new local build, run from this repository:
 node scripts/bootstrap.mjs --cordis-source ../cordis-verus --refresh-lock --online
 npm run build
 npm run verify
-npm run official:install -- --refresh-runtime-lock
+npm run official:install
 npm run official
 ```
 
@@ -51,6 +51,8 @@ npm run demo:recovery
 Watch a plugin update encounter a real file-cleanup failure, retain the required service, explain its blockers, recover on explicit retry, and run the new plugin through the official AgentLoop. The [recovery case](docs/recovery-case.md) includes raw diagnostics, paper-to-code review links and a portable review bundle (`npm run reproduce:recovery`) that runs without a core checkout or source compilation.
 
 ## How it works
+
+`cordis-verus` corresponds to Cordis; this application corresponds to DeepSeek Harness. The optional `cordis-compat-deepseek` package adapts `@deepseek-ai/cordis`, while this repository owns the official application integration. See [package boundaries](docs/package-boundaries.md).
 
 ```mermaid
 flowchart TD

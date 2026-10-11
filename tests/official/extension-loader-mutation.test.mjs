@@ -13,8 +13,8 @@ if (!process.execArgv.some(arg => arg === '--import' || arg.startsWith('--import
   await import('../../scripts/official-register.mjs');
 }
 const { Context } = await import('@deepseek-ai/cordis');
-const { default: Loader } = await import('../../official-runtime/node_modules/@deepseek-ai/cordis-plugin-loader/lib/index.js');
-const { default: Include } = await import('../../official-runtime/node_modules/@deepseek-ai/cordis-plugin-include/lib/index.js');
+const { default: Loader } = await import('@deepseek-ai/cordis-plugin-loader');
+const { default: Include } = await import('@deepseek-ai/cordis-plugin-include');
 
 test('official Include patches await child withdrawal and allow reactivation', { timeout: 15000 }, async () => {
   assert.equal(typeof Context.prototype.snapshot, 'function', 'This regression requires the native facade');

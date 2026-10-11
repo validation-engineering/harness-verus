@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-import '@cordis-verus/compat-harness/register';
+import '@validation-engineering/cordis-compat-deepseek/register';
 import { parseArgs } from 'node:util';
 import { mkdir, mkdtemp, copyFile, readFile } from 'node:fs/promises';
 import { resolve } from 'node:path';
@@ -10,7 +10,7 @@ import { fileURLToPath } from 'node:url';
 const { readConfig, createHarness } = await import('./app.mjs');
 
 const project = fileURLToPath(new URL('../', import.meta.url));
-const usage = `cordis-harness — official Harness plugins on Rust-backed Cordis
+const usage = `harness-verus compact — official Harness plugins on Rust-backed Cordis
 
   demo                          Offline real-agent/tool integration in a fresh workspace
   run <prompt>                  Run one agent turn; --resume reopens a persisted session

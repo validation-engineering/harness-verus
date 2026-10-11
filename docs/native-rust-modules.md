@@ -202,7 +202,7 @@ Checkpoint 只在当前进程内保存，既不写入 YAML，也不提供跨进�
 ## 宿主 API
 
 ```js
-import { loadRustModule } from '@cordis-verus/compat-loader/rust-module';
+import { loadRustModule } from '@validation-engineering/cordis-loader/rust-module';
 
 const module = await loadRustModule(ctx, {
   path: '/absolute/path/plugin-v1.dylib',

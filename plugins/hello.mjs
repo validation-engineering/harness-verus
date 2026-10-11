@@ -1,4 +1,4 @@
-import { defineTool } from '@cordis-harness/app/plugin-api';
+import { defineTool } from '@validation-engineering/harness-verus/plugin-api';
 
 export const name = 'hello';
 export const inject = ['tools'];

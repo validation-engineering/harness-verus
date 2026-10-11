@@ -11,9 +11,9 @@ if (!process.execArgv.some(arg => arg === '--import' || arg.startsWith('--import
 }
 const { Context, domainMutation } = await import('@deepseek-ai/cordis');
 const { LoaderTransactions } = await import('../../src/official-loader-api.mjs');
-const { default: Loader } = await import('../../official-runtime/node_modules/@deepseek-ai/cordis-plugin-loader/lib/index.js');
-const { default: Include } = await import('../../official-runtime/node_modules/@deepseek-ai/cordis-plugin-include/lib/index.js');
-const { default: Schema } = await import('../../official-runtime/node_modules/@deepseek-ai/schemastery/lib/index.mjs');
+const { default: Loader } = await import('@deepseek-ai/cordis-plugin-loader');
+const { default: Include } = await import('@deepseek-ai/cordis-plugin-include');
+const { default: Schema } = await import('@deepseek-ai/schemastery');
 
 async function fixture(options = {}) {
   const directory = await mkdtemp(join(tmpdir(), 'cordis-official-transaction-'));

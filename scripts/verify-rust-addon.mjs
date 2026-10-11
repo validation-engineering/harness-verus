@@ -56,13 +56,13 @@ export async function verifyRustAddon({ root = projectRoot } = {}) {
   assert.deepEqual(evidence.inputs, await addonSources(root), 'Rust addon sources changed; rebuild the addon');
   assert.deepEqual(evidence.coreSources, await approvedCoreSources(root), 'Rust addon core differs from approved runtime; rebuild from its matching core');
   const distribution = await json(path.join(root, '.vendor/cordis/provenance/package-report.json'));
-  const runtime = distribution.packages.find(item => item.name === '@cordis-verus/compat-cordis');
+  const runtime = distribution.packages.find(item => item.name === '@validation-engineering/cordis');
   assert(runtime?.files?.length, 'Missing Cordis runtime file evidence');
   for (const file of runtime.files) {
     const expected = distribution.sourceHashes[`packages/compat-cordis/${file}`]
       ?? (['LICENSE', 'NOTICE'].includes(file) ? distribution.sourceHashes[file] : undefined);
     assert(expected, `Missing Cordis runtime source hash: ${file}`);
-    assert.equal(await sha256(path.join(root, 'official-runtime/node_modules/@cordis-verus/compat-cordis', file)), expected,
+    assert.equal(await sha256(path.join(root, 'node_modules/@validation-engineering/cordis', file)), expected,
       `Installed Cordis runtime differs from addon provenance: ${file}`);
   }
   const addonPath = path.join(root, addonRelativePath);

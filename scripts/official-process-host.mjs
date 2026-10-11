@@ -29,15 +29,15 @@ export function createHost({ directory, entry }) {
       assert(inside(module) && (await stat(module)).isFile(), 'Plugin entry must be a file within the captured bundle');
       rows.push({ ...item, name: pathToFileURL(module).href });
     }
-    const { RegistryService } = await import('../official-runtime/node_modules/@cordis-verus/compat-harness/index.js');
+    const { RegistryService } = await import('@validation-engineering/cordis-compat-deepseek');
     const original = RegistryService.prototype.plugin;
     RegistryService.prototype.plugin = function (...args) {
       roots.add(this.ctx.root);
       return Reflect.apply(original, this, args);
     };
     const [{ runProfile }, { loadLayeredEnv }] = await Promise.all([
-      import('../official-runtime/node_modules/@deepseek-ai/dsh/lib/profile-boot.js'),
-      import('../official-runtime/node_modules/@deepseek-ai/dsh-app-boot/lib/index.js'),
+      import('@deepseek-ai/dsh/lib/profile-boot.js'),
+      import('@deepseek-ai/dsh-app-boot'),
     ]);
     overlayDirectory = await mkdtemp(resolve(tmpdir(), 'cordis-official-overlay-'));
     const overlay = resolve(overlayDirectory, 'plugins.json');

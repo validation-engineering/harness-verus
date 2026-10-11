@@ -11,7 +11,7 @@ import { createOfficialSupervisor } from '../../src/official-supervisor.mjs';
 // Development preflight is explicit. The normal test command uses installed artifacts.
 const { ProcessDomain } = await import(process.env.CORDIS_HARNESS_PROCESS_DOMAIN_SOURCE
   ? pathToFileURL(resolve(process.env.CORDIS_HARNESS_PROCESS_DOMAIN_SOURCE)).href
-  : '../../official-runtime/node_modules/@cordis-verus/compat-loader/process.js');
+  : '../../node_modules/@validation-engineering/cordis-loader/process.js');
 const plugin = (process.env.CORDIS_HARNESS_PROCESS_DOMAIN_SOURCE ? '' : `import { Context } from '@deepseek-ai/cordis';
 if (typeof Context !== 'function') throw new Error('Native Harness facade was not routed');
 `) + `import { appendFileSync } from 'node:fs';

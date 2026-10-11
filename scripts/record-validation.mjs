@@ -58,7 +58,7 @@ if (process.argv[2] === '--check') {
     const files = (await readdir(join(root, 'tests'))).filter(name => name.endsWith('.test.mjs')).sort().map(name => 'tests/' + name);
     for (const args of [
       ['scripts/verify-install.mjs'],
-      ['--import', '@cordis-verus/compat-harness/register', '--test', '--test-timeout=30000', '--test-reporter=tap', ...files],
+      ['--import', '@validation-engineering/cordis-compat-deepseek/register', '--test', '--test-timeout=30000', '--test-reporter=tap', ...files],
       ['src/cli.mjs', 'demo', '--json'],
       ['scripts/reproduce-recovery.mjs', '--json'],
       ['scripts/verify-install.mjs'],

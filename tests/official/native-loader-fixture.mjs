@@ -8,15 +8,15 @@ import { publishNativeModule, readNativeModule } from '../../src/native-module-a
 
 if (!process.execArgv.some(arg => arg === '--import' || arg.startsWith('--import='))) await import('../../scripts/official-register.mjs');
 const { Context } = await import('@deepseek-ai/cordis');
-const { default: Loader, EntryTree } = await import('../../official-runtime/node_modules/@deepseek-ai/cordis-plugin-loader/lib/index.js');
-const { default: Timer } = await import('../../official-runtime/node_modules/@deepseek-ai/cordis-plugin-timer/lib/index.js');
-const { default: Hmr } = await import('../../official-runtime/node_modules/@deepseek-ai/dsh-hmr/lib/index.js');
-const { ConfigEditor } = await import('../../official-runtime/node_modules/@deepseek-ai/dsh-config-editor/lib/index.js');
-const { mountRootInclude, readProfilePatches } = await import('../../official-runtime/node_modules/@deepseek-ai/dsh-app-boot/lib/index.js');
-const { default: Schema } = await import('../../official-runtime/node_modules/@deepseek-ai/schemastery/lib/index.mjs');
-const { ToolRuntime } = await import('../../official-runtime/node_modules/@deepseek-ai/dsh-tools/lib/index.js');
-const { SystemPrompt } = await import('../../official-runtime/node_modules/@deepseek-ai/dsh-system-prompt/lib/index.js');
-const { SettingsForms } = await import('../../official-runtime/node_modules/@deepseek-ai/dsh-settings/lib/index.js');
+const { default: Loader, EntryTree } = await import('@deepseek-ai/cordis-plugin-loader');
+const { default: Timer } = await import('@deepseek-ai/cordis-plugin-timer');
+const { default: Hmr } = await import('@deepseek-ai/dsh-hmr');
+const { ConfigEditor } = await import('@deepseek-ai/dsh-config-editor');
+const { mountRootInclude, readProfilePatches } = await import('@deepseek-ai/dsh-app-boot');
+const { default: Schema } = await import('@deepseek-ai/schemastery');
+const { ToolRuntime } = await import('@deepseek-ai/dsh-tools');
+const { SystemPrompt } = await import('@deepseek-ai/dsh-system-prompt');
+const { SettingsForms } = await import('@deepseek-ai/dsh-settings');
 const bridge = await import('../../examples/official/rust-dynamic-text-analysis.mjs');
 const policyBridge = await import('../../examples/official/rust-policy-text-analysis.mjs');
 const { createTextPolicyPlugin } = await import('../../examples/official/text-policy.mjs');
@@ -54,7 +54,7 @@ async function fixture({ migration = false, rejectFleetV2 = false, failFleetRoll
   const directory = await realpath(await mkdtemp(join(tmpdir(), 'cordis-official-native-')));
   const configPath = join(directory, 'cordis.json'), patchPath = join(directory, 'cordis.patch.yml');
   const profile = { name: 'native-loader-fixture', dir: directory, patchPath,
-    installAnchor: new URL('../../official-runtime/package.json', import.meta.url).pathname,
+    installAnchor: new URL('../../package.json', import.meta.url).pathname,
     home: join(directory, 'home'), cwd: directory, startedBundles: [], overlays: [], telemetryDisabledEnv: '1' };
   const ctx = new Context(), manifests = {}, consumerHistory = [];
   let calls = 0, fleetGuardRepaired = false, fleetCandidateRejected = false, fleetRollbackRejected = false;

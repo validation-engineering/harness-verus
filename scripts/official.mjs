@@ -9,7 +9,7 @@ if (verified.error) throw verified.error;
 if (verified.status !== 0) process.exit(verified.status ?? 1);
 process.env.DSH_HOME ??= resolve(root, '.cordis-harness/official');
 const args = process.argv.slice(2);
-const entry = new URL('../official-runtime/node_modules/@deepseek-ai/dsh/lib/bin.js', import.meta.url);
+const entry = new URL(import.meta.resolve('@deepseek-ai/dsh/lib/bin.js'));
 process.argv = [process.execPath, fileURLToPath(entry), ...(args.length ? args : ['web'])];
 await import('./official-register.mjs');
 console.error(`[cordis-harness] Official DeepSeek Harness; Rust/Verus Cordis host; data: ${process.env.DSH_HOME}`);

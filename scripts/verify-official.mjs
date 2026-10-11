@@ -1,4 +1,5 @@
 #!/usr/bin/env node
+import { runtimeDirectories } from "./runtime-packages.mjs";
 import assert from 'node:assert/strict';
 import { createHash } from 'node:crypto';
 import { lstat, readFile, readdir, readlink, realpath } from 'node:fs/promises';
@@ -6,9 +7,9 @@ import path from 'node:path';
 import { fileURLToPath, pathToFileURL } from 'node:url';
 
 export const projectRoot = fileURLToPath(new URL('../', import.meta.url));
-export const runtimeRoot = path.join(projectRoot, 'official-runtime');
+export const runtimeRoot = projectRoot;
 export const evidencePath = path.join(projectRoot, '.cache/official/install-manifest.json');
-export const runtimeNames = ['@cordis-verus/compat-cordis', '@cordis-verus/compat-harness', '@cordis-verus/compat-loader'];
+export const runtimeNames = ['@validation-engineering/cordis', '@validation-engineering/cordis-compat-deepseek', '@validation-engineering/cordis-loader'];
 export const officialVersion = '0.2.0-rc.2';
 export const hash = async file => createHash('sha256').update(await readFile(file)).digest('hex');
 export const json = async file => JSON.parse(await readFile(file, 'utf8'));
@@ -32,11 +33,11 @@ export async function approvedArchives() {
   for (const name of runtimeNames) {
     const entry = sources.cordis.archives.find(item => item.name === name);
     assert(entry && entry.file.startsWith('.vendor/cordis/') && !entry.file.split('/').includes('..'), `Missing local runtime archive: ${name}`);
-    assert.equal(manifest.dependencies[name], `file:../${entry.file}`, `Unexpected runtime source: ${name}`);
+    assert.equal(manifest.dependencies[name], `file:${entry.file}`, `Unexpected runtime source: ${name}`);
     const file = path.join(projectRoot, entry.file);
     assert((await lstat(file)).isFile(), `Runtime archive is not a regular file: ${name}`);
     assert.equal(await hash(file), entry.sha256, `Runtime archive differs from sources.lock.json: ${name}`);
-    archives.push({ ...entry, resolved: `file:../${entry.file}`,
+    archives.push({ ...entry, resolved: `file:${entry.file}`,
       integrity: `sha512-${createHash('sha512').update(await readFile(file)).digest('base64')}` });
   }
   return archives;
@@ -108,7 +109,7 @@ export async function inspectInstallation() {
     const actual = Object.keys(files).filter(file => file.startsWith(name + '/')).map(file => file.slice(name.length + 1));
     assert.deepEqual(actual.sort(), [...expected.files].sort(), `Unexpected runtime files: ${name}`);
     for (const file of expected.files) {
-      const key = `packages/${name.split('/').at(-1)}/${file}`;
+      const key = `packages/${runtimeDirectories[name]}/${file}`;
       const digest = report.sourceHashes[key] ?? (['LICENSE', 'NOTICE'].includes(file) ? report.sourceHashes[file] : undefined);
       assert(digest, `Missing core source hash: ${key}`);
       assert.equal(files[`${name}/${file}`]?.sha256, digest, `Runtime bytes differ from tested core: ${name}/${file}`);
@@ -129,7 +130,7 @@ export async function inspectInstallation() {
     '@deepseek-ai/dsh-web-app/cordis.patch.yml', '@deepseek-ai/dsh-web-frontend/dist/index.html',
     ...['standard', 'ptc', 'minimal', 'cordis'].map(name => `@deepseek-ai/dsh-web-app/presets/${name}.patch.yml`)];
   for (const file of required) assert(files[file]?.bytes > 0 && files[file].sha256, `Missing official CLI/default Web asset: ${file}`);
-  const { selectNativeArtifact } = await import(pathToFileURL(path.join(modules, '@cordis-verus/compat-cordis/native-artifacts.js')).href);
+  const { selectNativeArtifact } = await import(pathToFileURL(path.join(modules, '@validation-engineering/cordis/native-artifacts.js')).href);
   const selected = selectNativeArtifact();
   assert.equal(await hash(selected.path), sources.cordis.nativeArtifactSha256, 'Selected native binary differs from approved core');
   assert.equal(selected.entry.target, sources.cordis.nativeTarget);

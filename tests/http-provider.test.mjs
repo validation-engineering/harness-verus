@@ -4,7 +4,7 @@ import { mkdtemp, rm } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import path from 'node:path';
 import test from 'node:test';
-import { Context } from '@cordis-verus/compat-harness';
+import { Context } from '@validation-engineering/cordis-compat-deepseek';
 import {
   AgentLoop, AgentRegistry, DeepSeekApiKey, LlmRuntime, SessionId, SessionStore,
   SessionProjectionRegistry, SystemPrompt, ToolRuntime, ToolTodo,

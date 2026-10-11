@@ -7,7 +7,7 @@ import { tmpdir } from 'node:os';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import test from 'node:test';
-import { Context } from '@cordis-verus/compat-harness';
+import { Context } from '@validation-engineering/cordis-compat-deepseek';
 import { SessionStore, SessionId } from '../dist/upstream/plugins.mjs';
 import FileSessions from '../src/plugins/file-sessions.mjs';
 
@@ -190,7 +190,7 @@ test('routed append failure rejects immediate flush and every close attempt with
   const source = `
     import assert from 'node:assert/strict';
     import {readdir} from 'node:fs/promises';
-    import {Context} from '@cordis-verus/compat-harness';
+    import {Context} from '@validation-engineering/cordis-compat-deepseek';
     import {SessionStore,SessionId} from './dist/upstream/plugins.mjs';
     import FileSessions from './src/plugins/file-sessions.mjs';
     const ctx=new Context();await ctx.plugin(SessionStore);await ctx.plugin(FileSessions,{root:process.argv[1]});
@@ -205,7 +205,7 @@ test('routed append failure rejects immediate flush and every close attempt with
     process.exit(0);
   `;
   const { stdout } = await promisify(execFile)(process.execPath, [
-    '--import', '@cordis-verus/compat-harness/register', '--input-type=module', '-e', source, root,
+    '--import', '@validation-engineering/cordis-compat-deepseek/register', '--input-type=module', '-e', source, root,
   ], { cwd: project, timeout: 15000 });
   assert.deepEqual(JSON.parse(stdout), { flushRejected: true, closeRejected: true, leaseRetained: true });
 });
@@ -232,7 +232,7 @@ test('lost lease ownership remains lost and close cannot remove another owner', 
     import {createHash} from 'node:crypto';
     import {readFile,writeFile,readdir} from 'node:fs/promises';
     import path from 'node:path';
-    import {Context} from '@cordis-verus/compat-harness';
+    import {Context} from '@validation-engineering/cordis-compat-deepseek';
     import {SessionStore,SessionId} from './dist/upstream/plugins.mjs';
     import FileSessions from './src/plugins/file-sessions.mjs';
     const root=process.argv[1],ctx=new Context();await ctx.plugin(SessionStore);await ctx.plugin(FileSessions,{root});
@@ -250,7 +250,7 @@ test('lost lease ownership remains lost and close cannot remove another owner', 
     console.log('ownership-retained-with-failure');process.exit(0);
   `;
   const { stdout } = await promisify(execFile)(process.execPath, [
-    '--import', '@cordis-verus/compat-harness/register', '--input-type=module', '-e', source, root,
+    '--import', '@validation-engineering/cordis-compat-deepseek/register', '--input-type=module', '-e', source, root,
   ], { cwd: project, timeout: 15000 });
   assert.equal(stdout.trim(), 'ownership-retained-with-failure');
 });

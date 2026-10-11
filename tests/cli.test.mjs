@@ -23,7 +23,7 @@ async function fixture(t) {
 
 test('standalone CLI bootstraps routing without a --import flag and works outside the project cwd', async t => {
   const { directory, filename } = await fixture(t);
-  const help = run(['--help'], directory); assert.equal(help.status, 0, help.stderr); assert.match(help.stdout, /cordis-harness/);
+  const help = run(['--help'], directory); assert.equal(help.status, 0, help.stderr); assert.match(help.stdout, /harness-verus compact/);
   const listed = run(['plugins', '--config', filename, '--json'], directory);
   assert.equal(listed.status, 0, listed.stderr); assert.ok(JSON.parse(listed.stdout).tools.some(tool => tool.name === 'todo_write'));
 });

@@ -47,16 +47,16 @@ test('distribution evidence remains portable and rejects changed inputs', async 
   await t.test('rejects a changed application export input', () => change('src/upstream.ts', before => Buffer.concat([before, Buffer.from('\n// changed\n')]), fails(/Stale build: src\/upstream.ts/)));
   await t.test('rejects a changed official AgentLoop source', () => change('.cache/upstream/deepseek-harness/packages/core/agent-loop/src/index.ts', before => Buffer.concat([before, Buffer.from('\n// changed\n')]), fails(/Stale build:.*agent-loop\/src\/index.ts/)));
   await t.test('rejects a changed generated bundle', () => change('dist/upstream/plugins.mjs', before => Buffer.concat([before, Buffer.from('\n// changed\n')]), fails(/Stale build: dist\/upstream\/plugins.mjs/)));
-  await t.test('rejects a changed tarball', () => change('.vendor/cordis/cordis-verus-compat-harness-0.1.0.tgz', before => Buffer.concat([before, Buffer.from('changed')]), fails(/Archive differs from source lock/)));
-  await t.test('rejects installed facade modifications', () => change('node_modules/@cordis-verus/compat-harness/index.js', before => Buffer.concat([before, Buffer.from('\n// changed\n')]), fails(/Installed package changed/)));
+  await t.test('rejects a changed tarball', () => change('.vendor/cordis/validation-engineering-cordis-compat-deepseek-0.1.0.tgz', before => Buffer.concat([before, Buffer.from('changed')]), fails(/Archive differs from source lock/)));
+  await t.test('rejects installed facade modifications', () => change('node_modules/@validation-engineering/cordis-compat-deepseek/index.js', before => Buffer.concat([before, Buffer.from('\n// changed\n')]), fails(/Installed package changed/)));
   await t.test('rejects unrecorded files inside a runtime package', async () => {
-    const extra = path.join(temporary, 'node_modules/@cordis-verus/compat-harness/unrecorded.mjs');
+    const extra = path.join(temporary, 'node_modules/@validation-engineering/cordis-compat-deepseek/unrecorded.mjs');
     await writeFile(extra, 'export const hidden = true;');
     try { fails(/Unexpected runtime package content/)(verify()); } finally { await rm(extra); }
   });
   await t.test('rejects source links in the dependency lock', () => change('package-lock.json', before => {
     const lock = JSON.parse(before);
-    lock.packages['node_modules/@cordis-verus/compat-harness'].link = true;
+    lock.packages['node_modules/@validation-engineering/cordis-compat-deepseek'].link = true;
     return JSON.stringify(lock);
   }, fails(/Linked dependency in npm lock/)));
 });

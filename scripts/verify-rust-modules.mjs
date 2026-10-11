@@ -1,4 +1,5 @@
 #!/usr/bin/env node
+import { runtimeDirectories } from "./runtime-packages.mjs";
 import assert from 'node:assert/strict';
 import { readNativeModule } from '../src/native-module-artifacts.mjs';
 import { createHash } from 'node:crypto';
@@ -49,15 +50,15 @@ export async function verifyRustModules({ root = projectRoot, runtime = 'officia
   assert(!evidence.dependencies.some(name => ['cordis', 'cordis-node', 'cordis-driver', 'cordis-kernel', 'napi', 'napi-derive'].includes(name)),
     'A dynamic module must not embed a second Driver or Node binding');
   const distribution = await json(path.join(root, '.vendor/cordis/provenance/package-report.json'));
-  const installed = runtime === 'official' ? 'official-runtime/node_modules' : 'node_modules';
-  for (const name of ['compat-cordis', 'compat-harness', 'compat-loader']) {
-    const compat = distribution.packages.find(item => item.name === `@cordis-verus/${name}`);
+  const installed = 'node_modules';
+  for (const [packageName, name] of Object.entries(runtimeDirectories)) {
+    const compat = distribution.packages.find(item => item.name === packageName);
     assert(compat?.files?.length, `Missing approved ${name} runtime file evidence`);
     for (const file of compat.files) {
       const expected = distribution.sourceHashes[`packages/${name}/${file}`]
         ?? (['LICENSE', 'NOTICE'].includes(file) ? distribution.sourceHashes[file] : undefined);
       assert(expected, `Missing approved runtime hash: ${name}/${file}`);
-      assert.equal(await sha256(path.join(root, installed, `@cordis-verus/${name}`, file)), expected,
+      assert.equal(await sha256(path.join(root, installed, packageName, file)), expected,
         `Installed Cordis runtime differs from native module provenance: ${name}/${file}`);
     }
   }

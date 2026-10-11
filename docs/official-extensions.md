@@ -23,7 +23,7 @@ The launcher verifies the ordinary official installation before selecting the se
 
 `Config.prefix` uses the official Schema `volatile()` API. The official Settings form can update it without restarting the plugin. Execution reads the current value through `config.prefix.get()`. Invalid settings are rejected by the official ConfigEditor before the live value changes. Registrations belong to the plugin context. Its inverse closes admission, aborts pending delays, and awaits all admitted calls before cleanup finishes.
 
-The repository-local [`official-plugin-api.mjs`](../src/official-plugin-api.mjs) imports the ESM entries from the pinned official installation. A separately packaged plugin should import `defineTool` from `@deepseek-ai/dsh-tools` and Schema from `@deepseek-ai/schemastery`, and declare the corresponding official packages as peer dependencies. It must not import the slim `@cordis-harness/app/plugin-api` into this composition or construct another Context.
+The repository-local [`official-plugin-api.mjs`](../src/official-plugin-api.mjs) imports the ESM entries from the pinned official installation. A separately packaged plugin should import `defineTool` from `@deepseek-ai/dsh-tools` and Schema from `@deepseek-ai/schemastery`, and declare the corresponding official packages as peer dependencies. It must not import the slim `@validation-engineering/harness-verus/plugin-api` into this composition or construct another Context.
 
 ## Loader configuration
 
@@ -42,7 +42,7 @@ A `--patch` overlay also works for fixed configuration, but it takes priority ov
 ## Host-owned Loader edits
 
 For an explicit host operation against an owned official Include file, use
-`LoaderTransactions` from `@cordis-harness/app/official-loader-api`. Its
+`LoaderTransactions` from `@validation-engineering/harness-verus/official-loader-api`. Its
 create/update/remove calls join the native domain queue and wait for actual
 Include persistence as well as lifecycle completion. The native bootstrap also
 coordinates Settings/ConfigEditor, Include refresh and the HMR configuration

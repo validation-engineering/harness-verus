@@ -8,9 +8,9 @@ import { verifyRustModules, moduleEvidenceRelativePath } from '../../scripts/ver
 
 await import('../../scripts/official-register.mjs');
 const { Context } = await import('@deepseek-ai/cordis');
-const { loadRustModule } = await import('../../official-runtime/node_modules/@cordis-verus/compat-loader/rust-module.js');
-const { ToolRuntime } = await import('../../official-runtime/node_modules/@deepseek-ai/dsh-tools/lib/index.js');
-const { SystemPrompt } = await import('../../official-runtime/node_modules/@deepseek-ai/dsh-system-prompt/lib/index.js');
+const { loadRustModule } = await import('@validation-engineering/cordis-loader/rust-module');
+const { ToolRuntime } = await import('@deepseek-ai/dsh-tools');
+const { SystemPrompt } = await import('@deepseek-ai/dsh-system-prompt');
 const bridge = await import('../../examples/official/rust-dynamic-text-analysis.mjs');
 
 test('installed official ToolRuntime follows native generations and unregisters on module disposal', async () => {
@@ -57,9 +57,9 @@ test('dynamic artifact evidence rejects source, bytes, and installed runtime dri
     await mkdir(path.dirname(destination), { recursive: true });
     await cp(path.join(projectRoot, file), destination);
   }
-  for (const name of ['compat-cordis', 'compat-harness', 'compat-loader']) {
-    await cp(path.join(projectRoot, 'official-runtime/node_modules/@cordis-verus', name),
-      path.join(temporary, 'official-runtime/node_modules/@cordis-verus', name), { recursive: true });
+  for (const name of ['cordis', 'cordis-compat-deepseek', 'cordis-loader']) {
+    await cp(path.join(projectRoot, 'node_modules/@validation-engineering', name),
+      path.join(temporary, 'node_modules/@validation-engineering', name), { recursive: true });
   }
   assert(!(await readFile(path.join(temporary, moduleEvidenceRelativePath), 'utf8')).includes(projectRoot));
   await verifyRustModules({ root: temporary });
@@ -72,6 +72,6 @@ test('dynamic artifact evidence rejects source, bytes, and installed runtime dri
   }
   await mutate('native/dynamic-text-analysis/src/lib.rs', '\n// changed\n', /sources changed/);
   await mutate(path.relative(projectRoot, artifacts.v2.path), 'changed', /bytes differ/);
-  await mutate('official-runtime/node_modules/@cordis-verus/compat-cordis/runtime.js', '\n// changed\n', /runtime differs/);
-  await mutate('official-runtime/node_modules/@cordis-verus/compat-loader/rust-module.js', '\n// changed\n', /runtime differs/);
+  await mutate('node_modules/@validation-engineering/cordis/runtime.js', '\n// changed\n', /runtime differs/);
+  await mutate('node_modules/@validation-engineering/cordis-loader/rust-module.js', '\n// changed\n', /runtime differs/);
 });

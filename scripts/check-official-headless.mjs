@@ -169,7 +169,7 @@ async function execute(prompt, sessionId) {
 }
 async function sessionLogs() {
   const found = [];
-  const { sessionFormatCatalog } = await import('../official-runtime/node_modules/@deepseek-ai/dsh-session-format-catalog/lib/index.js');
+  const { sessionFormatCatalog } = await import('@deepseek-ai/dsh-session-format-catalog');
   async function visit(directory) {
     for (const entry of await readdir(directory, { withFileTypes: true })) {
       const file = path.join(directory, entry.name);
@@ -198,12 +198,12 @@ async function sessionLogs() {
   return found;
 }
 try {
-  const pkg = JSON.parse(await readFile(path.join(root, 'official-runtime/node_modules/@deepseek-ai/dsh/package.json'), 'utf8'));
+  const pkg = JSON.parse(await readFile(path.join(root, 'node_modules/@deepseek-ai/dsh/package.json'), 'utf8'));
   assert.equal(pkg.version, '0.2.0-rc.2'); report.version = pkg.version;
   report.inputs = {};
-  for (const file of ['official-runtime/package-lock.json', 'scripts/official-test-entry.mjs', 'scripts/check-official-headless.mjs',
-    'official-runtime/node_modules/@deepseek-ai/dsh/lib/bin.js', 'official-runtime/node_modules/@deepseek-ai/dsh-base/cordis.patch.yml',
-    'official-runtime/node_modules/@deepseek-ai/dsh-headless/cordis.patch.yml']) report.inputs[file] = sha256(await readFile(path.join(root, file)));
+  for (const file of ['package-lock.json', 'scripts/official-test-entry.mjs', 'scripts/check-official-headless.mjs',
+    'node_modules/@deepseek-ai/dsh/lib/bin.js', 'node_modules/@deepseek-ai/dsh-base/cordis.patch.yml',
+    'node_modules/@deepseek-ai/dsh-headless/cordis.patch.yml']) report.inputs[file] = sha256(await readFile(path.join(root, file)));
   if (backend === 'native') report.registerSha256 = sha256(await readFile(register));
   await new Promise((resolve, reject) => { server.once('error', reject); server.listen(0, '127.0.0.1', resolve); });
   const baseURL = `http://127.0.0.1:${server.address().port}`;

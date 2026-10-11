@@ -3,7 +3,7 @@
 ```mermaid
 flowchart TD
   CLI[CLI / createHarness] --> Manager[插件清单与静止时加载、卸载、重载]
-  Manager --> Context[唯一 compat-harness Context]
+  Manager --> Context[唯一 cordis-compat-deepseek Context]
   Context --> Driver[Rust NativeDriver / Verus Kernel]
   Context --> Official[官方 AgentLoop、LLM、Session、Prompt、Tools、Projection]
   Official --> Todo[官方 Todo]

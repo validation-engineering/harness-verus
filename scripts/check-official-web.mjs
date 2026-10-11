@@ -24,10 +24,10 @@ const temporary = await mkdtemp(resolve(tmpdir(), 'cordis-official-web-'));
 const workspace = resolve(temporary, 'workspace');
 const home = resolve(temporary, 'home');
 await Promise.all([mkdir(workspace), mkdir(home)]);
-const entry = resolve(root, 'official-runtime/node_modules/@deepseek-ai/dsh/lib/bin.js');
+const entry = resolve(root, 'node_modules/@deepseek-ai/dsh/lib/bin.js');
 const observerEntry = resolve(root, 'scripts/official-test-entry.mjs');
 const observerPath = resolve(temporary, 'runtime-observer.json');
-const dist = resolve(root, 'official-runtime/node_modules/@deepseek-ai/dsh-web-frontend/dist');
+const dist = resolve(root, 'node_modules/@deepseek-ai/dsh-web-frontend/dist');
 const sha256 = bytes => createHash('sha256').update(bytes).digest('hex');
 const report = {
   schemaVersion: 1, status: 'running', backend,

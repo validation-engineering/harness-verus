@@ -28,7 +28,7 @@ npm run official -- headless --session-id <真实已有会话ID> "继续上次�
 
 ## 实际替换范围
 
-- 官方 Node 插件中的 `@deepseek-ai/cordis` 导入统一映射到 `@cordis-verus/compat-harness`，由 Rust native driver 与 Verus kernel 调度。
+- 官方 Node 插件中的 `@deepseek-ai/cordis` 导入统一映射到 `@validation-engineering/cordis-compat-deepseek`，由 Rust native driver 与 Verus kernel 调度。
 - 官方 `cordis-plugin-loader/include/group/timer` 原样运行。我们的简化 `compat-loader` 不冒名替代它们。
 - 主进程的 load guard 拒绝重新加载安装目录中的原版 Cordis JavaScript 宿主入口；继承 `execArgv` 的 ESM 文件型 Node Worker 会预加载同一路由。官方显式隔离的 JSONL 数据校验 Worker 原样保留，其中包含打包后的 Cordis 定义，但当前固定版本不创建 Context。此处验证的是主宿主插件图；Node 22 的 `eval` / CommonJS 入口 Worker、显式清空启动参数的 Worker 和自行启动的隔离进程不包含在自动迁移承诺中。
 - 官方前端包和浏览器插件保持原样，因此浏览器端 Cordis 仍是 JavaScript。这个方案替换 **Node 宿主核心**。

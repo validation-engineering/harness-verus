@@ -43,7 +43,7 @@ async function sources() {
   }
   return hashes;
 }
-const officialUnitTests = ['--expose-internals', '--test', '--test-timeout=60000', 'tests/official/bootstrap.test.mjs', 'tests/official/roster.test.mjs',
+const officialUnitTests = ['--expose-internals', '--test', '--test-timeout=60000', 'tests/official/types.test.mjs', 'tests/official/bootstrap.test.mjs', 'tests/official/official-host-transactions.test.mjs', 'tests/official/official-transaction-compose.test.mjs', 'tests/official/official-transactions.test.mjs', 'tests/official/roster.test.mjs',
   'tests/official/native-build-reload.test.mjs', 'tests/official/native-loader.test.mjs', 'tests/official/native-reverse-services.test.mjs', 'tests/official/native-resources.test.mjs', 'tests/official/native-reverse-resources.test.mjs', 'tests/official/native-publications.test.mjs', 'tests/official/native-migration.test.mjs', 'tests/official/native-launcher.test.mjs', 'tests/official/rust-addon.test.mjs', 'tests/official/rust-modules.test.mjs', 'tests/official/dynamic-rust-loop.test.mjs', 'tests/official/extensions-launcher.test.mjs', 'tests/official/extension-loader-mutation.test.mjs', 'tests/official/loader-transactions.test.mjs', 'tests/official/config-transactions.test.mjs', 'tests/official/in-place-hmr.test.mjs', 'tests/official/process-supervisor.test.mjs'];
 const extensionRuns = [
   {name:'upstream', backend:'upstream', rust:false},

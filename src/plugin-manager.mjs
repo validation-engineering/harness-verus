@@ -2,7 +2,7 @@ import { pathToFileURL } from 'node:url';
 import { resolve } from 'node:path';
 import { createRequire } from 'node:module';
 import { randomUUID } from 'node:crypto';
-import { FiberState } from '@cordis-verus/compat-harness';
+import { FiberState } from '@validation-engineering/cordis-compat-deepseek';
 
 /** Mutations are serialized by the application at a quiescent agent boundary. */
 export class PluginManager {

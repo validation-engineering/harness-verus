@@ -51,7 +51,7 @@ async function verifySnapshot() {
   await add(snapshotPath);
 }
 await verifySnapshot();
-for (const file of ['package.json', 'package-lock.json', 'sources.lock.json', 'scripts/build.mjs', 'scripts/bootstrap.mjs', 'scripts/install-artifacts.mjs', 'scripts/verify-install.mjs', 'src/upstream.ts']) await add(path.join(root, file));
+for (const file of ['package.json', 'package-lock.json', 'sources.lock.json', 'scripts/build.mjs', 'scripts/bootstrap.mjs', 'scripts/install-artifacts.mjs', 'scripts/verify-install.mjs', 'scripts/runtime-packages.mjs', 'src/upstream.ts']) await add(path.join(root, file));
 async function toolFiles(directory) {
   for (const entry of await readdir(directory, { withFileTypes: true })) {
     const file = path.join(directory, entry.name);
@@ -109,12 +109,12 @@ const result = await build({
       return { path: resolved };
     });
     builder.onResolve({ filter: /^(cordis(?:\/|$)|@cordisjs\/)/ }, args => { throw new Error(`Mixed Cordis profile import: ${args.path}`); });
-    builder.onResolve({ filter: /^@cordis-verus\// }, args => ({ path: args.path, external: true }));
+    builder.onResolve({ filter: /^@validation-engineering\// }, args => ({ path: args.path, external: true }));
   } }],
 });
 for (const name of Object.keys(result.metafile.inputs)) {
   assert(!name.includes('/vendor/cordis/'), 'The upstream JS scheduler was accidentally bundled');
-  assert(!name.includes('node_modules/@cordis-verus/'), 'A compatibility facade was accidentally bundled');
+  assert(!name.includes('node_modules/@validation-engineering/'), 'A compatibility facade was accidentally bundled');
   await add(path.resolve(root, name));
 }
 for (const name of [
@@ -129,7 +129,7 @@ for (const [name, metadata] of Object.entries(result.metafile.outputs)) {
   for (const item of metadata.imports) {
     assert(item.external, `Unexpected untracked output import: ${item.path}`);
     assert(!path.isAbsolute(item.path) && !item.path.startsWith('file:'), `Nonportable output import: ${item.path}`);
-    assert(item.path.startsWith('node:') || item.path === '@deepseek-ai/cordis' || item.path.startsWith('@cordis-verus/'), `Unexpected external dependency: ${item.path}`);
+    assert(item.path.startsWith('node:') || item.path === '@deepseek-ai/cordis' || item.path.startsWith('@validation-engineering/'), `Unexpected external dependency: ${item.path}`);
   }
   outputs[name] = await hash(path.resolve(root, name));
 }
@@ -154,9 +154,9 @@ const report = {
   schema: 'cordis-harness.build/v1', status: 'passed', node: process.version, esbuild: esbuildVersion,
   upstream: { revision: lock.deepseekHarness.revision, tree: lock.deepseekHarness.tree, sourceUnmodified: true },
   runtimeSourceFingerprint: lock.cordis.sourceFingerprint,
-  runtimeResolution: 'bare @deepseek-ai/cordis -> explicit compat-harness/register hook; single installed Rust-backed runtime',
+  runtimeResolution: 'bare @deepseek-ai/cordis -> explicit cordis-compat-deepseek/register hook; single installed Rust-backed runtime',
   inputs, outputs, resolvedPackages,
-  requiredPreload: '@cordis-verus/compat-harness/register',
+  requiredPreload: '@validation-engineering/cordis-compat-deepseek/register',
   runtimeAssets: { 'dist/package.json': relative(manifest) },
   claims: { completeHarnessCompatibility: false, crossPlatformAcceptance: false, hostCallbackProof: false },
 };

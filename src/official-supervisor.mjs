@@ -19,7 +19,7 @@ export async function createOfficialSupervisor(options) {
   assert(Number.isInteger(interval) && interval >= 50, 'Watch interval must be at least 50 ms');
   const port = options.port ?? 3080;
   assert(Number.isInteger(port) && port >= 0 && port <= 65535, 'port must be 0..65535');
-  const Domain = options.ProcessDomain ?? (await import('../official-runtime/node_modules/@cordis-verus/compat-loader/process.js')).ProcessDomain;
+  const Domain = options.ProcessDomain ?? (await import('@validation-engineering/cordis-loader/process')).ProcessDomain;
   const domain = new Domain({ entry: 'harness.json', hostModule, cwd: workspace, timeout: options.timeout ?? 30000,
     env: { ...options.env, DSH_HOME: home, CORDIS_HARNESS_PROCESS_WEB_ARGS: JSON.stringify(['--no-open', '--port', String(port)]) },
     ...(options.onOutput ? { onOutput: options.onOutput } : {}),

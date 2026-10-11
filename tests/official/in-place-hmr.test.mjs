@@ -9,9 +9,9 @@ import { setImmediate as turn } from 'node:timers/promises';
 
 if (!process.execArgv.some(arg => arg === '--import' || arg.startsWith('--import='))) await import('../../scripts/official-register.mjs');
 const { Context, domainMutation } = await import('@deepseek-ai/cordis');
-const { default: Loader } = await import('../../official-runtime/node_modules/@deepseek-ai/cordis-plugin-loader/lib/index.js');
-const { default: Timer } = await import('../../official-runtime/node_modules/@deepseek-ai/cordis-plugin-timer/lib/index.js');
-const { default: Hmr } = await import('../../official-runtime/node_modules/@deepseek-ai/dsh-hmr/lib/index.js');
+const { default: Loader } = await import('@deepseek-ai/cordis-plugin-loader');
+const { default: Timer } = await import('@deepseek-ai/cordis-plugin-timer');
+const { default: Hmr } = await import('@deepseek-ai/dsh-hmr');
 const require = createRequire(import.meta.url);
 
 async function fixture(mode = 'esm', options = {}) {
@@ -230,7 +230,7 @@ test('rollback preserves concurrent dynamic imports from the same unchanged shar
 test('native addon dependency is detected before old teardown and candidate additions are refused before dlopen', { timeout: 20000 }, async () => {
   // The runtime artifact is a real local native binary. Loading it as an
   // application dependency does not receive the facade's trusted-host exemption.
-  const addon = new URL('../../official-runtime/node_modules/@cordis-verus/compat-cordis/native/cordis.node', import.meta.url).pathname;
+  const addon = new URL('../../node_modules/@validation-engineering/cordis/native/cordis.node', import.meta.url).pathname;
   const f = await fixture('cjs', { prepare: async ({write, body}) => {
     await write('plugin.cjs', `require(${JSON.stringify(addon)}); const {version}=require('./leaf.cjs'); module.exports=${body('probe')};`);
   } });

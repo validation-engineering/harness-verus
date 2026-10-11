@@ -1,4 +1,4 @@
-import { defineTool } from '@cordis-harness/app/plugin-api';
+import { defineTool } from '@validation-engineering/harness-verus/plugin-api';
 import { registerDynamicTextTool } from '../examples/shared/dynamic-text-tool.mjs';
 
 export const name = 'dynamic-text-analysis';

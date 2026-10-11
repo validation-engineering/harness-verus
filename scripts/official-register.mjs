@@ -1,5 +1,5 @@
 // Route only the Node host. Official browser bundles remain unchanged.
-import '../official-runtime/node_modules/@cordis-verus/compat-harness/register.js';
+import '@validation-engineering/cordis-compat-deepseek/register';
 import { registerHooks } from 'node:module';
 import { fileURLToPath } from 'node:url';
 
@@ -27,16 +27,16 @@ registerHooks({
 // Keep published implementations intact and coordinate their host entrypoints
 // before any default CLI composition can mount them. All use the routed facade.
 const [{ installOfficialTransactions }, { Entry, EntryGroup, EntryTree }, { default: Hmr }, { ConfigEditor }] = await Promise.all([
-  import('../official-runtime/node_modules/@cordis-verus/compat-loader/harness.js'),
-  import('../official-runtime/node_modules/@deepseek-ai/cordis-plugin-loader/lib/index.js'),
-  import('../official-runtime/node_modules/@deepseek-ai/dsh-hmr/lib/index.js'),
-  import('../official-runtime/node_modules/@deepseek-ai/dsh-config-editor/lib/index.js'),
+  import('../src/integrations/deepseek-loader.mjs'),
+  import('@deepseek-ai/cordis-plugin-loader'),
+  import('@deepseek-ai/dsh-hmr'),
+  import('@deepseek-ai/dsh-config-editor'),
 ]);
 installOfficialTransactions({ Entry, EntryGroup, EntryTree, Hmr, ConfigEditor });
 
 // Native modules are ordinary entries in the unchanged official Loader.
 const [{ installOfficialRustModules }, { default: Schema }] = await Promise.all([
   import('../src/official-native-modules.mjs'),
-  import('../official-runtime/node_modules/@deepseek-ai/schemastery/lib/index.mjs'),
+  import('@deepseek-ai/schemastery'),
 ]);
 installOfficialRustModules({ EntryTree, Schema });

@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import { cp, mkdir, mkdtemp, readFile, rm, writeFile } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import path from 'node:path';
-import { Context } from '../../official-runtime/node_modules/@cordis-verus/compat-harness/index.js';
+import { Context } from '@validation-engineering/cordis-compat-deepseek';
 import { addonEvidenceRelativePath, addonRelativePath, projectRoot, verifyRustAddon } from '../../scripts/verify-rust-addon.mjs';
 
 const stale = error => /STALE_EPISODE|no longer admitted|not available|inactive/.test(`${error.code}: ${error.message}`);
@@ -44,8 +44,8 @@ test('Rust addon evidence is portable and rejects source, binary and runtime dri
     await mkdir(path.dirname(destination), { recursive: true });
     await cp(path.join(projectRoot, file), destination);
   }
-  await cp(path.join(projectRoot, 'official-runtime/node_modules/@cordis-verus/compat-cordis'),
-    path.join(temporary, 'official-runtime/node_modules/@cordis-verus/compat-cordis'), { recursive: true });
+  await cp(path.join(projectRoot, 'node_modules/@validation-engineering/cordis'),
+    path.join(temporary, 'node_modules/@validation-engineering/cordis'), { recursive: true });
   assert(!(await readFile(path.join(temporary, addonEvidenceRelativePath), 'utf8')).includes(projectRoot),
     'portable manifest must not contain checkout paths');
   assert.equal((await verifyRustAddon({ root: temporary })).evidence.factory, 'harness.text-analysis');
@@ -68,6 +68,6 @@ test('Rust addon evidence is portable and rejects source, binary and runtime dri
   });
   await t.test('core provenance cannot be replaced', () => mutate('.vendor/cordis/provenance/package-report.json',
     bytes => Buffer.concat([bytes, Buffer.from('\n')]), /report differs from approved/));
-  await t.test('installed runtime drift is rejected', () => mutate('official-runtime/node_modules/@cordis-verus/compat-cordis/runtime.js',
+  await t.test('installed runtime drift is rejected', () => mutate('node_modules/@validation-engineering/cordis/runtime.js',
     bytes => Buffer.concat([bytes, Buffer.from('\n// runtime changed\n')]), /runtime differs/));
 });

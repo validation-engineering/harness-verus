@@ -9,7 +9,7 @@
 先按[构建指南](build.md)准备匹配的核心制品并运行 `npm run official:install -- --offline`。使用正在运行的官方 native Context 和宿主拥有的 Include 文件：
 
 ```js
-import { LoaderTransactions } from '@cordis-harness/app/official-loader-api';
+import { LoaderTransactions } from '@validation-engineering/harness-verus/official-loader-api';
 
 // ctx 是已启动的官方应用 Context；custom 是本宿主拥有的 Include 条目。
 const tree = ctx.loader.resolve('custom').subtree;
@@ -23,7 +23,7 @@ await rootEdits.remove(id);
 await edits.close();
 ```
 
-本仓库脚本也可从 `src/official-loader-api.mjs` 导入；该入口指向官方安装目录中的同一 facade，避免与精简 CLI 的 runtime 实例混用。单独使用核心包时，导入 `@cordis-verus/compat-loader/harness`。
+本仓库脚本也可从 `src/official-loader-api.mjs` 导入；该入口由本应用维护，精简 CLI 与官方模式使用同一依赖树。`cordis-loader@0.2.0` 已移除 `/harness`；这部分官方应用集成统一从 `@validation-engineering/harness-verus/official-loader-api` 导入。
 
 从外部宿主操作调用这些方法，不要在插件 setup、cleanup 或当前 mutation 中等待新的全局事务。插件初始化期间创建和等待自己的 child 仍使用 `ctx.plugin()`。参数在接纳请求时做 structured clone；函数等不可克隆值在接纳前拒绝。Include 被移除或重启后，旧对象返回 `STALE_LOADER`，应为新 subtree 创建新适配器。
 
@@ -46,7 +46,7 @@ npm run official:check
 
 显式接口回归使用真实安装的官方 Loader/Include 和真实临时文件，覆盖：两个 Include 的 FIFO、异步 inverse 与文件写入屏障、关闭等待、文件失败后重试、实际模块 import、根树完整 ID 删除、YAML 表达式保存与新 Context 恢复、volatile 配置不 remount、生命周期重入拒绝、旧 owner 代次拒绝和清理失败时禁止后续修改。阻塞测试由可控 Promise 门触发，不依赖睡眠时长推断顺序。
 
-默认核心测试另检查同步 capture 权限、同域与跨域接纳、方法形状、参数快照边界和类型声明；这些检查不能替代上述官方实现验收。最终[官方验收记录](official-validation-report.json)绑定安装制品、源码和执行日志，普通[应用验收](validation-report.json)继续覆盖真实 AgentLoop 离线 demo。
+迁入本应用的单元与类型测试另检查同步 capture 权限、同域与跨域接纳、方法形状、参数快照边界和类型声明；这些检查不能替代上述官方实现验收。最终[官方验收记录](official-validation-report.json)绑定安装制品、源码和执行日志，普通[应用验收](validation-report.json)继续覆盖真实 AgentLoop 离线 demo。
 
 ## 默认官方配置协调
 

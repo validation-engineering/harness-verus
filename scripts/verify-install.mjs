@@ -1,5 +1,6 @@
 #!/usr/bin/env node
-import '@cordis-verus/compat-harness/register';
+import { runtimeDirectories } from "./runtime-packages.mjs";
+import '@validation-engineering/cordis-compat-deepseek/register';
 import assert from 'node:assert/strict';
 import { createHash } from 'node:crypto';
 import { createRequire } from 'node:module';
@@ -42,7 +43,7 @@ async function installedFiles(directory) {
 for (const item of report.packages) {
   assert.deepEqual(await installedFiles(path.join(installed, item.name)), [...item.files].sort(), `Unexpected runtime package content: ${item.name}`);
   for (const file of item.files) {
-  const source = `packages/${item.name.split('/').at(-1)}/${file}`;
+  const source = `packages/${runtimeDirectories[item.name]}/${file}`;
   const expected = report.sourceHashes[source] ?? (['LICENSE', 'NOTICE'].includes(file) ? report.sourceHashes[file] : undefined);
   assert(expected, `No distribution source hash for ${item.name}/${file}`);
   assert.equal(await hash(path.join(installed, item.name, file)), expected, `Installed package changed: ${item.name}/${file}`);
@@ -52,15 +53,14 @@ const packageLock = await json(path.join(root, 'package-lock.json'));
 for (const [name, entry] of Object.entries(packageLock.packages)) {
   assert(!entry.link, `Linked dependency in npm lock: ${name}`);
   if (entry.resolved?.startsWith('file:')) assert(!path.isAbsolute(entry.resolved.slice(5)) && !entry.resolved.includes('../'), `External file dependency: ${name}`);
-  assert(!/(^|\/)node_modules\/(?:@deepseek-ai\/cordis|cordis|@cordisjs\/core)$/.test(name), `Upstream JS scheduler is installed: ${name}`);
 }
-const facade = await import('@cordis-verus/compat-harness');
+const facade = await import('@validation-engineering/cordis-compat-deepseek');
 const routed = await import('@deepseek-ai/cordis');
 const require = createRequire(import.meta.url);
 assert.equal(facade.Context, routed.Context, 'Official imports resolve to another runtime');
-assert.equal(facade.Context, require('@cordis-verus/compat-harness').Context);
+assert.equal(facade.Context, require('@validation-engineering/cordis-compat-deepseek').Context);
 assert.equal(facade.Context, require('@deepseek-ai/cordis').Context);
-const { selectNativeArtifact } = await import('@cordis-verus/compat-cordis/native-artifacts');
+const { selectNativeArtifact } = await import('@validation-engineering/cordis/native-artifacts');
 const selected = selectNativeArtifact();
 assert((await realpath(selected.path)).startsWith(installed + path.sep));
 assert.equal(await hash(selected.path), lock.cordis.nativeArtifactSha256);

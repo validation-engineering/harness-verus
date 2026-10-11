@@ -8,19 +8,19 @@ import { setImmediate as nextTurn } from 'node:timers/promises';
 
 if (!process.execArgv.some(arg => arg === '--import' || arg.startsWith('--import='))) await import('../../scripts/official-register.mjs');
 const { Context, domainMutation } = await import('@deepseek-ai/cordis');
-const { default: Loader } = await import('../../official-runtime/node_modules/@deepseek-ai/cordis-plugin-loader/lib/index.js');
-const { default: Timer } = await import('../../official-runtime/node_modules/@deepseek-ai/cordis-plugin-timer/lib/index.js');
-const { default: Hmr } = await import('../../official-runtime/node_modules/@deepseek-ai/dsh-hmr/lib/index.js');
-const { ConfigEditor } = await import('../../official-runtime/node_modules/@deepseek-ai/dsh-config-editor/lib/index.js');
-const { mountRootInclude, readProfilePatches } = await import('../../official-runtime/node_modules/@deepseek-ai/dsh-app-boot/lib/index.js');
-const { withFileLock } = await import('../../official-runtime/node_modules/@deepseek-ai/dsh-atomic-write/lib/index.js');
-const { default: Schema } = await import('../../official-runtime/node_modules/@deepseek-ai/schemastery/lib/index.mjs');
+const { default: Loader } = await import('@deepseek-ai/cordis-plugin-loader');
+const { default: Timer } = await import('@deepseek-ai/cordis-plugin-timer');
+const { default: Hmr } = await import('@deepseek-ai/dsh-hmr');
+const { ConfigEditor } = await import('@deepseek-ai/dsh-config-editor');
+const { mountRootInclude, readProfilePatches } = await import('@deepseek-ai/dsh-app-boot');
+const { withFileLock } = await import('@deepseek-ai/dsh-atomic-write');
+const { default: Schema } = await import('@deepseek-ai/schemastery');
 
 async function fixture(options = {}) {
   const directory = await mkdtemp(join(tmpdir(), 'cordis-official-config-'));
   const ctx = new Context(), active = new Map(), history = [];
   const configPath = join(directory, 'cordis.json'), patchPath = join(directory, 'cordis.patch.yml');
-  const profile = { name: 'transaction-fixture', dir: directory, patchPath, installAnchor: new URL('../../official-runtime/package.json', import.meta.url).pathname,
+  const profile = { name: 'transaction-fixture', dir: directory, patchPath, installAnchor: new URL('../../package.json', import.meta.url).pathname,
     home: join(directory, 'home'), cwd: directory, startedBundles: [], overlays: [], telemetryDisabledEnv: '1' };
   const patches = [{ insert: [{ id: 'probe', name: 'cordis:config-probe', config: { value: 1 } }] }];
   await writeFile(join(directory, 'package.json'), JSON.stringify({ name: 'config-fixture', dsh: { profile: { bundles: [] } } }));
@@ -40,7 +40,7 @@ async function fixture(options = {}) {
         active.set('probe', config.value);
       },
     };
-    await mountRootInclude(ctx, configPath, readProfilePatches('dsh', profile), options.hostResolved ? new URL('../../official-runtime/', import.meta.url).href : undefined);
+    await mountRootInclude(ctx, configPath, readProfilePatches('dsh', profile), options.hostResolved ? new URL('../../', import.meta.url).href : undefined);
     await ctx.loader.await();
     await ctx.plugin(ConfigEditor);
     const entry = ctx.loader.resolve('include:probe'), tree = ctx.loader.resolve('include').subtree;

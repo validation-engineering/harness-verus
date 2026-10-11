@@ -1,5 +1,5 @@
-import '@cordis-verus/compat-harness/register';
-import { Context } from '@cordis-verus/compat-harness';
+import '@validation-engineering/cordis-compat-deepseek/register';
+import { Context } from '@validation-engineering/cordis-compat-deepseek';
 import { randomUUID } from 'node:crypto';
 import { readFile, realpath } from 'node:fs/promises';
 import { resolve, dirname } from 'node:path';

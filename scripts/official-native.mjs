@@ -18,7 +18,7 @@ if (args.includes('--help') && watch) {
   const { published } = await verifyRustModules();
   await import('./official-register.mjs');
   process.env.DSH_HOME ??= resolve(root, '.cordis-harness/official-native');
-  const { initProfile, PROFILE_TEMPLATES, loadLayeredEnv, loadProfileDirectory, composeEntries, readProfilePatches, loadOverlayPatches } = await import('../official-runtime/node_modules/@deepseek-ai/dsh-app-boot/lib/index.js');
+  const { initProfile, PROFILE_TEMPLATES, loadLayeredEnv, loadProfileDirectory, composeEntries, readProfilePatches, loadOverlayPatches } = await import('@deepseek-ai/dsh-app-boot');
   const profiles = resolve(process.env.DSH_HOME, 'profiles');
   await mkdir(profiles, { recursive: true });
   for (const profile of ['web', 'headless']) {
@@ -51,7 +51,7 @@ if (args.includes('--help') && watch) {
   }
   if (['web', 'headless'].includes(selected)) {
     const directory = resolve(profiles, selected);
-    const installAnchor = fileURLToPath(new URL('../official-runtime/node_modules/@deepseek-ai/dsh/package.json', import.meta.url));
+    const installAnchor = fileURLToPath(new URL(import.meta.resolve('@deepseek-ai/dsh/package.json')));
     const loaded = loadProfileDirectory('dsh', directory, installAnchor);
     const overlays = patches.flatMap(path => loadOverlayPatches('dsh', resolve(path)));
     const composed = composeEntries([readProfilePatches('dsh', { dir: directory, patchPath: loaded.patchPath,
@@ -65,14 +65,14 @@ if (args.includes('--help') && watch) {
     }
   }
   if (!watch) {
-    const entry = new URL('../official-runtime/node_modules/@deepseek-ai/dsh/lib/bin.js', import.meta.url);
+    const entry = new URL(import.meta.resolve('@deepseek-ai/dsh/lib/bin.js'));
     process.argv = [process.execPath, fileURLToPath(entry), ...(args.length ? args : ['web'])];
     const { runCli } = await import(entry.href);
     await runCli();
   } else {
     if (args[0] === 'web') args.shift();
     assert(!args[0] || args[0].startsWith('-'), 'Build watching currently runs the official Web profile');
-    const { runProfile } = await import('../official-runtime/node_modules/@deepseek-ai/dsh/lib/profile-boot.js');
+    const { runProfile } = await import('@deepseek-ai/dsh/lib/profile-boot.js');
     const { watchOfficialRustModule } = await import('../src/official-native-modules.mjs');
     const priorSignals = new Map(['SIGINT', 'SIGTERM'].map(signal => [signal, new Set(process.listeners(signal))]));
     const profile = await runProfile({ environment: loadLayeredEnv('dsh'), profile: 'web', patchFiles: [], args: args.length ? args : ['--no-open'] });

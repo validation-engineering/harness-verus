@@ -34,7 +34,7 @@ Plugins are trusted code, with normal Node access. Module graph checks are a rep
 
 ## Update and failure behavior
 
-The supervisor delegates lifecycle decisions to `ProcessDomain` from `@cordis-verus/compat-loader/process`:
+The supervisor delegates lifecycle decisions to `ProcessDomain` from `@validation-engineering/cordis-loader/process`:
 
 1. Capture candidate bytes, including nested modules, and compare them with the current artifact without evaluating candidate code.
 2. Ask the old process to run the **official** shutdown controller. Require a cleanup acknowledgement and a clean process exit before executing any candidate.

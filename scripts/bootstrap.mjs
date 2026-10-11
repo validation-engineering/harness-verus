@@ -80,7 +80,7 @@ await verifyHashes(source, packages.nativeSourceHashes);
 assert.equal(officialGit('rev-parse', 'HEAD'), upstream.revision);
 assert.equal(officialGit('rev-parse', 'HEAD^{tree}'), upstream.tree);
 assert.equal(officialGit('status', '--porcelain=v1', '--untracked-files=all'), '', 'Official source must remain unchanged');
-const expectedNames = ['@cordis-verus/compat-cordis', '@cordis-verus/compat-harness', '@cordis-verus/compat-loader'];
+const expectedNames = ['@validation-engineering/cordis', '@validation-engineering/cordis-compat-deepseek', '@validation-engineering/cordis-loader'];
 assert.deepEqual(packages.packages.map(item => item.name).sort(), expectedNames);
 const archiveRecords = [];
 for (const item of packages.packages) {

@@ -1,5 +1,5 @@
 import { Schema } from '../../src/official-plugin-api.mjs';
-import { adaptObject } from '../../official-runtime/node_modules/@cordis-verus/compat-cordis/index.js';
+import { adaptObject } from '@validation-engineering/cordis';
 
 export const name = 'cordis-harness-text-pipeline';
 export const Config = Schema.object({ revision: Schema.string().min(1).max(100).default('js-pipeline-v1') });

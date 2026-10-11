@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import { mkdir, mkdtemp } from 'node:fs/promises';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { loadRustModule } from '@cordis-verus/compat-loader/rust-module';
+import { loadRustModule } from '@validation-engineering/cordis-loader/rust-module';
 import { createHarness } from '../src/app.mjs';
 import { verifyRustModules } from './verify-rust-modules.mjs';
 

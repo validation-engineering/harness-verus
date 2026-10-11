@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import { mkdtemp, writeFile, rm } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { createHarness } from '../src/app.mjs';
-import { FiberState } from '@cordis-verus/compat-harness';
+import { FiberState } from '@validation-engineering/cordis-compat-deepseek';
 
 const tick = () => new Promise(resolve => setImmediate(resolve));
 

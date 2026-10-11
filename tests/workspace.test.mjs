@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import { mkdtemp, mkdir, readFile, writeFile, readdir, rm, symlink } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import path from 'node:path';
-import { Context } from '@cordis-verus/compat-harness';
+import { Context } from '@validation-engineering/cordis-compat-deepseek';
 import { ToolRuntime, SystemPrompt } from '../dist/upstream/plugins.mjs';
 import * as workspacePlugin from '../src/plugins/workspace.mjs';
 import { createWorkspace } from '../src/plugins/workspace.mjs';

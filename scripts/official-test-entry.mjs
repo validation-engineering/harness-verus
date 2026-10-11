@@ -7,7 +7,7 @@ import { inspect } from 'node:util';
 // process.exit() may run inside the official CLI's completed plugin episode.
 // This test observer belongs to the host that registered it, not that caller.
 const inHostScope = AsyncLocalStorage.snapshot();
-const require = createRequire(new URL('../official-runtime/package.json', import.meta.url));
+const require = createRequire(new URL('../package.json', import.meta.url));
 const { RegistryService, Context } = require('@deepseek-ai/cordis');
 const native = typeof Context.prototype.snapshot === 'function';
 // ACTIVE = 2 in both pinned profiles; upstream erases its const enum export.
@@ -29,6 +29,6 @@ function capture(stage) {
 }
 writeFileSync(reportPath, '{}\n', { mode: 0o600 });
 process.on('exit', () => inHostScope(capture, 'exit'));
-const { runCli } = await import('../official-runtime/node_modules/@deepseek-ai/dsh/lib/bin.js');
+const { runCli } = await import('@deepseek-ai/dsh/lib/bin.js');
 await runCli();
 inHostScope(capture, 'ready');

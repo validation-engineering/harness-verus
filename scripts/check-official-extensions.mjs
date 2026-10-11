@@ -104,7 +104,7 @@ const extensionRows = () => [{ id, name: pathToFileURL(path.join(root, 'examples
     { id: 'cordis-rust-dynamic-tool', name: pathToFileURL(path.join(root, 'examples/official/rust-dynamic-text-analysis.mjs')).href },
   ] : [])];
 async function prepare(profile) {
-  const { initProfile, PROFILE_TEMPLATES } = await import('../official-runtime/node_modules/@deepseek-ai/dsh-app-boot/lib/index.js');
+  const { initProfile, PROFILE_TEMPLATES } = await import('@deepseek-ai/dsh-app-boot');
   const directory = path.join(dshHome, 'profiles', profile);
   initProfile(directory, PROFILE_TEMPLATES[profile].bundles);
   await writeFile(path.join(directory, 'cordis.patch.yml'), JSON.stringify([{ insert: extensionRows() }], null, 2) + '\n');
@@ -152,7 +152,7 @@ async function stop(run) {
   evidence.singleContext = true; evidence.registryEmpty = true;
 }
 async function durableSessions() {
-  const { sessionFormatCatalog } = await import('../official-runtime/node_modules/@deepseek-ai/dsh-session-format-catalog/lib/index.js');
+  const { sessionFormatCatalog } = await import('@deepseek-ai/dsh-session-format-catalog');
   const found = [];
   async function visit(directory) {
     for (const entry of await readdir(directory, { withFileTypes: true })) {
@@ -175,7 +175,7 @@ async function durableSessions() {
 }
 try {
   for (const file of ['scripts/check-official-extensions.mjs', 'scripts/official-test-entry.mjs', 'src/official-plugin-api.mjs',
-    'examples/official/greeting.mjs', 'examples/official/rust-text-analysis.mjs', 'official-runtime/package-lock.json']) report.inputs[file] = sha(await readFile(path.join(root, file)));
+    'examples/official/greeting.mjs', 'examples/official/rust-text-analysis.mjs', 'package-lock.json']) report.inputs[file] = sha(await readFile(path.join(root, file)));
   if (values.dynamic) for (const file of ['scripts/official-native.mjs', 'scripts/verify-rust-modules.mjs',
     'src/native-module-artifacts.mjs', 'src/official-native-modules.mjs', 'src/official-loader-api.mjs',
     'examples/official/rust-dynamic-text-analysis.mjs', 'examples/shared/dynamic-text-tool.mjs']) report.inputs[file] = sha(await readFile(path.join(root, file)));
