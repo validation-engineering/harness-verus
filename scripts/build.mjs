@@ -51,7 +51,7 @@ async function verifySnapshot() {
   await add(snapshotPath);
 }
 await verifySnapshot();
-for (const file of ['package.json', 'package-lock.json', 'sources.lock.json', 'scripts/build.mjs', 'scripts/bootstrap.mjs', 'scripts/install-artifacts.mjs', 'scripts/verify-install.mjs', 'scripts/runtime-packages.mjs', 'src/upstream.ts']) await add(path.join(root, file));
+for (const file of ['package.json', 'package-lock.json', 'sources.lock.json', 'scripts/build.mjs', 'scripts/bootstrap.mjs', 'scripts/install-artifacts.mjs', 'scripts/verify-install.mjs', 'scripts/runtime-packages.mjs', 'scripts/npm-command.mjs', 'src/upstream.ts']) await add(path.join(root, file));
 async function toolFiles(directory) {
   for (const entry of await readdir(directory, { withFileTypes: true })) {
     const file = path.join(directory, entry.name);

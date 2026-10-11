@@ -1,5 +1,6 @@
 #!/usr/bin/env node
 import assert from 'node:assert/strict';
+import { npmCommand } from './npm-command.mjs';
 import { cp, mkdir, mkdtemp, readFile, readdir, rm, writeFile } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import path from 'node:path';
@@ -111,8 +112,8 @@ export async function reproduceRecovery({ directory, offline = true, quiet = fal
     report.isolation = { directory: temporary, freshNodeModules: true, siblingCheckoutUsed: false,
       copiedNodeModules: false, compilerExecuted: false, cleanedAfterRun: false };
     if (!quiet) console.log('Installing pinned dependencies in a fresh directory outside the checkout...');
-    const npm = process.platform === 'win32' ? 'npm.cmd' : 'npm';
-    await execute(extracted, npm, ['ci', '--ignore-scripts', '--include=dev', '--include=optional', '--no-audit', '--no-fund', ...(offline ? ['--offline'] : [])]);
+    const [npm, ...npmPrefix] = npmCommand();
+    await execute(extracted, npm, [...npmPrefix, 'ci', '--ignore-scripts', '--include=dev', '--include=optional', '--no-audit', '--no-fund', ...(offline ? ['--offline'] : [])]);
     await verifyRecoveryBundle(extracted);
     caseDirectory = path.join(extracted, '.cordis-harness/review-case');
     if (!quiet) console.log('Running the real file-failure, blocked-update and explicit-retry case...');

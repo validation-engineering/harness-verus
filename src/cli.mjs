@@ -1,5 +1,4 @@
 #!/usr/bin/env node
-import '@validation-engineering/cordis-compat-deepseek/register';
 import { parseArgs } from 'node:util';
 import { mkdir, mkdtemp, copyFile, readFile } from 'node:fs/promises';
 import { resolve } from 'node:path';
@@ -7,6 +6,9 @@ import { createInterface } from 'node:readline/promises';
 import { stdin, stdout } from 'node:process';
 import { randomUUID } from 'node:crypto';
 import { fileURLToPath } from 'node:url';
+import { dataDirectory, publishedDistribution } from './distribution.mjs';
+if (publishedDistribution) await (await import('../scripts/verify-published.mjs')).verifyPublished();
+await import('@validation-engineering/cordis-compat-deepseek/register');
 const { readConfig, createHarness } = await import('./app.mjs');
 
 const project = fileURLToPath(new URL('../', import.meta.url));
@@ -54,18 +56,22 @@ async function main() {
     ...(values.provider ? { type: values.provider } : {}), ...(values.model ? { model: values.model } : values.provider ? { model: values.provider === 'deepseek' ? 'deepseek-flash' : 'demo' } : {}),
   };
   const config = await readConfig(values.config, overrides);
+  if (publishedDistribution && values.config === resolve(project, 'harness.config.json')) {
+    config.workspace = resolve(values.workspace ?? process.cwd());
+    config.sessionDirectory = resolve(dataDirectory, 'sessions');
+  }
   if (values['allow-write']) for (const spec of config.plugins) {
     if (spec.module === 'local:workspace') spec.config = { ...spec.config, allowWrite: true };
   }
   let demoWorkspace;
   if (command === 'demo') {
-    const directory = resolve(project, '.cordis-harness/demos');
+    const directory = resolve(dataDirectory, 'demos');
     await mkdir(directory, { recursive: true });
     demoWorkspace = await mkdtemp(directory + '/workspace-');
     await copyFile(resolve(project, 'examples/workspace/README.md'), resolve(demoWorkspace, 'README.md'));
     config.workspace = demoWorkspace;
     config.provider = { type: 'scripted', model: 'demo' };
-    config.sessionDirectory = resolve(project, '.cordis-harness/demo-sessions');
+    config.sessionDirectory = resolve(dataDirectory, 'demo-sessions');
     config.plugins = [
       { id: 'todo', module: 'official:todo' },
       { id: 'workspace', module: 'local:workspace', config: { allowWrite: true } },

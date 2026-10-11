@@ -1,11 +1,13 @@
 import assert from 'node:assert/strict';
+import { npmCommand } from './npm-command.mjs';
 import { createHash } from 'node:crypto';
 import { spawnSync } from 'node:child_process';
 import { lstat, readFile, rm, writeFile } from 'node:fs/promises';
 import path from 'node:path';
 
 function runNpm(root, args, env) {
-  const result = spawnSync(process.platform === 'win32' ? 'npm.cmd' : 'npm', args, {
+  const [npm, ...prefix] = npmCommand(env);
+  const result = spawnSync(npm, [...prefix, ...args], {
     cwd: root, env, encoding: 'utf8', timeout: 120000, maxBuffer: 32 * 1024 * 1024,
   });
   if (result.error) throw result.error;

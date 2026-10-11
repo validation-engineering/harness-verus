@@ -1,0 +1,59 @@
+name: Published application installation
+
+on:
+  workflow_dispatch:
+    inputs:
+      candidate_tag:
+        description: Draft release containing candidate.json and the exact npm archive
+        required: true
+        type: string
+      registry:
+        description: Download the application itself from npm after publication
+        type: boolean
+        default: false
+
+permissions:
+  contents: read
+
+concurrency:
+  group: release-installation-${{ github.ref }}-${{ inputs.registry }}
+  cancel-in-progress: false
+
+jobs:
+  install:
+    name: Install Harness (${{ matrix.os }})
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 20
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-24.04, macos-15, macos-15-intel, windows-2025]
+    defaults:
+      run:
+        shell: bash
+    steps:
+      - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
+        with:
+          node-version: '22.22.0'
+      - name: Download the immutable candidate
+        env:
+          GH_TOKEN: ${{ github.token }}
+          CANDIDATE_TAG: ${{ inputs.candidate_tag }}
+        run: gh release download "$CANDIDATE_TAG" --repo "$GITHUB_REPOSITORY" --pattern '*.tgz' --pattern 'candidate.json' --dir "$RUNNER_TEMP/candidate"
+      - name: Install, run official CLI and AgentLoop, and reinstall offline
+        env:
+          FROM_REGISTRY: ${{ inputs.registry }}
+        run: |
+          args=()
+          if [[ "$FROM_REGISTRY" == "true" ]]; then args+=(--registry); fi
+          node scripts/check-release.mjs --from-directory "$RUNNER_TEMP/candidate" --output "$RUNNER_TEMP/application-installation.json" "${args[@]}"
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        if: always()
+        with:
+          name: application-installation-${{ github.run_attempt }}-${{ matrix.os }}
+          path: ${{ runner.temp }}/application-installation.json
+          if-no-files-found: warn
+          retention-days: 14

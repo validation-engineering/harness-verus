@@ -1,5 +1,6 @@
 #!/usr/bin/env node
 import assert from 'node:assert/strict';
+import { npmCommand } from './npm-command.mjs';
 import { spawnSync } from 'node:child_process';
 import { mkdir, readFile, rename, rm, writeFile } from 'node:fs/promises';
 import path from 'node:path';
@@ -9,9 +10,9 @@ const flags = new Set(process.argv.slice(2));
 assert(flags.size === process.argv.length - 2 && [...flags].every(flag => ['--offline', '--refresh-runtime-lock'].includes(flag)), 'Usage: node scripts/install-official.mjs [--offline] [--refresh-runtime-lock]');
 const common = ['--ignore-scripts', '--no-audit', '--no-fund', '--include=optional', '--include=peer'];
 if (flags.has('--offline')) common.push('--offline');
-const npm = process.platform === 'win32' ? 'npm.cmd' : 'npm';
+const [npm, ...prefix] = npmCommand();
 function run(args) {
-  const result = spawnSync(npm, args, { cwd: runtimeRoot, stdio: 'inherit', timeout: 180000,
+  const result = spawnSync(npm, [...prefix, ...args], { cwd: runtimeRoot, stdio: 'inherit', timeout: 180000,
     env: { ...process.env, PATH: `${path.dirname(process.execPath)}${path.delimiter}${process.env.PATH ?? ''}` } });
   if (result.error) throw result.error;
   assert.equal(result.status, 0, `Official npm ${args[0]} failed`);

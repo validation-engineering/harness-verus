@@ -6,6 +6,7 @@ import { tmpdir } from 'node:os';
 import path from 'node:path';
 import test from 'node:test';
 import { installArtifacts } from '../scripts/install-artifacts.mjs';
+import { npmCommand } from '../scripts/npm-command.mjs';
 
 const digest = (bytes, algorithm = 'sha256', encoding = 'hex') => createHash(algorithm).update(bytes).digest(encoding);
 test('same-version local archives refresh their real npm lock and installed bytes', async t => {
@@ -23,7 +24,8 @@ test('same-version local archives refresh their real npm lock and installed byte
     dependencies: Object.fromEntries(archives.map(item => [item.name, `file:${item.file}`])),
   }));
   function npm(args, cwd) {
-    const result = spawnSync(process.platform === 'win32' ? 'npm.cmd' : 'npm', args, { cwd, env, encoding: 'utf8', timeout: 15000 });
+    const [command, ...prefix] = npmCommand(env);
+    const result = spawnSync(command, [...prefix, ...args], { cwd, env, encoding: 'utf8', timeout: 15000 });
     assert.equal(result.status, 0, result.stderr);
   }
   async function pack(generation) {

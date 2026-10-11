@@ -8,7 +8,7 @@ Run unchanged official [DeepSeek Harness](https://github.com/deepseek-ai/deepsee
 
 Part of [Validation Engineering](https://github.com/validation-engineering): connecting formal constraints to running code and reproducible evidence.
 
-**Status:** Experimental, pre-1.0. This application has not yet been published. The current checkout uses locally validated runtime artifacts; its acceptance records identify the exact source, platform and Node version. Repository access is currently required.
+**Status:** Experimental, pre-1.0. The lifecycle kernel has Verus proofs; application compatibility is covered by separate behavioral and installation checks. See the [validation records](#validation-and-project-status) for the exact tested scope.
 
 ## What you can do
 
@@ -18,31 +18,28 @@ Part of [Validation Engineering](https://github.com/validation-engineering): con
 
 ## Quick start
 
-Use Node **22.22.0 or later**, npm and Git. Follow the [build guide](docs/build.md) to prepare a development-validated `../cordis-verus` checkout, its three runtime archives and the pinned official Harness source snapshot. Building those archives requires the core project's pinned Rust/Verus toolchain.
-
-For a new local build, run from this repository:
+Use Node **22.22.0 or later** and npm:
 
 ```sh
-node scripts/bootstrap.mjs --cordis-source ../cordis-verus --refresh-lock --online
-npm run build
-npm run verify
-npm run official:install
-npm run official
+npm install @validation-engineering/harness-verus
+npx harness-verus
 ```
+
+The npm distribution includes the prebuilt application and uses precompiled Cordis runtime packages. Starting it does not require Git, Rust, Verus or a source build. The declared native targets are Linux x64 (glibc), macOS Apple Silicon, macOS Intel and Windows x64; see [release acceptance](docs/releasing.md) for what each platform check covers.
 
 The official CLI opens the Web application on port **3080**. Configure your model account or API key in the application, then start a session. Tools, settings, plugins and stored conversations use the official default composition. See [official mode](docs/official-mode.md) for headless usage.
 
-The refresh flags record the newly built artifacts. For existing matching artifacts or cached, offline installation, use the [build guide](docs/build.md). After installation, running the application does not require the adjacent core checkout.
+Published installations keep data under `~/.harness-verus`; set `HARNESS_VERUS_HOME` to choose another location, or `DSH_HOME` for the official profile data. See the [build guide](docs/build.md) for source development.
 
 To try the agent loop without a model account:
 
 ```sh
-npm run demo
+npx harness-verus demo
 ```
 
 This secondary, compact CLI demo runs the real official loop with a **deterministic scripted provider**, making no model API request. It reads a README, writes `DEMO_RESULT.md`, completes Todo items and saves a session. It does not interpret arbitrary prompts.
 
-To see what lifecycle guarantees protect in practice:
+From a source checkout, see what lifecycle guarantees protect in practice:
 
 ```sh
 npm run demo:recovery
@@ -67,10 +64,10 @@ The [architecture guide](docs/architecture.md) describes host responsibilities, 
 
 ## Extend your Harness
 
-Plugins use the official tool API. For example, save this as `examples/official/hello.mjs` after installing official mode:
+Plugins use the official tool API. For example, save a plugin in the application directory where you installed the package:
 
 ```js
-import { defineTool } from '../../src/official-plugin-api.mjs';
+import { defineTool } from '@validation-engineering/harness-verus/official-plugin-api';
 
 export const name = 'hello';
 export const inject = ['tools'];
@@ -102,7 +99,7 @@ The [official acceptance record](docs/official-validation-report.json) covers te
 
 Application tests establish observed functional alignment. Formal guarantees belong to the core kernel's specified contracts and assumptions; arbitrary plugins, asynchronous host execution, external I/O and model behavior remain outside that proof scope. See the core's [paper-to-code review guide](https://github.com/validation-engineering/cordis-verus/blob/main/docs/paper-review-guide.md).
 
-Next priorities are broader third-party plugin coverage, complete host refinement and cross-platform release acceptance. See the [core roadmap](https://github.com/validation-engineering/cordis-verus/blob/main/docs/roadmap.md).
+Next priorities are broader third-party plugin coverage, complete host refinement and broader platform coverage for full official workflows. See the [core roadmap](https://github.com/validation-engineering/cordis-verus/blob/main/docs/roadmap.md).
 
 ## Documentation and contributing
 
@@ -112,6 +109,7 @@ Next priorities are broader third-party plugin coverage, complete host refinemen
 | Write plugins | [Official extensions](docs/official-extensions.md) · [Compact CLI plugins](docs/plugins.md) · [Providers](docs/providers.md) |
 | Update a running application | [Native modules](docs/native-rust-modules.md) · [Loader transactions](docs/loader-transactions.md) · [Process supervision](docs/process-supervisor.md) |
 | Inspect failure and recovery | [Runnable case and independent reproduction](docs/recovery-case.md) |
+| Release the application | [Packaging and acceptance](docs/releasing.md) |
 | Understand the implementation | [Architecture](docs/architecture.md) · [Performance notes](docs/performance.md) |
 
 Detailed guides include English and Chinese documents. See [Contributing](CONTRIBUTING.md) for development and review expectations. Compatibility cases, plugin examples and focused fixes are welcome.

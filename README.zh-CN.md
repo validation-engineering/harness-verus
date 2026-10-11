@@ -8,7 +8,7 @@
 
 项目属于 [Validation Engineering](https://github.com/validation-engineering)，致力于连接形式化约束、实际运行代码与可复现证据。
 
-**状态：** 实验性、pre-1.0。本应用尚未正式发布。当前工作目录使用完成本地验收的运行时制品；验收记录注明精确源码、平台及 Node 版本。目前需要仓库访问权限。
+**状态：** 实验性、pre-1.0。生命周期内核具有 Verus 证明；应用兼容性由独立的行为和安装检查覆盖。实际验收范围见[验证与项目状态](#验证与项目状态)。
 
 ## 可以做什么
 
@@ -18,31 +18,28 @@
 
 ## 快速开始
 
-需要 Node **22.22.0 或更新版本**、npm 和 Git。先按[构建指南](docs/build.md)准备完成开发验收的 `../cordis-verus` 工作目录、三个运行时压缩包，以及锁定的官方 Harness 源码快照。构建这些制品需要核心项目固定的 Rust/Verus 工具链。
-
-对于一次新的本地构建，在本仓库目录运行：
+需要 Node **22.22.0 或更新版本**和 npm：
 
 ```sh
-node scripts/bootstrap.mjs --cordis-source ../cordis-verus --refresh-lock --online
-npm run build
-npm run verify
-npm run official:install
-npm run official
+npm install @validation-engineering/harness-verus
+npx harness-verus
 ```
+
+npm 发行包包含预先构建的应用，并依赖预编译 Cordis 运行时。启动应用不需要 Git、Rust、Verus 或源码编译。原生目标为 Linux x64（glibc）、macOS Apple Silicon、macOS Intel 和 Windows x64；每个平台的检查范围见[发布验收](docs/releasing.zh-CN.md)。
 
 官方 CLI 会打开端口 **3080** 上的 Web 应用。在应用中配置模型账号或 API key，然后开始会话。工具、设置、插件与会话存储采用官方默认组合。headless 用法见[官方模式](docs/official-mode.md)。
 
-刷新参数会记录新构建的制品。复用已匹配的制品，或使用缓存离线安装时，请按[构建指南](docs/build.md)操作。安装完成后，运行应用不需要相邻的核心源码目录。
+发行包默认将数据放在 `~/.harness-verus`；可用 `HARNESS_VERUS_HOME` 指定其他位置，或用 `DSH_HOME` 指定官方 profile 数据位置。源码开发方式见[构建指南](docs/build.md)。
 
 不配置模型账号也可以体验 Agent 循环：
 
 ```sh
-npm run demo
+npx harness-verus demo
 ```
 
 这个作为辅助入口的精简 CLI 演示使用真实官方循环与**确定性脚本提供者**，不发起模型 API 请求。它读取 README、写入 `DEMO_RESULT.md`、完成 Todo 条目并保存会话。它不会理解任意自然语言提示。
 
-想直观看到生命周期保证解决的问题，可以运行：
+在源码工作目录中，可运行以下案例来查看生命周期保证解决的问题：
 
 ```sh
 npm run demo:recovery
@@ -67,10 +64,10 @@ flowchart TD
 
 ## 扩展 Harness
 
-插件使用官方工具 API。例如，安装官方模式后，将以下代码保存为 `examples/official/hello.mjs`：
+插件使用官方工具 API。例如，在已经安装本包的应用目录中保存以下插件：
 
 ```js
-import { defineTool } from '../../src/official-plugin-api.mjs';
+import { defineTool } from '@validation-engineering/harness-verus/official-plugin-api';
 
 export const name = 'hello';
 export const inject = ['tools'];
@@ -102,7 +99,7 @@ export function apply(ctx) {
 
 应用测试检验已观察到的功能对齐。形式化保证来自核心内核在明确前提下的合同；任意插件、异步宿主执行、外部 I/O 与模型行为仍不在该证明范围内。审查路径见核心项目的[论文到代码指南](https://github.com/validation-engineering/cordis-verus/blob/main/docs/paper-review-guide.zh-CN.md)。
 
-后续重点是扩大第三方插件覆盖、完成宿主 refinement，以及跨平台发布验收。详见[核心路线图](https://github.com/validation-engineering/cordis-verus/blob/main/docs/roadmap.md)。
+后续重点是扩大第三方插件覆盖、完成宿主 refinement，以及扩大完整官方工作流的平台覆盖。详见[核心路线图](https://github.com/validation-engineering/cordis-verus/blob/main/docs/roadmap.md)。
 
 ## 文档与贡献
 
