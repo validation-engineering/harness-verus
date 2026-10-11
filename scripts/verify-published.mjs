@@ -55,6 +55,6 @@ export async function verifyPublished() {
   assert.equal(packageManifest.dependencies['@deepseek-ai/dsh'], official.version);
   return { version: release.version, target: native.entry.target, coreCommit: release.runtime.sourceCommit, officialVersion: official.version };
 }
-if (process.argv[1] && resolve(process.argv[1]) === fileURLToPath(import.meta.url)) {
+if (process.argv[1] && await realpath(resolve(process.argv[1])) === await realpath(fileURLToPath(import.meta.url))) {
   console.log(JSON.stringify(await verifyPublished()));
 }

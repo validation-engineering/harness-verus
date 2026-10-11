@@ -20,7 +20,29 @@ concurrency:
   cancel-in-progress: false
 
 jobs:
+  candidate:
+    name: Read the draft candidate
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    # GitHub only exposes draft releases to identities with push access.
+    # Keep this permission out of jobs that execute the installed application.
+    permissions:
+      contents: write
+    steps:
+      - name: Download the immutable candidate
+        env:
+          GH_TOKEN: ${{ github.token }}
+          CANDIDATE_TAG: ${{ inputs.candidate_tag }}
+        run: gh release download "$CANDIDATE_TAG" --repo "$GITHUB_REPOSITORY" --pattern '*.tgz' --pattern 'candidate.json' --dir "$RUNNER_TEMP/candidate"
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: application-candidate-${{ github.run_attempt }}
+          path: ${{ runner.temp }}/candidate
+          if-no-files-found: error
+          retention-days: 14
+
   install:
+    needs: candidate
     name: Install Harness (${{ matrix.os }})
     runs-on: ${{ matrix.os }}
     timeout-minutes: 20
@@ -38,11 +60,10 @@ jobs:
       - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
         with:
           node-version: '22.22.0'
-      - name: Download the immutable candidate
-        env:
-          GH_TOKEN: ${{ github.token }}
-          CANDIDATE_TAG: ${{ inputs.candidate_tag }}
-        run: gh release download "$CANDIDATE_TAG" --repo "$GITHUB_REPOSITORY" --pattern '*.tgz' --pattern 'candidate.json' --dir "$RUNNER_TEMP/candidate"
+      - uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093
+        with:
+          name: application-candidate-${{ github.run_attempt }}
+          path: ${{ runner.temp }}/candidate
       - name: Install, run official CLI and AgentLoop, and reinstall offline
         env:
           FROM_REGISTRY: ${{ inputs.registry }}
