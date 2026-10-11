@@ -66,6 +66,15 @@ try {
     assert.deepEqual(demo.toolCalls.map(call => call.name), ['todo_write', 'workspace_read', 'workspace_write', 'todo_write']);
     assert(demo.workspace.startsWith(data + sep), 'A global install must write demo data outside its package');
     assert.match(await readFile(join(demo.workspace, 'DEMO_RESULT.md'), 'utf8'), /official AgentLoop/);
+    // Read the snapshot after the CLI process exits: a successful printed turn
+    // must not hide a failed persistence barrier or a retained writer lease.
+    const sessions = join(data, 'demo-sessions');
+    const stem = createHash('sha256').update(demo.sessionId).digest('hex');
+    const saved = JSON.parse(await readFile(join(sessions, stem + '.json'), 'utf8'));
+    assert.equal(saved.header.id, demo.sessionId);
+    assert.equal(saved.events.length, demo.eventCount);
+    assert(saved.events.some(event => event.type === 'turn/end' && event.data.reason.kind === 'completed'));
+    assert(!(await readdir(sessions)).some(name => name.endsWith('.lock')), 'Successful CLI shutdown retained a writer lease');
     return verified;
   }
   const first = await smoke();
@@ -81,7 +90,7 @@ try {
   assert.deepEqual(await smoke(), first);
   Object.assign(report, { status: 'passed', target: first.target, offlineReinstall: 'passed',
     checks: ['exact-npm-archive', 'published-source-and-core-integrity', 'official-cli-entry',
-      'real-official-agent-loop', 'four-scripted-tool-calls', 'external-data-directory', 'changed-code-rejected', 'offline-reinstall'],
+      'real-official-agent-loop', 'four-scripted-tool-calls', 'external-data-directory', 'persisted-session-after-exit', 'writer-lease-released', 'changed-code-rejected', 'offline-reinstall'],
     scope: 'Fresh package installation, official CLI help and compact real AgentLoop demo. Full Web/headless acceptance is recorded separately for the development environment.' });
   await writeFile(output, JSON.stringify(report, null, 2) + '\n');
   console.log(`Installed ${candidate.name}@${candidate.version} on ${first.target}; official CLI and scripted AgentLoop passed before and after offline reinstall.`);

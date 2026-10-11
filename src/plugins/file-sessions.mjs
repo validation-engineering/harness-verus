@@ -253,8 +253,13 @@ class Store {
       await this.assertLease(lease);
       handle.assertRoutedSuccess();
       await rename(temp, file);
-      const directory = await open(this.#root, 'r');
-      try { await directory.sync(); } finally { await directory.close(); }
+      // Node's Windows directory handles cannot be flushed like POSIX ones.
+      // File sync and rename above remain mandatory; do not suppress their
+      // errors. Windows has no directory-metadata power-loss guarantee here.
+      if (process.platform !== 'win32') {
+        const directory = await open(this.#root, 'r');
+        try { await directory.sync(); } finally { await directory.close(); }
+      }
       handle.assertRoutedSuccess();
     } finally { await rm(temp, { force: true }); }
   }

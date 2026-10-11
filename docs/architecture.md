@@ -24,7 +24,7 @@ flowchart TD
 
 ## 会话存储
 
-`FileSessions` 是自有插件，遵循官方 `SessionPersistence` / `SessionHandle` 合同，使用官方事件/序号/版本校验和 `agents.resume`。每个 session id 被哈希成文件名；单写者目录锁与 owner token 拒绝并发写者及被替换的所有权。写入通过临时文件、fsync、rename、目录 fsync 提交，正常读只看到完整快照。
+`FileSessions` 是自有插件，遵循官方 `SessionPersistence` / `SessionHandle` 合同，使用官方事件/序号/版本校验和 `agents.resume`。每个 session id 被哈希成文件名；单写者目录锁与 owner token 拒绝并发写者及被替换的所有权。写入先刷新临时文件的数据，再通过 rename 替换快照，正常读只看到完整快照。Linux/macOS 还会刷新父目录；Windows 不执行 Node 不支持的目录 fsync，因此不承诺突然断电后 rename 的目录元数据一定保留。所有平台的文件写入、文件 fsync 和 rename 错误均会向上传播，不能按“平台兼容”忽略。
 
 append 后进程内可见，显式 flush、回合结束和正常 close 构成持久化屏障。崩溃前未 flush 的尾部可能丢失；遗留锁不会自动抢占，管理员须先确认旧进程和资源均已结束再恢复。格式不认识、事件损坏、历史倒退或锁丢失均拒绝继续，原始文件保留。永久清理失败会保留 lease；退出进程不代表外部资源已恢复。
 

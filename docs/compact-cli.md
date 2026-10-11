@@ -32,6 +32,8 @@ npm start -- inspect work-1 --config examples/deepseek.config.json
 
 The compact CLI's `FileSessions` implements the official `SessionPersistence` interface and resumes through `agents.resume`. Snapshots preserve original events and sequence numbers. Turn completion and normal shutdown wait for persistence. Storage uses atomic JSON snapshots with a size limit; it does not implement official JSONL migration, automatic stale-lock cleanup or distributed lease recovery. Official mode retains upstream JSONL storage. See [architecture and boundaries](architecture.md).
 
+Snapshot commits sync the temporary file before renaming it into place. Linux and macOS also sync the parent directory. Windows skips the unsupported directory sync, so this backend does not promise that rename metadata survives sudden power loss there. File writes, file syncs and rename failures still reject persistence on every platform; successful normal shutdown must leave a readable snapshot and release its writer lease.
+
 ## Compose your own plugins
 
 Add an entry to the `plugins` array in `harness.config.json`:
