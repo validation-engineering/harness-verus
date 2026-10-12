@@ -5,7 +5,9 @@ English · [简体中文](recovery-case.zh-CN.md)
 **An update must not close a service while a failed consumer still needs it for cleanup.**
 This case runs an unchanged official DeepSeek Harness AgentLoop, ToolRuntime and
 Todo plugin on the Rust-backed runtime. A custom plugin owns a real file service
-and a tool that needs that service during teardown. Only the model provider is
+and a tool that needs that service during teardown. The consumer also attempts
+lifecycle waits that would retain the service it is waiting to release; those
+requests are rejected with an explicit dependency witness. Only the model provider is
 scripted; no model account or paid request is needed.
 
 ## Run the case
@@ -33,10 +35,34 @@ releases the retained old instance; the example then submits the new revision
 explicitly. Plugin mutations run at the compact application's quiescent turn
 boundary. This case does not update a plugin during a running tool call.
 
+### Lifecycle waits in the same run
+
+The real consumer calls `provider.dispose()` from managed callbacks. Every attempt
+must raise `REENTRANT_MUTATION`, with `operation`, `owner`, `generation`, `target`
+and `retained` matching the actual committed file dependency. Each probe records
+raw before/after snapshots and requires them to be equal: the refusal cannot
+itself change retirement, cleanup or dependency state.
+
+| Callback | Versions / attempts | What is checked |
+| --- | --- | --- |
+| Setup, from a completed effect's continuation | v1 and v2 | A completed inner invocation must not hide the still-live setup ancestor. |
+| An owned task joined by the official tool call | v1 and v2 | A running tool-owned callback cannot await disposal of its retained file provider. The real tool then returns its version. |
+| Checkpoint inverse | v1 failed attempt, v1 explicit retry, v2 shutdown | The same refusal applies during restoration, including retry. It does not prevent the checkpoint or later provider release. |
+
+There are **seven rejected waits** across the seven update/recovery stages. After
+external shutdown, both plugins and native invocation records must be empty.
+`report.json` uses `cordis-harness.recovery-case/v2`; `waitRejections` retains every
+observation. The standalone runner and validation recorder reject missing probes,
+an incorrect retained-provider witness, changed snapshots or leaked invocation
+records. These checks exercise the actual plugin API; they do not fabricate native
+commands or replace the scheduler.
+
 The output directory contains:
 
 - `summary.md` and `report.json`: the stage results, **raw native snapshots**,
-  inverse IDs/attempts, nested cleanup errors, and source/artifact hashes.
+  inverse IDs/attempts, structured wait rejections, nested cleanup errors, and source/artifact hashes.
+- `wait-events.jsonl`: the seven wait attempts, including their complete before/after
+  snapshots and the actual errors naming the retained provider.
 - `before-update.json`, `after-update.json` and `sessions/`: actual official
   session events and tool results before and after replacement.
 - `plugin-events.jsonl`, `journal-v1.jsonl`, `journal-v2.jsonl` and checkpoint
@@ -59,7 +85,7 @@ npm run reproduce:recovery
 This produces a `.tar.gz` review bundle and `SHA256SUMS`, extracts it into a fresh
 temporary directory outside the repository, runs **fresh `npm ci --ignore-scripts
 --offline`**, verifies the installed runtime and build hashes, then executes the
-same seven stages. It copies neither `node_modules` nor a sibling core checkout.
+same seven stages and their lifecycle wait checks. It copies neither `node_modules` nor a sibling core checkout.
 The temporary installation is removed after its logs and case evidence have been
 saved. The local npm cache supplies pinned registry packages. With a cold cache,
 use `npm run reproduce:recovery -- --online`; this permits dependency downloads,
@@ -71,8 +97,9 @@ validation recorder also runs this independent installation and binds its archiv
 logs and case output in [the compact acceptance record](validation-report.json).
 
 Give the archive and its separately obtained checksum to a reviewer. The reviewer
-needs **Node 22.22.0, npm and tar** on the archive's platform and architecture;
-currently the recorded local case is **macOS ARM64**. No Rust/Verus installation,
+needs **Node, npm and tar** on the archive's platform and architecture. Use the
+exact Node version in `recovery-bundle.json`; this iteration was tested with
+**Node 22.22.0 on macOS ARM64** (package minimum: Node 22.22.0). No Rust/Verus installation,
 source compilation, core checkout or model credential is required:
 
 ```sh
@@ -105,12 +132,11 @@ session transcripts and any nonzero command logs.
 
 ## From the observation to the checked code
 
-This case uses core commit
-[`e69a1d5`](https://github.com/validation-engineering/cordis-verus/tree/e69a1d546a13dcf573a1a1e0b8cb692ee416250f).
-The exact identity is the file fingerprint in `sources.lock.json` and the generated
-report, not the short commit name alone. The paper's §4.2.2, Definition 54 and
-L-Unload (pp.36–37) retain the committed view during restoration and discard it
-last. The following connects those review obligations to this concrete run:
+The paper's §4.2.2, Definition 54 and L-Unload (pp.36–37) retain the committed
+view during restoration and discard it last. The source identity is the exact
+file fingerprint in `sources.lock.json` and the generated report. `baseCommit`
+is metadata: an imported development snapshot may include verified, uncommitted
+changes. It must not be treated as the identity of those sources.
 
 | Paper / protocol obligation | Executable core contract | Evidence here |
 | --- | --- | --- |
@@ -118,15 +144,31 @@ last. The following connects those review obligations to this concrete run:
 | RestorationGuard | A provider relied upon by a committed consumer cannot start restoration. | Provider reports `CommittedConsumers`; its file remains available for the retry, and closes after consumer flush. |
 | Report before release | `LifecycleActions` requires the exact accepted cleanup report before release; a failed outcome cannot authorize finish. | Real callback error remains visible; old consumer/provider are retained, then removed after successful explicit retry. |
 | Fresh retry and old-ticket rejection | `retry_cleanup` issues a fresh action; `consumed_ticket_never_returns` rejects later use of an old receipt. | The case observes the explicit retry and attempt count. Stale-ticket rejection is checked in the core protocol/regressions; this application case does not forge receipts. |
+| Host wait policy supporting dependency retention (§4.2.2, Definition 54, Theorem 70) | `Kernel::check_wait` finds a retained dependency in the target's subtree; `InvocationLedger::check_wait` checks every supplied live scope. | Seven actual calls are rejected without mutation. A completed effect cannot conceal live setup. This is an additional host policy, not a proof of Theorem 73's global progress obligations. |
 
-Read the pinned
-[cleanup protocol](https://github.com/validation-engineering/cordis-verus/blob/e69a1d546a13dcf573a1a1e0b8cb692ee416250f/docs/cleanup-protocol.md),
-[production protocol dispatcher and proofs](https://github.com/validation-engineering/cordis-verus/blob/e69a1d546a13dcf573a1a1e0b8cb692ee416250f/crates/cordis-kernel/src/cleanup_protocol.rs),
-and [paper review guide](https://github.com/validation-engineering/cordis-verus/blob/e69a1d546a13dcf573a1a1e0b8cb692ee416250f/docs/paper-review-guide.md).
-The runtime runs the checked Rust functions with proof data erased. The JS host
-invokes callbacks and supplies outcomes to that protocol; it is not itself fully
-Verus-verified. This demo consumes recorded development artifacts and does not
-rerun Verus or expand the proven boundary.
+The bundle includes **19 selected core review files** under
+`.vendor/cordis/provenance/review/`, preserving their original paths. Start with:
+
+- `docs/cleanup-protocol.md` and `docs/cases/reentrant-wait.md` (Chinese versions included);
+- `crates/cordis-kernel/src/cleanup_protocol.rs`, `wait_guard.rs`,
+  `request_ledger.rs` and `invocation_ledger.rs` for executable contracts and proofs;
+- `crates/cordis-driver/src/lib.rs` and `packages/compat-cordis/runtime.js` for the
+  native command dispatcher and actual JS callback/wait paths;
+- `docs/paper-review-guide.md` for the wider paper audit route.
+
+[`core-review.mjs`](../scripts/core-review.mjs) binds every selected file to the
+**same development report** recorded for the installed artifacts. Changing a
+review source and updating only the bundle manifest still fails validation.
+The included toolchain and upstream locks identify the proof toolchain and paper
+snapshot. This is a review subset, not a complete source/build/proof closure;
+follow the core repository's instructions for an independent Verus run.
+
+The runtime executes the checked Rust functions with proof data erased. The JS
+host still decides when callbacks begin/end, supplies outcomes, and preserves
+AsyncLocalStorage ancestry. The native ledger verifies the supplied handles;
+it cannot detect an ancestor omitted by that host. Integration tests cover these
+paths; they are not a whole-host refinement proof. This demo consumes recorded
+development artifacts and neither reruns Verus nor expands the proven boundary.
 
 The real-case regression also exposed a Harness integration bug: child disposal
 could reject before its parent's structural cleanup had finished reporting the

@@ -45,7 +45,7 @@ npx harness-verus demo
 npm run demo:recovery
 ```
 
-观察插件更新遇到真实的文件清理失败、保留所需服务、解释阻塞原因、显式重试成功，再通过官方 AgentLoop 使用新插件。[恢复案例](docs/recovery-case.zh-CN.md)提供原始诊断、论文到代码的审查路径，以及无需内核源码目录或源码编译即可运行的审查包（`npm run reproduce:recovery`）。
+观察插件更新遇到真实的文件清理失败、保留所需服务、解释阻塞原因、拒绝等待释放自己保留的服务、显式重试成功，再通过官方 AgentLoop 使用新插件。[恢复案例](docs/recovery-case.zh-CN.md)提供原始诊断、论文到代码的审查源码，以及无需内核源码目录或源码编译即可运行的审查包（`npm run reproduce:recovery`）。
 
 ## 工作原理
 

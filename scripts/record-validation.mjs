@@ -1,5 +1,6 @@
 #!/usr/bin/env node
 import assert from 'node:assert/strict';
+import { assertRecoveryReport, expectedStages, expectedWaits } from '../src/recovery-contract.mjs';
 import { createHash } from 'node:crypto';
 import { readFile, writeFile, mkdir, readdir, lstat } from 'node:fs/promises';
 import { spawnSync } from 'node:child_process';
@@ -42,6 +43,7 @@ if (process.argv[2] === '--check') {
   assert.equal(record.buildReportSha256, await hash('dist/build-report.json'), 'Build evidence changed');
   assert.equal(record.logSha256, await hash('.cordis-harness/validation.log'), 'Validation log changed');
   assert.equal(record.recovery?.status, 'passed', 'Missing independent recovery reproduction');
+  assert.deepEqual(record.recovery.waitSafety, { rejectedWaits: expectedWaits.length, invocationScopesRemaining: 0 });
   assert.deepEqual(await hashFiles(root, Object.keys(record.recoveryEvidenceHashes ?? {})), record.recoveryEvidenceHashes,
     'Independent recovery evidence changed');
   assert(Object.keys(record.recoveryEvidenceHashes).some(name => name.endsWith('.tar.gz')), 'Missing recovery archive hash');
@@ -95,8 +97,10 @@ if (process.argv[2] === '--check') {
     assert.equal(recoveryReport.isolation.cleanedAfterRun, true);
     assert.equal(recoveryReport.case.cleanupAttempts, 2);
     assert.equal(recoveryReport.case.oneShotReleases, 1);
-    assert.deepEqual(recoveryReport.case.stages, ['initial-turn', 'update-failed', 'update-blocked',
-      'fault-repaired', 'retry-succeeded', 'updated-turn', 'closed']);
+    assert.deepEqual(recoveryReport.case.stages, expectedStages);
+    const scenario = JSON.parse(await readFile(join(reproduction.output, 'case/report.json'), 'utf8'));
+    const waitSafety = assertRecoveryReport(scenario);
+    assert.deepEqual(recoveryReport.case.waitSafety, waitSafety);
     const recoveryFiles = await regularFiles(root, [`${recoveryRoot}/case`], [
       relative(root, reproduction.archive), `${recoveryRoot}/reproduction.json`, `${recoveryRoot}/package/SHA256SUMS`,
       `${recoveryRoot}/package/cordis-harness-recovery/recovery-bundle.json`,
@@ -108,14 +112,14 @@ if (process.argv[2] === '--check') {
     const log = runs.map(run => JSON.stringify(run)).join('\n') + '\n'; await writeFile(logPath, log);
     report = { ...report, status: 'passed', checkedAt: new Date().toISOString(), tests,
       demo: { provider: demo.provider, toolCalls: demo.toolCalls.map(call => call.name), events: demo.eventCount, resultFileConfirmed: true },
-      recovery: { status: recoveryReport.status, stages: recoveryReport.case.stages, cleanupAttempts: 2, oneShotReleases: 1,
+      recovery: { waitSafety, status: recoveryReport.status, stages: recoveryReport.case.stages, cleanupAttempts: 2, oneShotReleases: 1,
         pluginsRemaining: recoveryReport.case.pluginsRemaining, freshNpmInstall: true, copiedNodeModules: false,
         siblingCheckoutUsed: false, compilerExecuted: false, externalReviewer: false,
         installation: recoveryReport.installation, archive: relative(root, reproduction.archive), archiveSha256: reproduction.archiveSha256 },
       recoveryEvidenceHashes,
       sourceHashes: before, sourceFingerprint: digest(JSON.stringify(before)), buildReportSha256, logSha256: digest(log) };
     await writeFile(recordPath, JSON.stringify(report, null, 2) + '\n');
-    console.log(`Recorded ${tests.pass} passing tests, the official AgentLoop demo, and all seven recovery stages after an independent npm installation.`);
+    console.log(`Recorded ${tests.pass} passing tests, the official AgentLoop demo, and all seven recovery stages with lifecycle wait checks after an independent npm installation.`);
   } catch (error) {
     await writeFile(logPath, runs.map(run => JSON.stringify(run)).join('\n') + '\n');
     await writeFile(recordPath, JSON.stringify({ ...report, status: 'failed', failure: error.stack ?? String(error) }, null, 2) + '\n');

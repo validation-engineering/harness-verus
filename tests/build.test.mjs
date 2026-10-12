@@ -11,6 +11,8 @@ test('distribution evidence remains portable and rejects changed inputs', async 
   const temporary = await mkdtemp(path.join(tmpdir(), 'cordis-harness-evidence-'));
   t.after(() => rm(temporary, { recursive: true, force: true }));
   const build = JSON.parse(await readFile(path.join(root, 'dist/build-report.json'), 'utf8'));
+  const lock = JSON.parse(await readFile(path.join(root, 'sources.lock.json'), 'utf8'));
+  const facadeArchive = lock.cordis.archives.find(item => item.name === '@validation-engineering/cordis-compat-deepseek').file;
   const files = new Set([...Object.keys(build.inputs), ...Object.keys(build.outputs),
     'dist/build-report.json', 'scripts/verify-install.mjs', 'sources.lock.json', 'package-lock.json']);
   for (const name of files) {
@@ -47,7 +49,7 @@ test('distribution evidence remains portable and rejects changed inputs', async 
   await t.test('rejects a changed application export input', () => change('src/upstream.ts', before => Buffer.concat([before, Buffer.from('\n// changed\n')]), fails(/Stale build: src\/upstream.ts/)));
   await t.test('rejects a changed official AgentLoop source', () => change('.cache/upstream/deepseek-harness/packages/core/agent-loop/src/index.ts', before => Buffer.concat([before, Buffer.from('\n// changed\n')]), fails(/Stale build:.*agent-loop\/src\/index.ts/)));
   await t.test('rejects a changed generated bundle', () => change('dist/upstream/plugins.mjs', before => Buffer.concat([before, Buffer.from('\n// changed\n')]), fails(/Stale build: dist\/upstream\/plugins.mjs/)));
-  await t.test('rejects a changed tarball', () => change('.vendor/cordis/validation-engineering-cordis-compat-deepseek-0.1.0.tgz', before => Buffer.concat([before, Buffer.from('changed')]), fails(/Archive differs from source lock/)));
+  await t.test('rejects a changed tarball', () => change(facadeArchive, before => Buffer.concat([before, Buffer.from('changed')]), fails(/Archive differs from source lock/)));
   await t.test('rejects installed facade modifications', () => change('node_modules/@validation-engineering/cordis-compat-deepseek/index.js', before => Buffer.concat([before, Buffer.from('\n// changed\n')]), fails(/Installed package changed/)));
   await t.test('rejects unrecorded files inside a runtime package', async () => {
     const extra = path.join(temporary, 'node_modules/@validation-engineering/cordis-compat-deepseek/unrecorded.mjs');

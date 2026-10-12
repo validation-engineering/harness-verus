@@ -55,9 +55,9 @@
     "test:types": "node --test tests/official/types.test.mjs"
   },
   "dependencies": {
-    "@validation-engineering/cordis": "file:.vendor/cordis/validation-engineering-cordis-0.1.1.tgz",
-    "@validation-engineering/cordis-compat-deepseek": "file:.vendor/cordis/validation-engineering-cordis-compat-deepseek-0.1.0.tgz",
-    "@validation-engineering/cordis-loader": "file:.vendor/cordis/validation-engineering-cordis-loader-0.2.0.tgz",
+    "@validation-engineering/cordis": "file:.vendor/cordis/validation-engineering-cordis-0.2.0.tgz",
+    "@validation-engineering/cordis-compat-deepseek": "file:.vendor/cordis/validation-engineering-cordis-compat-deepseek-0.1.1.tgz",
+    "@validation-engineering/cordis-loader": "file:.vendor/cordis/validation-engineering-cordis-loader-0.2.1.tgz",
     "eventsource-parser": "3.1.1",
     "zod": "4.6.5",
     "@deepseek-ai/dsh": "0.2.0-rc.2",

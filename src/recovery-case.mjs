@@ -3,14 +3,10 @@ import { mkdir, readFile, readdir, rmdir, writeFile } from 'node:fs/promises';
 import { join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
+import { assertRecoveryReport, expectedStages, errorRecord } from './recovery-contract.mjs';
+export { expectedStages, errorRecord } from './recovery-contract.mjs';
+
 const root = fileURLToPath(new URL('../', import.meta.url));
-export const expectedStages = ['initial-turn', 'update-failed', 'update-blocked',
-  'fault-repaired', 'retry-succeeded', 'updated-turn', 'closed'];
-export function errorRecord(error) {
-  return { name: error.name, message: error.message, ...(error.code ? { code: error.code } : {}),
-    ...(error.errors ? { errors: [...error.errors].map(errorRecord) } : {}),
-    ...(error.cause instanceof Error ? { cause: errorRecord(error.cause) } : {}) };
-}
 async function jsonLines(file) {
   return (await readFile(file, 'utf8')).trim().split('\n').filter(Boolean).map(line => JSON.parse(line));
 }
@@ -24,19 +20,20 @@ export async function runRecoveryCase({ directory, onStage = () => {} }) {
   assert.deepEqual(await readdir(directory), [], 'Use a new empty output directory');
   const { createHarness } = await import('./app.mjs');
   const report = {
-    schema: 'cordis-harness.recovery-case/v1', status: 'running',
+    schema: 'cordis-harness.recovery-case/v2', status: 'running',
     environment: { node: process.version, platform: process.platform, architecture: process.arch },
     provider: 'deterministic scripted provider', officialAgentLoop: true,
     applicationMode: 'compact Harness with official AgentLoop, tools and Todo',
-    proofExecuted: false, releaseAcceptance: false, stages: [],
+    proofExecuted: false, releaseAcceptance: false, stages: [], waitRejections: [],
   };
   const output = join(directory, 'report.json');
   const save = () => writeFile(output, JSON.stringify(report, null, 2) + '\n');
   const stage = async (name, observations) => {
     assert.equal(name, expectedStages[report.stages.length]);
     report.stages.push({ name, ...observations });
+    report.waitRejections = await jsonLines(join(directory, 'wait-events.jsonl'));
     await save();
-    await onStage(report.stages.at(-1));
+    await onStage(report.stages.at(-1), report.waitRejections);
   };
   const plugin = version => ({ id: 'recovery', module: './examples/recovery/file-journal.mjs',
     config: { directory, version } });
@@ -131,6 +128,7 @@ export async function runRecoveryCase({ directory, onStage = () => {} }) {
     await stage('closed', { pluginsRemaining: 0, snapshot: final });
     report.status = 'passed';
     report.pluginEvents = allEvents;
+    report.waitSafety = assertRecoveryReport(report);
     await save();
     return report;
   } catch (error) {

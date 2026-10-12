@@ -1,5 +1,7 @@
 #!/usr/bin/env node
 import assert from 'node:assert/strict';
+import { assertRecoveryReport, expectedStages } from '../src/recovery-contract.mjs';
+import { coreReviewFiles, reviewDirectory } from './core-review.mjs';
 import { npmCommand } from './npm-command.mjs';
 import { cp, mkdir, mkdtemp, readFile, readdir, rm, writeFile } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
@@ -13,8 +15,8 @@ const readme = `# Cordis Harness recovery review bundle
 
 This development bundle runs one compact Harness recovery case with an unchanged
 official AgentLoop and a deterministic scripted model. No model account, sibling
-checkout, Rust, Verus or source build is needed to run it. Use Node 22.22.0 and npm
-on the platform/architecture in recovery-bundle.json.
+checkout, Rust, Verus or source build is needed to run it. Use npm and the Node
+version, platform and architecture recorded in recovery-bundle.json (package minimum: Node 22.22.0).
 
 After verifying the archive against its separately supplied SHA256SUMS:
 
@@ -29,8 +31,10 @@ tarballs and the native addon are already included; dependencies are installed
 afresh. The recorded build tool inputs are checked but no compiler is invoked.
 
 Read docs/recovery-case.md or docs/recovery-case.zh-CN.md for the failure, review
-path and limits. The bundle includes only the official source files used by the
-prebuilt compact application, plus its source manifest. Rebuilding the complete
+path and limits. Selected checked core/host review sources are included under
+.vendor/cordis/provenance/review and bound to the core development report; they
+are not a complete proof/build closure. The bundle includes the official files
+used by the prebuilt compact application, plus its source manifest. Rebuilding the complete
 project and running the official Web/standard application require the source
 repository and its build guide. This is neither a signed release nor a complete
 source checkout. Hashes establish consistency, not publisher authentication.
@@ -46,7 +50,9 @@ export async function createRecoveryBundle({ directory, root = projectRoot }) {
     .filter(name => !name.startsWith('node_modules/'));
   fixed.push('dist/build-report.json', 'LICENSE', 'NOTICE', 'docs/recovery-case.md', 'docs/recovery-case.zh-CN.md',
     'scripts/recovery-evidence.mjs', 'scripts/run-recovery-case.mjs', 'scripts/reproduce-recovery.mjs');
-  const names = await regularFiles(root, ['src', 'examples/recovery', 'third-party', '.vendor/cordis'], fixed);
+  fixed.push(...lock.cordis.archives.map(item => item.file), '.vendor/cordis/provenance/development-report.json',
+    '.vendor/cordis/provenance/package-report.json', ...coreReviewFiles.map(name => `${reviewDirectory}/${name}`));
+  const names = await regularFiles(root, ['src', 'examples/recovery', 'third-party'], fixed);
   const sources = await hashFiles(root, names);
   const project = path.join(directory, bundleName);
   await mkdir(project);
@@ -124,16 +130,14 @@ export async function reproduceRecovery({ directory, offline = true, quiet = fal
     const scenario = await json(path.join(caseDirectory, 'report.json'));
     assert.equal(scenario.status, 'passed');
     assert.equal(scenario.provenance.bundleManifestSha256, bundle.manifestSha256);
-    const expected = ['initial-turn', 'update-failed', 'update-blocked', 'fault-repaired', 'retry-succeeded', 'updated-turn', 'closed'];
-    assert.deepEqual(result.stages, expected);
-    assert.deepEqual(scenario.stages.map(stage => stage.name), expected);
-    assert.equal(scenario.stages.at(-1).pluginsRemaining, 0);
+    const waitSafety = assertRecoveryReport(scenario);
+    assert.deepEqual(result.stages, expectedStages);
     await verifyRecoveryBundle(extracted);
     assert.deepEqual(await hashFiles(projectRoot, Object.keys(bundle.sources)), bundle.sources, 'Source inputs changed during reproduction');
     const retry = scenario.stages.find(stage => stage.name === 'retry-succeeded');
     assert.equal(retry.cleanupAttempts, 2); assert.equal(retry.oneShotReleases, 1);
     assert.equal(await sha256(bundle.archive), bundle.archiveSha256, 'Archive changed during reproduction');
-    report.case = { stages: result.stages, pluginsRemaining: 0, cleanupAttempts: retry.cleanupAttempts, oneShotReleases: retry.oneShotReleases,
+    report.case = { waitSafety, stages: result.stages, pluginsRemaining: 0, cleanupAttempts: retry.cleanupAttempts, oneShotReleases: retry.oneShotReleases,
       provider: scenario.provider, report: 'case/report.json', reportSha256: result.reportSha256 };
     report.status = 'passed'; report.checkedAt = new Date().toISOString();
   } catch (error) {
@@ -170,5 +174,5 @@ if (process.argv[1] && path.resolve(process.argv[1]) === fileURLToPath(import.me
   }
   const result = await reproduceRecovery({ directory, offline, quiet });
   if (quiet) console.log(JSON.stringify(result));
-  else console.log(`\nIndependent installation passed all seven stages.\nArchive: ${result.archive}\nSHA-256: ${result.archiveSha256}\nEvidence: ${result.output}`);
+  else console.log(`\nIndependent installation passed all seven stages and lifecycle wait checks.\nArchive: ${result.archive}\nSHA-256: ${result.archiveSha256}\nEvidence: ${result.output}`);
 }

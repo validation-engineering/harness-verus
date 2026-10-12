@@ -33,7 +33,7 @@ test('real source edits compile and replace an official Rust tool; compiler erro
     const environment = { ...process.env, RUSTUP_TOOLCHAIN: rust, CARGO_TARGET_DIR: target, CARGO_NET_OFFLINE: 'true' };
     // Keep the package/dependency identities from the approved demonstration's
     // lock. This independent cdylib target contains no resident Cordis host.
-    await writeFile(join(directory, 'Cargo.toml'), `[package]\nname = "cordis-harness-dynamic-text-analysis"\nversion = "0.1.0"\nedition = "2021"\nrust-version = ${JSON.stringify(rust)}\npublish = false\n\n[lib]\nname = "cordis_harness_watch_fixture"\ncrate-type = ["cdylib"]\n\n[dependencies]\ncordis-plugin-api = { path = ${JSON.stringify(sdk)}, version = "=0.1.0" }\nserde_json = "1"\n\n[profile.release]\ndebug-assertions = true\noverflow-checks = true\n`);
+    await writeFile(join(directory, 'Cargo.toml'), `[package]\nname = "cordis-harness-dynamic-text-analysis"\nversion = "0.1.0"\nedition = "2021"\nrust-version = ${JSON.stringify(rust)}\npublish = false\n\n[lib]\nname = "cordis_harness_watch_fixture"\ncrate-type = ["cdylib"]\n\n[dependencies]\ncordis-plugin-api = { path = ${JSON.stringify(sdk)}, version = "=0.2.0" }\nserde_json = "1"\n\n[profile.release]\ndebug-assertions = true\noverflow-checks = true\n`);
     await copyFile(join(projectRoot, 'native/dynamic-text-analysis/Cargo.lock'), join(directory, 'Cargo.lock'));
     for (const source of ['resources.rs', 'reverse_resources.rs', 'fleet.rs']) {
       await copyFile(join(projectRoot, 'native/dynamic-text-analysis/src', source), join(directory, 'src', source));

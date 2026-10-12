@@ -1,5 +1,6 @@
 #!/usr/bin/env node
 import assert from 'node:assert/strict';
+import { verifyCoreReview } from './core-review.mjs';
 import { createHash } from 'node:crypto';
 import { spawnSync } from 'node:child_process';
 import { lstat, mkdir, mkdtemp, readFile, readdir, writeFile } from 'node:fs/promises';
@@ -92,7 +93,8 @@ export async function verifyRecoveryBundle(root) {
     assert.match(manifest.files[name], /^[a-f0-9]{64}$/, `Invalid file hash: ${name}`);
   }
   for (const name of ['package.json', 'package-lock.json', 'sources.lock.json', 'dist/build-report.json',
-    'src/app.mjs', 'src/plugin-manager.mjs', 'src/recovery-case.mjs', 'examples/recovery/file-journal.mjs',
+    'src/app.mjs', 'src/plugin-manager.mjs', 'src/recovery-case.mjs', 'src/recovery-contract.mjs',
+    'examples/recovery/file-journal.mjs', 'examples/recovery/wait-probe.mjs', 'scripts/core-review.mjs',
     'scripts/run-recovery-case.mjs', 'scripts/recovery-evidence.mjs', 'scripts/verify-install.mjs']) {
     assert(manifest.files[name], `Incomplete recovery bundle: ${name}`);
   }
@@ -100,6 +102,7 @@ export async function verifyRecoveryBundle(root) {
   assert.deepEqual(await regularFiles(root, entries), names.sort(), 'Bundle contains missing or unrecorded files');
   assert.deepEqual(await hashFiles(root, names), manifest.files, 'Recovery bundle content changed');
   const lock = await json(path.join(root, 'sources.lock.json'));
+  await verifyCoreReview(root, lock);
   for (const item of lock.cordis.archives) assert.equal(manifest.files[item.file], item.sha256, `Runtime archive is not bound: ${item.name}`);
   const build = await json(path.join(root, 'dist/build-report.json'));
   for (const [name, hash] of Object.entries({ ...build.inputs, ...build.outputs })) {

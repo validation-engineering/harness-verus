@@ -45,7 +45,7 @@ From a source checkout, see what lifecycle guarantees protect in practice:
 npm run demo:recovery
 ```
 
-Watch a plugin update encounter a real file-cleanup failure, retain the required service, explain its blockers, recover on explicit retry, and run the new plugin through the official AgentLoop. The [recovery case](docs/recovery-case.md) includes raw diagnostics, paper-to-code review links and a portable review bundle (`npm run reproduce:recovery`) that runs without a core checkout or source compilation.
+Watch a plugin update encounter a real file-cleanup failure, retain the required service, explain its blockers, reject lifecycle waits that retain their own provider, recover on explicit retry, and run the new plugin through the official AgentLoop. The [recovery case](docs/recovery-case.md) includes raw diagnostics, paper-to-code review sources and a portable review bundle (`npm run reproduce:recovery`) that runs without a core checkout or source compilation.
 
 ## How it works
 

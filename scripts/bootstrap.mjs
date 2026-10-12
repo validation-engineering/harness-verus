@@ -6,6 +6,7 @@ import { access, copyFile, mkdir, readFile, readdir, readlink, rename, rm, write
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { installArtifacts } from './install-artifacts.mjs';
+import { exportCoreReview } from './core-review.mjs';
 
 const root = fileURLToPath(new URL('../', import.meta.url));
 const sha256 = bytes => createHash('sha256').update(bytes).digest('hex');
@@ -135,6 +136,7 @@ try {
   for (const item of archiveRecords) await copyFile(path.join(source, 'target/release-artifacts/npm', path.basename(item.file)), path.join(root, item.file));
   await copyFile(developmentPath, path.join(vendor, 'provenance/development-report.json'));
   await copyFile(packagePath, path.join(vendor, 'provenance/package-report.json'));
+  await exportCoreReview({ source, root, development });
   await writeFile(lockPath, JSON.stringify(candidate, null, 2) + '\n');
   await mkdir(path.join(root, 'third-party'), { recursive: true });
   await copyFile(path.join(destination, 'LICENSE'), path.join(root, 'third-party/DeepSeek-Harness.LICENSE'));

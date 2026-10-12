@@ -2,12 +2,12 @@
   "schema": "cordis-harness.sources/v1",
   "cordis": {
     "repository": "https://github.com/validation-engineering/cordis-verus.git",
-    "baseCommit": "6d0e489d166916bd56d47c813c91ce8333bee9e6",
-    "workingTreeDirty": false,
+    "baseCommit": "d405fa0812cdb52c0ce3e4b2029c601b6a284cca",
+    "workingTreeDirty": true,
     "sourceIdentity": "verified working-tree file hashes; baseCommit is metadata, not snapshot identity",
-    "sourceFingerprint": "5c56ff715a9a0d4694094de26d01168aa1ca4da4275bd273399e547e923f4c4c",
-    "developmentReportSha256": "3986f666482c66376eab38502c2b8b2642cf2260acc27bf5461cd987ae8f68e8",
-    "packageReportSha256": "66e0f1f2b45e7251f0b2b6e126cea57735637b348cc4bd79f0081e66d82f0d25",
+    "sourceFingerprint": "08dfcc3e73674fa0a22526d9ba49b0151a52d845b7bec36317643f9f59e788b9",
+    "developmentReportSha256": "9833ce28ea85e5c1cd44e3506f4e9eda94faf2c0b773fe10e60b436aea7a111e",
+    "packageReportSha256": "a3e14aa82b743442ebcea4d1e85332b551715e0dd8bc9764a6936bf8bec70a63",
     "developmentAcceptance": true,
     "releaseAcceptance": false,
     "paperCompletion": false,
@@ -20,25 +20,25 @@
       "driverAbi": 1
     },
     "nativeTarget": "darwin-arm64-napi8",
-    "nativeArtifactSha256": "b8f25635869ed67b8d9b53d3f03d4d2cd4eac3c8a32d311bf772241a1e6087a9",
+    "nativeArtifactSha256": "101bff03bc1c6d6144f40b1236dd92753a423365352a64ba0fae8b7fd155be20",
     "archives": [
       {
         "name": "@validation-engineering/cordis",
-        "version": "0.1.1",
-        "file": ".vendor/cordis/validation-engineering-cordis-0.1.1.tgz",
-        "sha256": "3e0cc7776fcb9ea4ee81a9903fc507a49a54e320feb2f46e18cddd061399df4d"
+        "version": "0.2.0",
+        "file": ".vendor/cordis/validation-engineering-cordis-0.2.0.tgz",
+        "sha256": "bf74a45aaabff734d17cf6e0c9b2cee3fe0f2be65d626f4c09ba4701a0511a06"
       },
       {
         "name": "@validation-engineering/cordis-compat-deepseek",
-        "version": "0.1.0",
-        "file": ".vendor/cordis/validation-engineering-cordis-compat-deepseek-0.1.0.tgz",
-        "sha256": "0cedc716c80c3c846b9fb90d2c2ecfe737f811004aeadf137f327702774907e6"
+        "version": "0.1.1",
+        "file": ".vendor/cordis/validation-engineering-cordis-compat-deepseek-0.1.1.tgz",
+        "sha256": "19bbc9d009d62f3117869a910193a07feac5c01ea84a4db637e3524fa43115a3"
       },
       {
         "name": "@validation-engineering/cordis-loader",
-        "version": "0.2.0",
-        "file": ".vendor/cordis/validation-engineering-cordis-loader-0.2.0.tgz",
-        "sha256": "2fbe0ea809387821b1d944c1dee4de26910071a5dbead7d83cb9efca492b633c"
+        "version": "0.2.1",
+        "file": ".vendor/cordis/validation-engineering-cordis-loader-0.2.1.tgz",
+        "sha256": "c82fe612fa3b561719fd163d6d136eca35a1126599572fd18e5b383d37cdc540"
       }
     ]
   },

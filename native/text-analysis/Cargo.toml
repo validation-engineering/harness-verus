@@ -10,7 +10,7 @@ publish = false
 crate-type = ["cdylib", "rlib"]
 
 [dependencies]
-cordis-node = { path = "../../../cordis-verus/crates/cordis-node", version = "=0.1.1" }
+cordis-node = { path = "../../../cordis-verus/crates/cordis-node", version = "=0.2.0" }
 napi = { version = "=3.14.0", default-features = false, features = ["napi8", "dyn-symbols"] }
 napi-derive = "=3.6.10"
 serde_json = "1"

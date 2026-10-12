@@ -51,7 +51,7 @@ dependencies = [
 
 [[package]]
 name = "cordis-driver"
-version = "0.1.0"
+version = "0.2.0"
 dependencies = [
  "cordis-kernel",
  "serde",
@@ -71,14 +71,14 @@ dependencies = [
 
 [[package]]
 name = "cordis-kernel"
-version = "0.1.0"
+version = "0.2.0"
 dependencies = [
  "vstd",
 ]
 
 [[package]]
 name = "cordis-node"
-version = "0.1.1"
+version = "0.2.0"
 dependencies = [
  "cordis-driver",
  "cordis-plugin-api",
@@ -94,7 +94,7 @@ dependencies = [
 
 [[package]]
 name = "cordis-plugin-api"
-version = "0.1.0"
+version = "0.2.0"
 dependencies = [
  "serde",
  "serde_json",
@@ -102,7 +102,7 @@ dependencies = [
 
 [[package]]
 name = "cordis-verus"
-version = "0.1.0"
+version = "0.2.0"
 dependencies = [
  "atomicwrites",
  "cordis-driver",

@@ -1,5 +1,6 @@
 #!/usr/bin/env node
 import { runtimeDirectories } from "./runtime-packages.mjs";
+import { verifyCoreReview } from "./core-review.mjs";
 import '@validation-engineering/cordis-compat-deepseek/register';
 import assert from 'node:assert/strict';
 import { createHash } from 'node:crypto';
@@ -14,6 +15,7 @@ const json = async file => JSON.parse(await readFile(file, 'utf8'));
 assert(process.argv.length <= 3 && (!process.argv[2] || process.argv[2] === '--installed-only'), 'Usage: verify-install.mjs [--installed-only]');
 assert(!process.env.CORDIS_NATIVE_BINDING, 'Installation evidence requires the installed native artifact, without CORDIS_NATIVE_BINDING');
 const lock = await json(path.join(root, 'sources.lock.json'));
+await verifyCoreReview(root, lock);
 const installed = await realpath(path.join(root, 'node_modules'));
 const names = lock.cordis.archives.map(item => item.name);
 for (const item of lock.cordis.archives) {
